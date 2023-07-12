@@ -31,4 +31,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	class UCameraComponent* FollowCamera;
 
+	UPROPERTY(VisibleAnywhere, Category = "Ability")
+	class UAimingComponent* Aiming;
+
+	UPROPERTY(VisibleAnywhere, Category = "Ability")
+	class UGrabberComponent* Grabber;
 };

@@ -3,6 +3,8 @@
 
 #include "Character/ItTakesXCharacter.h"
 
+#include "Ability/AimingComponent.h"
+#include "Ability/GrabberComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -20,6 +22,10 @@ AItTakesXCharacter::AItTakesXCharacter()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
+
+	Aiming = CreateDefaultSubobject<UAimingComponent>("AimingComp");
+
+	Grabber = CreateDefaultSubobject<UGrabberComponent>("GrabberComp");
 
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
