@@ -133,6 +133,15 @@ bool UGrabberComponent::InterfaceWithComposing()
 	if (VehicleNode == nullptr) return false;
 
 	bool bAttachingResult = VehicleNode->AttachToCurrentOverlappingVehicleNode();
+
+	// if (!bAttachingResult)
+	// {
+	// 	return false;
+	// }
+	if (CurrentHoistingHoistable)
+	{
+		CurrentHoistingHoistable->OnEndHoisting_Implementation(GetOwner());
+	}
 	CurrentHoistingHoistable = nullptr;
-	return bAttachingResult;
+	return true;
 }

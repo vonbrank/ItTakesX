@@ -72,17 +72,17 @@ void UAimingComponent::AimScene()
 
 	UWorld* World = GetWorld();
 	TArray<FHitResult> HitResults;
-	if (World->LineTraceMultiByChannel(HitResults, Start, End, ECollisionChannel::ECC_WorldDynamic))
+	if (World->LineTraceMultiByChannel(HitResults, Start, End, ECollisionChannel::ECC_Visibility))
 	{
 	}
 	CurrentHitResults = HitResults;
 
 	auto CurrentNearestHitAimable = GetNearestAimingAimable();
 
-	// GEngine->AddOnScreenDebugMessage(
-	// 	-1, 15.f, FColor::Yellow,
-	// 	FString::Printf(
-	// 		TEXT("HitResults length = %d"), HitResults.Num()));
+	GEngine->AddOnScreenDebugMessage(
+		-1, 15.f, FColor::Yellow,
+		FString::Printf(
+			TEXT("HitResults length = %d"), HitResults.Num()));
 	// GEngine->AddOnScreenDebugMessage(
 	// 	-1, 15.f, FColor::Yellow,
 	// 	FString::Printf(
@@ -96,10 +96,10 @@ void UAimingComponent::AimScene()
 			AActor* AimingActor = Cast<AActor>(CurrentAimingAimable);
 			if (AimingActor)
 			{
-				// GEngine->AddOnScreenDebugMessage(
-				// 	-1, 15.f, FColor::Yellow,
-				// 	FString::Printf(
-				// 		TEXT("Current aiming actor: %s"), *AimingActor->GetName()));
+				GEngine->AddOnScreenDebugMessage(
+					-1, 15.f, FColor::Yellow,
+					FString::Printf(
+						TEXT("Current aiming actor: %s"), *AimingActor->GetName()));
 			}
 		}
 	}
