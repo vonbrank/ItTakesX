@@ -24,6 +24,8 @@ protected:
 	void Turn(float Value);
 	void LookUp(float Value);
 
+	void HandlePressingE();
+
 private:
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	class USpringArmComponent* CameraBoom;
@@ -36,4 +38,8 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Ability")
 	class UGrabberComponent* Grabber;
+
+public:
+	FORCEINLINE class UCameraComponent* GetFollowCamera() { return FollowCamera; }
+	FVector GetFollowCameraLocation() const;
 };

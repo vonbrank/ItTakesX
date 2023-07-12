@@ -49,6 +49,7 @@ void AItTakesXCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction(TEXT("Operate"), IE_Pressed, this, &ThisClass::HandlePressingE);
 
 	PlayerInputComponent->BindAxis(TEXT("MoveForward"), this, &ThisClass::MoveForward);
 	PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &ThisClass::MoveRight);
@@ -84,4 +85,21 @@ void AItTakesXCharacter::Turn(float Value)
 void AItTakesXCharacter::LookUp(float Value)
 {
 	AddControllerPitchInput(Value);
+}
+
+void AItTakesXCharacter::HandlePressingE()
+{
+	if (Grabber->ToggleHoistingActor())
+	{
+		return;
+	}
+}
+
+FVector AItTakesXCharacter::GetFollowCameraLocation() const
+{
+	if (FollowCamera == nullptr)
+	{
+		return FVector::Zero();
+	}
+	return FollowCamera->GetComponentLocation();
 }
