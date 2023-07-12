@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "Hoistable.generated.h"
+#include "VehicleNode.generated.h"
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
-class UHoistable : public UInterface
+class UVehicleNode : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -16,15 +16,12 @@ class UHoistable : public UInterface
 /**
  * 
  */
-class ITTAKESX_API IHoistable
+class ITTAKESX_API IVehicleNode
 {
 	GENERATED_BODY()
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void OnBeginHoisting(AActor* OtherActor);
-
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
-	void OnEndHoisting(AActor* OtherActor);
+	virtual void AddChildNode(TScriptInterface<IVehicleNode> ChildNode) = 0;
+	virtual bool AttachToCurrentOverlappingVehicleNode() = 0;
 };

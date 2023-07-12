@@ -25,6 +25,7 @@ protected:
 	void LookUp(float Value);
 
 	void HandlePressingE();
+	void HandlePressingF();
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = Camera)

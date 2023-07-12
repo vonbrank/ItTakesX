@@ -50,6 +50,7 @@ void AItTakesXCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 
 	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction(TEXT("Operate"), IE_Pressed, this, &ThisClass::HandlePressingE);
+	PlayerInputComponent->BindAction(TEXT("FAction"), IE_Pressed, this, &ThisClass::HandlePressingF);
 
 	PlayerInputComponent->BindAxis(TEXT("MoveForward"), this, &ThisClass::MoveForward);
 	PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &ThisClass::MoveRight);
@@ -102,4 +103,12 @@ FVector AItTakesXCharacter::GetFollowCameraLocation() const
 		return FVector::Zero();
 	}
 	return FollowCamera->GetComponentLocation();
+}
+
+void AItTakesXCharacter::HandlePressingF()
+{
+	if (Grabber->InterfaceWithComposing())
+	{
+		return;
+	}
 }

@@ -8,6 +8,7 @@
 #include "Character/ItTakesXCharacter.h"
 #include "Interface/Aimable.h"
 #include "Interface/Hoistable.h"
+#include "Interface/VehicleNode.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values for this component's properties
@@ -41,6 +42,8 @@ bool UGrabberComponent::ToggleHoistingActor()
 
 	if (CurrentHoistingHoistable)
 	{
+		CurrentHoistingHoistable->OnEndHoisting_Implementation(GetOwner());
+
 		HoistingActor = Cast<AActor>(CurrentHoistingHoistable);
 		if (HoistingActor)
 		{
@@ -78,10 +81,12 @@ bool UGrabberComponent::ToggleHoistingActor()
 
 		CurrentSelectDistance = (StartLocation - HoistingActor->GetActorLocation()).Length();
 
-		GEngine->AddOnScreenDebugMessage(
-			-1, 15.f, FColor::Yellow,
-			FString::Printf(
-				TEXT("Current Hoisting actor: %s"), *HoistingActor->GetName()));
+		CurrentHoistingHoistable->OnBeginHoisting_Implementation(GetOwner());
+
+		// GEngine->AddOnScreenDebugMessage(
+		// 	-1, 15.f, FColor::Yellow,
+		// 	FString::Printf(
+		// 		TEXT("Current Hoisting actor: %s"), *HoistingActor->GetName()));
 	}
 
 	return true;
@@ -120,4 +125,14 @@ bool UGrabberComponent::InteractWithHoisting()
 	}
 
 	return false;
+}
+
+bool UGrabberComponent::InterfaceWithComposing()
+{
+	auto VehicleNode = Cast<IVehicleNode>(CurrentHoistingHoistable);
+	if (VehicleNode == nullptr) return false;
+
+	bool bAttachingResult = VehicleNode->AttachToCurrentOverlappingVehicleNode();
+	CurrentHoistingHoistable = nullptr;
+	return bAttachingResult;
 }

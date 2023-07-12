@@ -6,10 +6,11 @@
 #include "GameFramework/Actor.h"
 #include "Interface/Aimable.h"
 #include "Interface/Hoistable.h"
+#include "Interface/VehicleNode.h"
 #include "VehicleComponentActor.generated.h"
 
 UCLASS()
-class ITTAKESX_API AVehicleComponentActor : public AActor, public IAimable, public IHoistable
+class ITTAKESX_API AVehicleComponentActor : public AActor, public IAimable, public IHoistable, public IVehicleNode
 {
 	GENERATED_BODY()
 
@@ -32,9 +33,36 @@ private:
 	UPROPERTY()
 	AActor* CurrentHoistingActor;
 
+	UPROPERTY()
+	TScriptInterface<IVehicleNode> CurrentOverlappingVehicleNode;
+
+	UPROPERTY()
+	TScriptInterface<IVehicleNode> ParentNode;
+	UPROPERTY()
+	TArray<TScriptInterface<IVehicleNode>> ChildNodes;
+
+	UFUNCTION()
+	virtual void OnSphereStartOverlap(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex,
+		bool bFromSweep,
+		const FHitResult& SweepResult
+	);
+	UFUNCTION()
+	virtual void OnSphereEndOverlap(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex
+	);
+
 public:
-	void OnBeginAiming_Implementation(AActor* OtherActor);
-	void OnEndAiming_Implementation(AActor* OtherActor);
-	void OnBeginHoisting_Implementation(AActor* OtherActor);
-	void OnEndHoisting_Implementation(AActor* OtherActor);
+	virtual void OnBeginAiming_Implementation(AActor* OtherActor);
+	virtual void OnEndAiming_Implementation(AActor* OtherActor);
+	virtual void OnBeginHoisting_Implementation(AActor* OtherActor);
+	virtual void OnEndHoisting_Implementation(AActor* OtherActor);
+	virtual void AddChildNode(TScriptInterface<IVehicleNode> ChildNode) override;
+	virtual bool AttachToCurrentOverlappingVehicleNode() override;
 };

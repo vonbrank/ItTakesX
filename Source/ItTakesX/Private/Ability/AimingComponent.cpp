@@ -74,15 +74,19 @@ void UAimingComponent::AimScene()
 	TArray<FHitResult> HitResults;
 	if (World->LineTraceMultiByChannel(HitResults, Start, End, ECollisionChannel::ECC_WorldDynamic))
 	{
-		CurrentHitResults = HitResults;
 	}
+	CurrentHitResults = HitResults;
 
 	auto CurrentNearestHitAimable = GetNearestAimingAimable();
 
 	// GEngine->AddOnScreenDebugMessage(
 	// 	-1, 15.f, FColor::Yellow,
 	// 	FString::Printf(
-	// 		TEXT("AimScene: count of CurrentHitResults = %d"), HitResults.Num()));
+	// 		TEXT("HitResults length = %d"), HitResults.Num()));
+	// GEngine->AddOnScreenDebugMessage(
+	// 	-1, 15.f, FColor::Yellow,
+	// 	FString::Printf(
+	// 		TEXT("CurrentAimingAimable = %p"), CurrentAimingAimable));
 
 	if (CurrentAimingAimable != CurrentNearestHitAimable)
 	{
@@ -92,10 +96,10 @@ void UAimingComponent::AimScene()
 			AActor* AimingActor = Cast<AActor>(CurrentAimingAimable);
 			if (AimingActor)
 			{
-				GEngine->AddOnScreenDebugMessage(
-					-1, 15.f, FColor::Yellow,
-					FString::Printf(
-						TEXT("Current aiming actor: %s"), *AimingActor->GetName()));
+				// GEngine->AddOnScreenDebugMessage(
+				// 	-1, 15.f, FColor::Yellow,
+				// 	FString::Printf(
+				// 		TEXT("Current aiming actor: %s"), *AimingActor->GetName()));
 			}
 		}
 	}
@@ -125,7 +129,9 @@ IAimable* UAimingComponent::GetNearestAimingAimable() const
 	for (auto HitResult : CurrentHitResults)
 	{
 		auto Aimable = Cast<IAimable>(HitResult.GetActor());
-		if (Aimable != nullptr && MinDistance > HitResult.Distance)
+		// 必须击中 Mesh 才可以
+		auto MeshComponent = Cast<UMeshComponent>(HitResult.Component);
+		if (Aimable != nullptr && MeshComponent != nullptr && MinDistance > HitResult.Distance)
 		{
 			MinDistance = HitResult.Distance;
 			NearestAimable = Aimable;
