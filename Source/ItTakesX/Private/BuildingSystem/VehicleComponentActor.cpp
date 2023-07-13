@@ -22,6 +22,7 @@ AVehicleComponentActor::AVehicleComponentActor()
 	AreaSphere->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	AreaSphere->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldDynamic, ECollisionResponse::ECR_Overlap);
 	AreaSphere->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+	AreaSphere->ComponentTags.Add(TEXT("VehicleArea"));
 	// AreaSphere->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
 }
 
@@ -69,10 +70,11 @@ void AVehicleComponentActor::OnSphereStartOverlap(UPrimitiveComponent* Overlappe
                                                   const FHitResult& SweepResult)
 {
 	auto VehicleNode = Cast<IVehicleNode>(OtherActor);
-	auto OtherAreaSphere = Cast<USphereComponent>(OtherComp);
 
-	if (CurrentHoistingActor && VehicleNode && OtherAreaSphere)
+	if (CurrentHoistingActor != nullptr && CurrentOverlappingComponent == nullptr && OtherComp->ComponentTags.Contains(
+		TEXT("VehicleArea")))
 	{
+		CurrentOverlappingComponent = OtherComp;
 		CurrentOverlappingVehicleNode.SetObject(OtherActor);
 		CurrentOverlappingVehicleNode.SetInterface(VehicleNode);
 
@@ -86,11 +88,9 @@ void AVehicleComponentActor::OnSphereStartOverlap(UPrimitiveComponent* Overlappe
 void AVehicleComponentActor::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                                 UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	auto VehicleNode = Cast<IVehicleNode>(OtherActor);
-	auto OtherAreaSphere = Cast<USphereComponent>(OtherComp);
-
-	if (CurrentHoistingActor && VehicleNode && OtherAreaSphere)
+	if (OtherComp == CurrentOverlappingComponent)
 	{
+		CurrentOverlappingComponent = nullptr;
 		GEngine->AddOnScreenDebugMessage(
 			-1, 15.f, FColor::Yellow,
 			FString::Printf(

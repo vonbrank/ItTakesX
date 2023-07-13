@@ -79,10 +79,10 @@ void UAimingComponent::AimScene()
 
 	auto CurrentNearestHitAimable = GetNearestAimingAimable();
 
-	GEngine->AddOnScreenDebugMessage(
-		-1, 15.f, FColor::Yellow,
-		FString::Printf(
-			TEXT("HitResults length = %d"), HitResults.Num()));
+	// GEngine->AddOnScreenDebugMessage(
+	// 	-1, 15.f, FColor::Yellow,
+	// 	FString::Printf(
+	// 		TEXT("HitResults length = %d"), HitResults.Num()));
 	// GEngine->AddOnScreenDebugMessage(
 	// 	-1, 15.f, FColor::Yellow,
 	// 	FString::Printf(

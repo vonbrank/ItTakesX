@@ -32,6 +32,8 @@ private:
 	AActor* CurrentAimingActor;
 	UPROPERTY()
 	AActor* CurrentHoistingActor;
+	UPROPERTY()
+	USceneComponent* CurrentOverlappingComponent;
 
 	UPROPERTY()
 	TScriptInterface<IVehicleNode> CurrentOverlappingVehicleNode;
