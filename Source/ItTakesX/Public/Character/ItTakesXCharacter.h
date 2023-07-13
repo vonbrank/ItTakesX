@@ -46,7 +46,13 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Ability")
 	class UGrabberComponent* Grabber;
 
+	UPROPERTY()
+	class AMagnet* EquippedMagnet;
+
 public:
 	FORCEINLINE class UCameraComponent* GetFollowCamera() { return FollowCamera; }
 	FVector GetFollowCameraLocation() const;
+
+	void EquipMagnet(AMagnet* MagnetToEquip);
+	bool HasMagnetEquipped() const;
 };

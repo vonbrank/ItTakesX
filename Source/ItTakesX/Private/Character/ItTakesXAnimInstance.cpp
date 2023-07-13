@@ -30,4 +30,6 @@ void UItTakesXAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	bIsInAir = ItTakesXCharacter->GetCharacterMovement()->IsFalling();
 
 	bIsAccelerating = ItTakesXCharacter->GetCharacterMovement()->GetCurrentAcceleration().Size() > 0.f;
+	
+	bEquippingMagnet = ItTakesXCharacter->HasMagnetEquipped();
 }

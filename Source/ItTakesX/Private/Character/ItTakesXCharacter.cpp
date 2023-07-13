@@ -5,7 +5,9 @@
 
 #include "Ability/AimingComponent.h"
 #include "Ability/GrabberComponent.h"
+#include "Ability/Magnet.h"
 #include "Camera/CameraComponent.h"
+#include "Engine/SkeletalMeshSocket.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
@@ -141,4 +143,23 @@ void AItTakesXCharacter::HandlePressingF()
 	{
 		return;
 	}
+}
+
+void AItTakesXCharacter::EquipMagnet(AMagnet* MagnetToEquip)
+{
+	if (MagnetToEquip == nullptr || EquippedMagnet == MagnetToEquip) return;
+
+	EquippedMagnet = MagnetToEquip;
+
+	const auto HandSocket = GetMesh()->GetSocketByName(TEXT("hand_rSocket"));
+	if (HandSocket)
+	{
+		HandSocket->AttachActor(EquippedMagnet, GetMesh());
+	}
+	EquippedMagnet->SetOwner(this);
+}
+
+bool AItTakesXCharacter::HasMagnetEquipped() const
+{
+	return EquippedMagnet != nullptr;
 }
