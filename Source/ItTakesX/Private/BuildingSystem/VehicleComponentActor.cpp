@@ -3,7 +3,9 @@
 
 #include "BuildingSystem/VehicleComponentActor.h"
 
+#include "Components/ArrowComponent.h"
 #include "Components/SphereComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "PhysicsEngine/PhysicsConstraintActor.h"
 #include "PhysicsEngine/PhysicsConstraintComponent.h"
 
@@ -24,6 +26,8 @@ AVehicleComponentActor::AVehicleComponentActor()
 	AreaSphere->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
 	AreaSphere->ComponentTags.Add(TEXT("VehicleArea"));
 	// AreaSphere->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
+
+	CurrentConnectionIndex = -1;
 }
 
 // Called when the game starts or when spawned
@@ -35,12 +39,36 @@ void AVehicleComponentActor::BeginPlay()
 
 	AreaSphere->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnSphereStartOverlap);
 	AreaSphere->OnComponentEndOverlap.AddDynamic(this, &ThisClass::OnSphereEndOverlap);
+
+
+	TArray<USceneComponent*> AllComponents;
+	RootComponent->GetChildrenComponents(true, AllComponents);
+	for (auto Comp : AllComponents)
+	{
+		auto StaticMeshComp = Cast<UStaticMeshComponent>(Comp);
+		if (Comp->ComponentTags.Contains(TEXT("ConnectionComp")) && StaticMeshComp)
+		{
+			ConnectionComponents.Add(StaticMeshComp);
+		}
+	}
+
+	for (auto Comp : ConnectionComponents)
+	{
+		auto Material = Comp->CreateDynamicMaterialInstance(0);
+		ConnectionMaterials.Add(Material);
+	}
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	                                 FString::Printf(
+		                                 TEXT("name: %s, connection num: %d"), *GetName(), ConnectionComponents.Num()));
 }
 
 // Called every frame
 void AVehicleComponentActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	InteractWithOverlappingVehicleNode();
 }
 
 void AVehicleComponentActor::OnBeginAiming_Implementation(AActor* OtherActor)
@@ -96,6 +124,12 @@ void AVehicleComponentActor::OnSphereEndOverlap(UPrimitiveComponent* OverlappedC
 			FString::Printf(
 				TEXT("End overlap: %s, owner: %s"), *OtherComp->GetName(), *GetName()));
 
+		auto VehicleNode = CurrentOverlappingVehicleNode.GetInterface();
+		if (VehicleNode)
+		{
+			VehicleNode->DeactivateAllConnection();
+		}
+
 		CurrentOverlappingVehicleNode.SetObject(nullptr);
 		CurrentOverlappingVehicleNode.SetInterface(nullptr);
 	}
@@ -107,6 +141,8 @@ void AVehicleComponentActor::AddChildNode(TScriptInterface<IVehicleNode> ChildNo
 
 bool AVehicleComponentActor::AttachToCurrentOverlappingVehicleNode()
 {
+	if (CurrentConnectionIndex == -1) return false;
+
 	auto ParentActor = Cast<AActor>(CurrentOverlappingVehicleNode.GetInterface());
 
 	if (ParentActor == nullptr) return false;
@@ -116,7 +152,13 @@ bool AVehicleComponentActor::AttachToCurrentOverlappingVehicleNode()
 		return false;
 	}
 
+	SetActorLocation(FMath::VInterpTo(GetActorLocation(), CurrentPlaceLocation,
+	                                  UGameplayStatics::GetWorldDeltaSeconds(this), 5.f));
+
+	FVector MidLocation = ParentActor->GetActorLocation() + (CurrentPlaceLocation - CurrentPlaceLocation) / 2;
+
 	APhysicsConstraintActor* PhysicsConstraintActor = GetWorld()->SpawnActor<APhysicsConstraintActor>();
+	PhysicsConstraintActor->SetActorLocation(MidLocation);
 	UPhysicsConstraintComponent* PhysicsConstraintComponent = PhysicsConstraintActor->GetConstraintComp();
 	PhysicsConstraintComponent->SetConstrainedComponents(ParentRootComponent, TEXT(""), Mesh, TEXT(""));
 	PhysicsConstraintComponent->SetAngularSwing1Limit(EAngularConstraintMotion::ACM_Locked, 0.f);
@@ -124,4 +166,106 @@ bool AVehicleComponentActor::AttachToCurrentOverlappingVehicleNode()
 	PhysicsConstraintComponent->SetAngularTwistLimit(EAngularConstraintMotion::ACM_Locked, 0.f);
 	// Mesh->SetSimulatePhysics(true);
 	return true;
+}
+
+void AVehicleComponentActor::AddConnectionComponent(USceneComponent* Component)
+{
+	auto StaticMesh = Cast<UStaticMeshComponent>(Component);
+	ConnectionComponents.Add(StaticMesh);
+}
+
+bool AVehicleComponentActor::IsHoisting() const
+{
+	return CurrentHoistingActor != nullptr;
+}
+
+void AVehicleComponentActor::NearestConnection(FVector SourceLocation, int32& OutConnectionIndex,
+                                               FVector& OutConnectionLocation,
+                                               FVector& OutPlaceLocation) const
+{
+	OutConnectionIndex = -1;
+	float MinDistance = TNumericLimits<float>::Max();
+
+	for (auto i = 0; i < ConnectionComponents.Num(); i++)
+	{
+		auto ConnectionComponent = ConnectionComponents[i];
+		UArrowComponent* ArrowComponent = Cast<UArrowComponent>(ConnectionComponent->GetChildComponent(0));
+		if (ArrowComponent == nullptr)
+		{
+			continue;
+		}
+		auto ConnectionLocation = ConnectionComponent->GetComponentLocation();
+		auto PlaceLocation = ArrowComponent->GetComponentLocation();
+		auto CurrentDistance = (SourceLocation - ConnectionLocation).Length();
+		if (CurrentDistance < MinDistance)
+		{
+			MinDistance = CurrentDistance;
+			OutConnectionIndex = i;
+			OutConnectionLocation = ConnectionLocation;
+			OutPlaceLocation = PlaceLocation;
+		}
+	}
+}
+
+void AVehicleComponentActor::ActivateConnection(int32 ConnectionIndex)
+{
+	for (int32 i = 0; i < ConnectionMaterials.Num(); i++)
+	{
+		auto Material = ConnectionMaterials[i];
+		if (i == ConnectionIndex)
+		{
+			Material->SetScalarParameterValue(TEXT("Transparent"), 1.f);
+		}
+		else
+		{
+			Material->SetScalarParameterValue(TEXT("Transparent"), 0.f);
+		}
+	}
+}
+
+bool AVehicleComponentActor::InteractWithOverlappingVehicleNode()
+{
+	auto VehicleNode = CurrentOverlappingVehicleNode.GetInterface();
+
+	//
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	//                                  FString::Printf(
+	// 	                                 TEXT("VehicleNode: %p, CurrentHoistingActor: %p"), VehicleNode,
+	// 	                                 CurrentHoistingActor));
+
+	if (CurrentHoistingActor == nullptr || VehicleNode == nullptr)
+	{
+		return false;
+	}
+
+	FVector SourceConnection = GetActorLocation();
+	int32 OutConnectionIndex = -1;
+	FVector OutConnectionLocation;
+	FVector OutPlaceLocation;
+
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	                                 FString::Printf(
+		                                 TEXT("OutConnectionIndex: %d"), OutConnectionIndex));
+
+	VehicleNode->NearestConnection(SourceConnection, OutConnectionIndex, OutConnectionLocation, OutPlaceLocation);
+	VehicleNode->ActivateConnection(OutConnectionIndex);
+
+	CurrentConnectionIndex = OutConnectionIndex;
+
+	if (OutConnectionIndex >= 0)
+	{
+		CurrentPlaceLocation = OutPlaceLocation;
+	}
+
+	return true;
+}
+
+void AVehicleComponentActor::DeactivateAllConnection()
+{
+	for (int32 i = 0; i < ConnectionMaterials.Num(); i++)
+	{
+		auto Material = ConnectionMaterials[i];
+		Material->SetScalarParameterValue(TEXT("Transparent"), 0.f);
+	}
 }

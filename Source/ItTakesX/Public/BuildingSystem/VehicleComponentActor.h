@@ -43,6 +43,16 @@ private:
 	UPROPERTY()
 	TArray<TScriptInterface<IVehicleNode>> ChildNodes;
 
+	UPROPERTY()
+	TArray<class UStaticMeshComponent*> ConnectionComponents;
+	UPROPERTY()
+	TArray<class UMaterialInstanceDynamic*> ConnectionMaterials;
+
+	UPROPERTY()
+	FVector CurrentPlaceLocation;
+	UPROPERTY()
+	int32 CurrentConnectionIndex;
+
 	UFUNCTION()
 	virtual void OnSphereStartOverlap(
 		UPrimitiveComponent* OverlappedComponent,
@@ -60,11 +70,23 @@ private:
 		int32 OtherBodyIndex
 	);
 
+	UFUNCTION()
+	bool InteractWithOverlappingVehicleNode();
+
+
 public:
+	UFUNCTION(BlueprintCallable)
+	void AddConnectionComponent(class USceneComponent* Component);
+
 	virtual void OnBeginAiming_Implementation(AActor* OtherActor);
 	virtual void OnEndAiming_Implementation(AActor* OtherActor);
 	virtual void OnBeginHoisting_Implementation(AActor* OtherActor);
 	virtual void OnEndHoisting_Implementation(AActor* OtherActor);
 	virtual void AddChildNode(TScriptInterface<IVehicleNode> ChildNode) override;
 	virtual bool AttachToCurrentOverlappingVehicleNode() override;
+	virtual bool IsHoisting() const override;
+	virtual void NearestConnection(FVector SourceLocation, int32& OutConnectionIndex, FVector& OutConnectionLocation,
+	                               FVector& OutPlaceLocation) const override;
+	virtual void ActivateConnection(int32 ConnectionIndex) override;
+	virtual void DeactivateAllConnection() override;
 };
