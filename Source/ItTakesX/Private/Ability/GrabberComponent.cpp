@@ -121,12 +121,16 @@ bool UGrabberComponent::InteractWithComposing()
 	if (VehicleNode == nullptr) return false;
 
 	bool bAttachingResult = VehicleNode->AttachToCurrentOverlappingVehicleNode();
-	if (CurrentHoistingHoistable)
+
+	if (bAttachingResult)
 	{
-		CurrentHoistingHoistable->OnEndHoisting_Implementation(GetOwner());
+		if (CurrentHoistingHoistable)
+		{
+			CurrentHoistingHoistable->OnEndHoisting_Implementation(GetOwner());
+		}
+		CurrentHoistingHoistable = nullptr;
 	}
-	CurrentHoistingHoistable = nullptr;
-	return true;
+	return bAttachingResult;
 }
 
 bool UGrabberComponent::InteractWithHoistingObjectRotation(ERotateDirection Direction, float Value)

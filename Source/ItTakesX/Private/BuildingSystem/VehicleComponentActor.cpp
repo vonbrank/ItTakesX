@@ -141,6 +141,10 @@ void AVehicleComponentActor::AddChildNode(TScriptInterface<IVehicleNode> ChildNo
 
 bool AVehicleComponentActor::AttachToCurrentOverlappingVehicleNode()
 {
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	                                 FString::Printf(
+		                                 TEXT("OutConnectionIndex: %d"), CurrentConnectionIndex));
+
 	if (CurrentConnectionIndex == -1) return false;
 
 	auto ParentActor = Cast<AActor>(CurrentOverlappingVehicleNode.GetInterface());
@@ -152,8 +156,9 @@ bool AVehicleComponentActor::AttachToCurrentOverlappingVehicleNode()
 		return false;
 	}
 
-	SetActorLocation(FMath::VInterpTo(GetActorLocation(), CurrentPlaceLocation,
-	                                  UGameplayStatics::GetWorldDeltaSeconds(this), 5.f));
+	// SetActorLocation(FMath::VInterpTo(GetActorLocation(), CurrentPlaceLocation,
+	//                                   UGameplayStatics::GetWorldDeltaSeconds(this), 5.f));
+	SetActorLocation(CurrentPlaceLocation);
 
 	FVector MidLocation = ParentActor->GetActorLocation() + (CurrentPlaceLocation - CurrentPlaceLocation) / 2;
 
@@ -289,12 +294,12 @@ bool AVehicleComponentActor::InteractWithOverlappingVehicleNode()
 	FVector OutPlaceLocation;
 
 
-	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-	//                                  FString::Printf(
-	// 	                                 TEXT("OutConnectionIndex: %d"), OutConnectionIndex));
-
 	VehicleNode->NearestConnection(SourceConnection, OutConnectionIndex, OutConnectionLocation, OutPlaceLocation);
 	VehicleNode->ActivateConnection(OutConnectionIndex);
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	                                 FString::Printf(
+		                                 TEXT("OutConnectionIndex: %d"), OutConnectionIndex));
 
 	CurrentConnectionIndex = OutConnectionIndex;
 
@@ -308,9 +313,13 @@ bool AVehicleComponentActor::InteractWithOverlappingVehicleNode()
 
 void AVehicleComponentActor::DeactivateAllConnection()
 {
-	for (int32 i = 0; i < ConnectionMaterials.Num(); i++)
-	{
-		auto Material = ConnectionMaterials[i];
-		Material->SetScalarParameterValue(TEXT("Transparent"), 0.f);
-	}
+	// for (int32 i = 0; i < ConnectionMaterials.Num(); i++)
+	// {
+	// 	auto Material = ConnectionMaterials[i];
+	// 	Material->SetScalarParameterValue(TEXT("Transparent"), 0.f);
+	// }
+	// for (int32 i = 0; i < ConnectionComponents.Num(); i++)
+	// {
+	// 	
+	// }
 }
