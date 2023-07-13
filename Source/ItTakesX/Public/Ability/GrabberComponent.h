@@ -34,5 +34,5 @@ private:
 
 public:
 	bool ToggleHoistingActor();
-	bool InterfaceWithComposing();
+	bool InteractWithComposing();
 };

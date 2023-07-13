@@ -4,6 +4,8 @@
 #include "BuildingSystem/VehicleComponentActor.h"
 
 #include "Components/SphereComponent.h"
+#include "PhysicsEngine/PhysicsConstraintActor.h"
+#include "PhysicsEngine/PhysicsConstraintComponent.h"
 
 // Sets default values
 AVehicleComponentActor::AVehicleComponentActor()
@@ -20,7 +22,7 @@ AVehicleComponentActor::AVehicleComponentActor()
 	AreaSphere->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	AreaSphere->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldDynamic, ECollisionResponse::ECR_Overlap);
 	AreaSphere->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
-	AreaSphere->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
+	// AreaSphere->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
 }
 
 // Called when the game starts or when spawned
@@ -53,11 +55,13 @@ void AVehicleComponentActor::OnEndAiming_Implementation(AActor* OtherActor)
 void AVehicleComponentActor::OnBeginHoisting_Implementation(AActor* OtherActor)
 {
 	CurrentHoistingActor = OtherActor;
+	Mesh->SetSimulatePhysics(false);
 }
 
 void AVehicleComponentActor::OnEndHoisting_Implementation(AActor* OtherActor)
 {
 	CurrentHoistingActor = nullptr;
+	Mesh->SetSimulatePhysics(true);
 }
 
 void AVehicleComponentActor::OnSphereStartOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -106,15 +110,18 @@ bool AVehicleComponentActor::AttachToCurrentOverlappingVehicleNode()
 	auto ParentActor = Cast<AActor>(CurrentOverlappingVehicleNode.GetInterface());
 
 	if (ParentActor == nullptr) return false;
+	auto ParentRootComponent = Cast<UPrimitiveComponent>(ParentActor->GetRootComponent());
+	if (ParentRootComponent == nullptr)
+	{
+		return false;
+	}
 
-	bool bAttachResult = AttachToActor(ParentActor,
-	                                   FAttachmentTransformRules(EAttachmentRule::KeepWorld,
-	                                                             EAttachmentRule::KeepWorld,
-	                                                             EAttachmentRule::KeepWorld, true));
-	GEngine->AddOnScreenDebugMessage(
-		-1, 15.f, FColor::Blue,
-		FString::Printf(
-			TEXT("Attach Result: %s"), bAttachResult ? *FString("true") : *FString("false")));
-
-	return bAttachResult;
+	APhysicsConstraintActor* PhysicsConstraintActor = GetWorld()->SpawnActor<APhysicsConstraintActor>();
+	UPhysicsConstraintComponent* PhysicsConstraintComponent = PhysicsConstraintActor->GetConstraintComp();
+	PhysicsConstraintComponent->SetConstrainedComponents(ParentRootComponent, TEXT(""), Mesh, TEXT(""));
+	PhysicsConstraintComponent->SetAngularSwing1Limit(EAngularConstraintMotion::ACM_Locked, 0.f);
+	PhysicsConstraintComponent->SetAngularSwing2Limit(EAngularConstraintMotion::ACM_Locked, 0.f);
+	PhysicsConstraintComponent->SetAngularTwistLimit(EAngularConstraintMotion::ACM_Locked, 0.f);
+	// Mesh->SetSimulatePhysics(true);
+	return true;
 }

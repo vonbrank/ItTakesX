@@ -107,7 +107,7 @@ FVector AItTakesXCharacter::GetFollowCameraLocation() const
 
 void AItTakesXCharacter::HandlePressingF()
 {
-	if (Grabber->InterfaceWithComposing())
+	if (Grabber->InteractWithComposing())
 	{
 		return;
 	}

@@ -44,13 +44,6 @@ bool UGrabberComponent::ToggleHoistingActor()
 	{
 		CurrentHoistingHoistable->OnEndHoisting_Implementation(GetOwner());
 
-		HoistingActor = Cast<AActor>(CurrentHoistingHoistable);
-		if (HoistingActor)
-		{
-			auto RootComponent = Cast<UStaticMeshComponent>(HoistingActor->GetRootComponent());
-			RootComponent->SetSimulatePhysics(true);
-		}
-
 		CurrentHoistingHoistable = nullptr;
 
 		// TODO other action for dropdown;
@@ -71,16 +64,12 @@ bool UGrabberComponent::ToggleHoistingActor()
 	HoistingActor = Cast<AActor>(CurrentHoistingHoistable);
 	if (HoistingActor)
 	{
-		auto RootComponent = Cast<UStaticMeshComponent>(HoistingActor->GetRootComponent());
-		RootComponent->SetSimulatePhysics(false);
 
 		auto Character = Cast<AItTakesXCharacter>(GetOwner());
 		FVector StartLocation = Character == nullptr
 			                        ? GetOwner()->GetActorLocation()
 			                        : Character->GetFollowCameraLocation();
-
 		CurrentSelectDistance = (StartLocation - HoistingActor->GetActorLocation()).Length();
-
 		CurrentHoistingHoistable->OnBeginHoisting_Implementation(GetOwner());
 
 		// GEngine->AddOnScreenDebugMessage(
@@ -127,17 +116,12 @@ bool UGrabberComponent::InteractWithHoisting()
 	return false;
 }
 
-bool UGrabberComponent::InterfaceWithComposing()
+bool UGrabberComponent::InteractWithComposing()
 {
 	auto VehicleNode = Cast<IVehicleNode>(CurrentHoistingHoistable);
 	if (VehicleNode == nullptr) return false;
 
 	bool bAttachingResult = VehicleNode->AttachToCurrentOverlappingVehicleNode();
-
-	// if (!bAttachingResult)
-	// {
-	// 	return false;
-	// }
 	if (CurrentHoistingHoistable)
 	{
 		CurrentHoistingHoistable->OnEndHoisting_Implementation(GetOwner());
