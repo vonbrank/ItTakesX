@@ -164,6 +164,8 @@ bool AVehicleComponentActor::AttachToCurrentOverlappingVehicleNode()
 	PhysicsConstraintComponent->SetAngularSwing1Limit(EAngularConstraintMotion::ACM_Locked, 0.f);
 	PhysicsConstraintComponent->SetAngularSwing2Limit(EAngularConstraintMotion::ACM_Locked, 0.f);
 	PhysicsConstraintComponent->SetAngularTwistLimit(EAngularConstraintMotion::ACM_Locked, 0.f);
+	PhysicsConstraintComponent->SetDisableCollision(true);
+	CurrentOverlappingVehicleNode.GetInterface()->DeactivateAllConnection();
 	// Mesh->SetSimulatePhysics(true);
 	return true;
 }
@@ -207,6 +209,49 @@ void AVehicleComponentActor::NearestConnection(FVector SourceLocation, int32& Ou
 	}
 }
 
+void AVehicleComponentActor::GetBothWayConnectionInfo(const TArray<FVector>& SourceAnchorLocations,
+                                                      const TArray<FVector>& SourceArrowLocations,
+                                                      const TArray<FRotator>& SourceArrowRotation,
+                                                      int32& OutSourceConnectionIndex,
+                                                      int32& OutTargetConnectionIndex,
+                                                      FVector& OutConnectionLocation,
+                                                      FVector& OutPlaceLocation)
+{
+	// IVehicleNode::GetBothWayConnectionInfo(SourceAnchorLocations, SourceArrowLocations, SourceArrowRotation,
+	//                                        OutSourceConnectionIndex,
+	//                                        OutTargetConnectionIndex, OutConnectionLocation, OutPlaceLocation);
+
+	// OutSourceConnectionIndex = -1;
+	// OutTargetConnectionIndex = -1;
+	// float MinDistance = TNumericLimits<float>::Max();
+	//
+	// if(SourceAnchorLocations.Num() != SourceArrowLocations.Num())
+	//
+	// for (auto i = 0; i < ConnectionComponents.Num(); i++)
+	// {
+	// 	auto ConnectionComponent = ConnectionComponents[i];
+	// 	UArrowComponent* ArrowComponent = Cast<UArrowComponent>(ConnectionComponent->GetChildComponent(0));
+	// 	if (ArrowComponent == nullptr)
+	// 	{
+	// 		continue;
+	// 	}
+	//
+	// 	for(auto j = 0; )
+	// 	
+	// 	
+	// 	auto ConnectionLocation = ConnectionComponent->GetComponentLocation();
+	// 	auto PlaceLocation = ArrowComponent->GetComponentLocation();
+	// 	auto CurrentDistance = (SourceLocation - ConnectionLocation).Length();
+	// 	if (CurrentDistance < MinDistance)
+	// 	{
+	// 		MinDistance = CurrentDistance;
+	// 		OutConnectionIndex = i;
+	// 		OutConnectionLocation = ConnectionLocation;
+	// 		OutPlaceLocation = PlaceLocation;
+	// 	}
+	// }
+}
+
 void AVehicleComponentActor::ActivateConnection(int32 ConnectionIndex)
 {
 	for (int32 i = 0; i < ConnectionMaterials.Num(); i++)
@@ -244,9 +289,9 @@ bool AVehicleComponentActor::InteractWithOverlappingVehicleNode()
 	FVector OutPlaceLocation;
 
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-	                                 FString::Printf(
-		                                 TEXT("OutConnectionIndex: %d"), OutConnectionIndex));
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	//                                  FString::Printf(
+	// 	                                 TEXT("OutConnectionIndex: %d"), OutConnectionIndex));
 
 	VehicleNode->NearestConnection(SourceConnection, OutConnectionIndex, OutConnectionLocation, OutPlaceLocation);
 	VehicleNode->ActivateConnection(OutConnectionIndex);

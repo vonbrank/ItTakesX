@@ -51,11 +51,16 @@ void AItTakesXCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction(TEXT("Operate"), IE_Pressed, this, &ThisClass::HandlePressingE);
 	PlayerInputComponent->BindAction(TEXT("FAction"), IE_Pressed, this, &ThisClass::HandlePressingF);
+	PlayerInputComponent->BindAction(TEXT("ZAction"), IE_Repeat, this, &ThisClass::HandleRepeatingZ);
+	PlayerInputComponent->BindAction(TEXT("XAction"), IE_Repeat, this, &ThisClass::HandleRepeatingX);
+	PlayerInputComponent->BindAction(TEXT("LShiftAction"), IE_Repeat, this, &ThisClass::HandleRepeatingLShift);
+	PlayerInputComponent->BindAction(TEXT("LCtrlAction"), IE_Repeat, this, &ThisClass::HandleRepeatingLCtrl);
 
 	PlayerInputComponent->BindAxis(TEXT("MoveForward"), this, &ThisClass::MoveForward);
 	PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &ThisClass::MoveRight);
 	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &ThisClass::Turn);
 	PlayerInputComponent->BindAxis(TEXT("LookUp"), this, &ThisClass::LookUp);
+	PlayerInputComponent->BindAxis(TEXT("Zoom"), this, &ThisClass::Zoom);
 }
 
 void AItTakesXCharacter::MoveForward(float Value)
@@ -88,12 +93,37 @@ void AItTakesXCharacter::LookUp(float Value)
 	AddControllerPitchInput(Value);
 }
 
+void AItTakesXCharacter::Zoom(float Value)
+{
+	Grabber->InteractWithZoomingHoistable(Value * 100);
+}
+
 void AItTakesXCharacter::HandlePressingE()
 {
 	if (Grabber->ToggleHoistingActor())
 	{
 		return;
 	}
+}
+
+void AItTakesXCharacter::HandleRepeatingLShift()
+{
+	Grabber->InteractWithHoistingObjectRotation(ERotateDirection::Direction_Up, 10.f);
+}
+
+void AItTakesXCharacter::HandleRepeatingLCtrl()
+{
+	Grabber->InteractWithHoistingObjectRotation(ERotateDirection::Direction_Down, 10.f);
+}
+
+void AItTakesXCharacter::HandleRepeatingZ()
+{
+	Grabber->InteractWithHoistingObjectRotation(ERotateDirection::Direction_Left, 10.f);
+}
+
+void AItTakesXCharacter::HandleRepeatingX()
+{
+	Grabber->InteractWithHoistingObjectRotation(ERotateDirection::Direction_Right, 10.f);
 }
 
 FVector AItTakesXCharacter::GetFollowCameraLocation() const

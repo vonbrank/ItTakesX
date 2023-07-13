@@ -23,9 +23,15 @@ protected:
 	void MoveRight(float Value);
 	void Turn(float Value);
 	void LookUp(float Value);
+	void Zoom(float Value);
 
 	void HandlePressingE();
 	void HandlePressingF();
+	void HandleRepeatingLShift();
+	void HandleRepeatingLCtrl();
+	void HandleRepeatingZ();
+	void HandleRepeatingX();
+
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = Camera)

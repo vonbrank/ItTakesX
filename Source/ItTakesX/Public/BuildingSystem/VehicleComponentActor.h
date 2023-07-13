@@ -32,22 +32,24 @@ private:
 	AActor* CurrentAimingActor;
 	UPROPERTY()
 	AActor* CurrentHoistingActor;
-	UPROPERTY()
-	USceneComponent* CurrentOverlappingComponent;
 
-	UPROPERTY()
-	TScriptInterface<IVehicleNode> CurrentOverlappingVehicleNode;
 
 	UPROPERTY()
 	TScriptInterface<IVehicleNode> ParentNode;
 	UPROPERTY()
 	TArray<TScriptInterface<IVehicleNode>> ChildNodes;
 
+	// 该零件所有可连接点的 Component 和材质的引用
 	UPROPERTY()
 	TArray<class UStaticMeshComponent*> ConnectionComponents;
 	UPROPERTY()
 	TArray<class UMaterialInstanceDynamic*> ConnectionMaterials;
 
+	// 用于吸附父节点的各类信息
+	UPROPERTY()
+	USceneComponent* CurrentOverlappingComponent;
+	UPROPERTY()
+	TScriptInterface<IVehicleNode> CurrentOverlappingVehicleNode;
 	UPROPERTY()
 	FVector CurrentPlaceLocation;
 	UPROPERTY()
@@ -87,6 +89,11 @@ public:
 	virtual bool IsHoisting() const override;
 	virtual void NearestConnection(FVector SourceLocation, int32& OutConnectionIndex, FVector& OutConnectionLocation,
 	                               FVector& OutPlaceLocation) const override;
+	virtual void GetBothWayConnectionInfo(const TArray<FVector>& SourceAnchorLocations,
+	                                      const TArray<FVector>& SourceArrowLocations,
+	                                      const TArray<FRotator>& SourceArrowRotation, int32& OutSourceConnectionIndex,
+	                                      int32& OutTargetConnectionIndex, FVector& OutConnectionLocation,
+	                                      FVector& OutPlaceLocation) override;
 	virtual void ActivateConnection(int32 ConnectionIndex) override;
 	virtual void DeactivateAllConnection() override;
 };

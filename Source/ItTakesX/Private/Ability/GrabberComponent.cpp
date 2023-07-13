@@ -64,7 +64,6 @@ bool UGrabberComponent::ToggleHoistingActor()
 	HoistingActor = Cast<AActor>(CurrentHoistingHoistable);
 	if (HoistingActor)
 	{
-
 		auto Character = Cast<AItTakesXCharacter>(GetOwner());
 		FVector StartLocation = Character == nullptr
 			                        ? GetOwner()->GetActorLocation()
@@ -127,5 +126,55 @@ bool UGrabberComponent::InteractWithComposing()
 		CurrentHoistingHoistable->OnEndHoisting_Implementation(GetOwner());
 	}
 	CurrentHoistingHoistable = nullptr;
+	return true;
+}
+
+bool UGrabberComponent::InteractWithHoistingObjectRotation(ERotateDirection Direction, float Value)
+{
+	auto HoistingActor = Cast<AActor>(CurrentHoistingHoistable);
+	if (HoistingActor == nullptr)
+	{
+		return false;
+	}
+
+	FRotator NewRotation = HoistingActor->GetActorRotation();
+
+	switch (Direction)
+	{
+	case Direction_Up:
+		NewRotation.Pitch += Value;
+		break;
+	case Direction_Down:
+		NewRotation.Pitch -= Value;
+		break;
+	case Direction_Left:
+		NewRotation.Yaw -= Value;
+		break;
+	case Direction_Right:
+		NewRotation.Yaw += Value;
+		break;
+	default:
+		break;
+	}
+
+	HoistingActor->SetActorRotation(FMath::RInterpTo(HoistingActor->GetActorRotation(), NewRotation,
+	                                                 UGameplayStatics::GetWorldDeltaSeconds(this), 50.f));
+
+	return true;
+}
+
+bool UGrabberComponent::InteractWithZoomingHoistable(float Value)
+{
+	if (CurrentHoistingHoistable == nullptr)
+	{
+		return false;
+	}
+
+	CurrentSelectDistance += Value;
+	CurrentSelectDistance = FMath::Clamp(CurrentSelectDistance, 1000.f, 10000.f);
+
+	GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan,
+	                                 FString::Printf(TEXT("CurrentSelectDistance: %f"), CurrentSelectDistance));
+
 	return true;
 }

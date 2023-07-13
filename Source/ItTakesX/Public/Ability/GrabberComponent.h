@@ -7,6 +7,15 @@
 #include "Interface/Hoistable.h"
 #include "GrabberComponent.generated.h"
 
+UENUM()
+enum ERotateDirection
+{
+	Direction_Up,
+	Direction_Down,
+	Direction_Left,
+	Direction_Right,
+	Direction_Max,
+};
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class ITTAKESX_API UGrabberComponent : public UActorComponent
@@ -31,8 +40,12 @@ private:
 
 	bool InteractWithHoisting();
 
+	ERotateDirection CurrentHoistingObjectRotateDirection = Direction_Max;
+
 
 public:
 	bool ToggleHoistingActor();
 	bool InteractWithComposing();
+	bool InteractWithHoistingObjectRotation(ERotateDirection Direction, float Value);
+	bool InteractWithZoomingHoistable(float Value);
 };

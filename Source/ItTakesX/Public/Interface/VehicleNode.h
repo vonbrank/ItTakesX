@@ -28,6 +28,14 @@ public:
 	virtual void NearestConnection(FVector SourceLocation, int32& OutConnectionIndex, FVector& OutConnectionLocation,
 	                               FVector& OutPlaceLocation) const =
 	0;
+	virtual void GetBothWayConnectionInfo(const TArray<FVector>& SourceAnchorLocations,
+	                                      const TArray<FVector>& SourceArrowLocations,
+	                                      const TArray<FRotator>& SourceArrowRotation,
+	                                      int32& OutSourceConnectionIndex,
+	                                      int32& OutTargetConnectionIndex,
+	                                      FVector& OutConnectionLocation,
+	                                      FVector& OutPlaceLocation
+	) = 0;
 	virtual void ActivateConnection(int32 ConnectionIndex) = 0;
 	virtual void DeactivateAllConnection() = 0;
 };
