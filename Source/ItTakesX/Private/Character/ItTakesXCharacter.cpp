@@ -5,6 +5,7 @@
 
 #include "Ability/AimingComponent.h"
 #include "Ability/GrabberComponent.h"
+#include "Ability/InventoryComponent.h"
 #include "Ability/Magnet.h"
 #include "Camera/CameraComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
@@ -29,6 +30,8 @@ AItTakesXCharacter::AItTakesXCharacter()
 
 	Grabber = CreateDefaultSubobject<UGrabberComponent>("GrabberComp");
 
+	Inventory = CreateDefaultSubobject<UInventoryComponent>("InventoryComp");
+
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 }
@@ -37,6 +40,8 @@ AItTakesXCharacter::AItTakesXCharacter()
 void AItTakesXCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	Inventory->OnCurrentEquippableUpdate.AddDynamic(this, &ThisClass::OnCurrentEquippableUpdate);
 }
 
 // Called every frame
@@ -145,25 +150,57 @@ void AItTakesXCharacter::HandlePressingF()
 	}
 }
 
-void AItTakesXCharacter::EquipMagnet(AMagnet* MagnetToEquip)
+bool AItTakesXCharacter::HasMagnetEquipped() const
 {
-	if (MagnetToEquip == nullptr || EquippedMagnet == MagnetToEquip) return;
+	return Inventory != nullptr && Inventory->HasMagnetEquipped();
+}
 
-	EquippedMagnet = MagnetToEquip;
+void AItTakesXCharacter::PickUpAndEquip(TScriptInterface<IEquippable> Equippable)
+{
+	Inventory->AddAndEquip(Equippable);
 
-	const auto HandSocket = GetMesh()->GetSocketByName(TEXT("hand_rSocket"));
-	if (HandSocket)
+	auto MagnetToEquip = Cast<AMagnet>(Equippable.GetInterface());
+
+	if (MagnetToEquip)
 	{
-		HandSocket->AttachActor(EquippedMagnet, GetMesh());
+		const auto HandSocket = GetMesh()->GetSocketByName(TEXT("hand_rSocket"));
+		if (HandSocket)
+		{
+			HandSocket->AttachActor(MagnetToEquip, GetMesh());
+		}
+		MagnetToEquip->SetOwner(this);
 	}
-	EquippedMagnet->SetOwner(this);
+}
+
+void AItTakesXCharacter::OnCurrentEquippableUpdate(TScriptInterface<IEquippable> NewEquippableInterface)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("Equip Update")));
+
+	auto NewEquippable = NewEquippableInterface.GetInterface();
+
+	if (NewEquippable == nullptr)
+	{
+		bUseControllerRotationYaw = false;
+		GetCharacterMovement()->bOrientRotationToMovement = true;
+		GetCharacterMovement()->MaxWalkSpeed = 600.f;
+	}
 
 	bUseControllerRotationYaw = true;
 	GetCharacterMovement()->bOrientRotationToMovement = false;
-	GetCharacterMovement()->MaxWalkSpeed = 300.f;
-}
+	GetCharacterMovement()->MaxWalkSpeed = NewEquippable->GetMaxWalkingSpeed();
 
-bool AItTakesXCharacter::HasMagnetEquipped() const
-{
-	return EquippedMagnet != nullptr;
+	if (bIsSwitching)
+	{
+		return;
+	}
+
+	if (ItTakesXView == EItTakesXViewType_Normal && NewEquippable->GetViewType() == EItTakesXViewType_NiceToAiming)
+	{
+		SwitchToView(EItTakesXViewType_NiceToAiming);
+	}
+	else if (ItTakesXView == EItTakesXViewType_NiceToAiming && NewEquippable->GetViewType() == EItTakesXViewType_Normal)
+	{
+		SwitchToView(EItTakesXViewType_Normal);
+	}
+	ItTakesXView = NewEquippable->GetViewType();
 }

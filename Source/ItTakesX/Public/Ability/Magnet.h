@@ -4,10 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Interface/Equippable.h"
+#include "Interface/Pickupable.h"
 #include "Magnet.generated.h"
 
 UCLASS()
-class ITTAKESX_API AMagnet : public AActor
+class ITTAKESX_API AMagnet : public AActor, public IPickupable, public IEquippable
 {
 	GENERATED_BODY()
 
@@ -45,5 +47,6 @@ private:
 	);
 
 public:
-	// Called every frame
+	FORCEINLINE virtual EItTakesXViewType GetViewType() override { return EItTakesXViewType_NiceToAiming; };
+	FORCEINLINE virtual float GetMaxWalkingSpeed() override { return 300.f; };
 };

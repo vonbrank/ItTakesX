@@ -46,7 +46,10 @@ void AMagnet::OnSphereStartOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 	auto Character = Cast<AItTakesXCharacter>(OtherActor);
 	if (Character)
 	{
-		Character->EquipMagnet(this);
+		TScriptInterface<IEquippable> Equippable;
+		Equippable.SetObject(this);
+		Equippable.SetInterface(this);
+		Character->PickUpAndEquip(Equippable);
 	}
 }
 

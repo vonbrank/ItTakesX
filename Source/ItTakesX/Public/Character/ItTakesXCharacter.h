@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Interface/Equippable.h"
 #include "ItTakesXCharacter.generated.h"
 
 UCLASS()
@@ -34,11 +35,16 @@ protected:
 
 
 private:
-	UPROPERTY(VisibleAnywhere, Category = Camera)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta=(AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
 
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	class UCameraComponent* FollowCamera;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera, meta=(AllowPrivateAccess = "true"))
+	float CameraSocketOffsetDefault = 0.f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera, meta=(AllowPrivateAccess = "true"))
+	float CameraSocketOffsetNiceToAiming = 240.f;
 
 	UPROPERTY(VisibleAnywhere, Category = "Ability")
 	class UAimingComponent* Aiming;
@@ -46,13 +52,27 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Ability")
 	class UGrabberComponent* Grabber;
 
-	UPROPERTY()
-	class AMagnet* EquippedMagnet;
+	UPROPERTY(VisibleAnywhere, Category = "Ability")
+	class UInventoryComponent* Inventory;
+
+	EItTakesXViewType ItTakesXView = EItTakesXViewType_Normal;
+
+	UFUNCTION()
+	void OnCurrentEquippableUpdate(TScriptInterface<IEquippable> NewEquippableInterface);
+
+	UPROPERTY(BlueprintReadWrite, meta=(AllowPrivateAccess = "true"))
+	bool bIsSwitching;
+
 
 public:
 	FORCEINLINE class UCameraComponent* GetFollowCamera() { return FollowCamera; }
 	FVector GetFollowCameraLocation() const;
 
-	void EquipMagnet(AMagnet* MagnetToEquip);
+	// void EquipMagnet(AMagnet* MagnetToEquip);
 	bool HasMagnetEquipped() const;
+
+	void PickUpAndEquip(TScriptInterface<IEquippable> Equippable);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void SwitchToView(EItTakesXViewType NewItTakesXView);
 };

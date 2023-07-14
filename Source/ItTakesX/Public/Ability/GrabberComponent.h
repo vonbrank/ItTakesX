@@ -34,6 +34,9 @@ private:
 	UPROPERTY()
 	class UAimingComponent* AimingComponent;
 
+	UPROPERTY()
+	class UInventoryComponent* InventoryComponent;
+
 	IHoistable* CurrentHoistingHoistable;
 
 	float CurrentSelectDistance;
@@ -45,6 +48,7 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class ADottedLazer> MagnetEffectClass;
 
+	UPROPERTY()
 	class ADottedLazer* CurrentMagnetEffect;
 
 
@@ -53,4 +57,5 @@ public:
 	bool InteractWithComposing();
 	bool InteractWithHoistingObjectRotation(ERotateDirection Direction, float Value);
 	bool InteractWithZoomingHoistable(float Value);
+
 };

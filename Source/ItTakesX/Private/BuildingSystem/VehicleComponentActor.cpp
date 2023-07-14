@@ -141,9 +141,9 @@ void AVehicleComponentActor::AddChildNode(TScriptInterface<IVehicleNode> ChildNo
 
 bool AVehicleComponentActor::AttachToCurrentOverlappingVehicleNode()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-	                                 FString::Printf(
-		                                 TEXT("OutConnectionIndex: %d"), CurrentConnectionIndex));
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	//                                  FString::Printf(
+	// 	                                 TEXT("OutConnectionIndex: %d"), CurrentConnectionIndex));
 
 	if (CurrentConnectionIndex == -1) return false;
 
@@ -275,6 +275,8 @@ void AVehicleComponentActor::ActivateConnection(int32 ConnectionIndex)
 
 bool AVehicleComponentActor::InteractWithOverlappingVehicleNode()
 {
+	//TODO Waiting for optimizing action between this and other vehicle node
+
 	auto VehicleNode = CurrentOverlappingVehicleNode.GetInterface();
 
 	//

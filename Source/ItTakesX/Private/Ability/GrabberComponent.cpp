@@ -4,6 +4,8 @@
 #include "Ability/GrabberComponent.h"
 
 #include "Ability/AimingComponent.h"
+#include "Ability/InventoryComponent.h"
+#include "Ability/Magnet.h"
 #include "Camera/CameraComponent.h"
 #include "Character/ItTakesXCharacter.h"
 #include "Effect/DottedLazer.h"
@@ -25,6 +27,7 @@ void UGrabberComponent::BeginPlay()
 	Super::BeginPlay();
 
 	AimingComponent = GetOwner()->FindComponentByClass<UAimingComponent>();
+	InventoryComponent = GetOwner()->FindComponentByClass<UInventoryComponent>();
 }
 
 
@@ -39,6 +42,11 @@ void UGrabberComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 
 bool UGrabberComponent::ToggleHoistingActor()
 {
+	if (!(InventoryComponent != nullptr && InventoryComponent->HasMagnetEquipped()))
+	{
+		return false;
+	}
+
 	AActor* HoistingActor = nullptr;
 
 	if (CurrentHoistingHoistable)
@@ -94,6 +102,11 @@ bool UGrabberComponent::ToggleHoistingActor()
 
 bool UGrabberComponent::InteractWithHoisting()
 {
+	if (!(InventoryComponent && InventoryComponent->HasMagnetEquipped()))
+	{
+		return false;
+	}
+
 	if (CurrentHoistingHoistable)
 	{
 		auto Character = Cast<AItTakesXCharacter>(GetOwner());
@@ -142,11 +155,7 @@ bool UGrabberComponent::InteractWithComposing()
 
 	if (bAttachingResult)
 	{
-		if (CurrentHoistingHoistable)
-		{
-			CurrentHoistingHoistable->OnEndHoisting_Implementation(GetOwner());
-		}
-		CurrentHoistingHoistable = nullptr;
+		ToggleHoistingActor();
 	}
 	return bAttachingResult;
 }
