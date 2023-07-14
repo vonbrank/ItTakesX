@@ -157,6 +157,10 @@ void AItTakesXCharacter::EquipMagnet(AMagnet* MagnetToEquip)
 		HandSocket->AttachActor(EquippedMagnet, GetMesh());
 	}
 	EquippedMagnet->SetOwner(this);
+
+	bUseControllerRotationYaw = true;
+	GetCharacterMovement()->bOrientRotationToMovement = false;
+	GetCharacterMovement()->MaxWalkSpeed = 300.f;
 }
 
 bool AItTakesXCharacter::HasMagnetEquipped() const

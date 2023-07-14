@@ -5,6 +5,7 @@
 
 #include "Character/ItTakesXCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 void UItTakesXAnimInstance::NativeInitializeAnimation()
 {
@@ -30,6 +31,12 @@ void UItTakesXAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	bIsInAir = ItTakesXCharacter->GetCharacterMovement()->IsFalling();
 
 	bIsAccelerating = ItTakesXCharacter->GetCharacterMovement()->GetCurrentAcceleration().Size() > 0.f;
-	
+
 	bEquippingMagnet = ItTakesXCharacter->HasMagnetEquipped();
+
+	FRotator AimRotation = ItTakesXCharacter->GetBaseAimRotation();
+	FRotator MovementRotation = UKismetMathLibrary::MakeRotFromX(ItTakesXCharacter->GetVelocity());
+	YawOffset = UKismetMathLibrary::NormalizedDeltaRotator(MovementRotation, AimRotation).Yaw;
+
+	// YawOffset = UKismetMathLibrary::MakeRotFromX(UKismetMathLibrary::InverseTransformDirection(ItTakesXCharacter->GetActorTransform(), Velocity)).Yaw;
 }

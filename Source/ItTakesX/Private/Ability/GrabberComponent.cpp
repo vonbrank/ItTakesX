@@ -177,8 +177,8 @@ bool UGrabberComponent::InteractWithZoomingHoistable(float Value)
 	CurrentSelectDistance += Value;
 	CurrentSelectDistance = FMath::Clamp(CurrentSelectDistance, 1000.f, 10000.f);
 
-	GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan,
-	                                 FString::Printf(TEXT("CurrentSelectDistance: %f"), CurrentSelectDistance));
+	// GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan,
+	//                                  FString::Printf(TEXT("CurrentSelectDistance: %f"), CurrentSelectDistance));
 
 	return true;
 }
