@@ -13,6 +13,7 @@
 #include "Interface/Hoistable.h"
 #include "Interface/VehicleNode.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values for this component's properties
 UGrabberComponent::UGrabberComponent()
@@ -166,29 +167,45 @@ bool UGrabberComponent::InteractWithHoistingObjectRotation(ERotateDirection Dire
 	{
 		return false;
 	}
+	Value *= GetWorld()->DeltaTimeSeconds;
 
-	FRotator NewRotation = HoistingActor->GetActorRotation();
+	FVector N;
 
 	switch (Direction)
 	{
 	case Direction_Up:
-		NewRotation.Pitch += Value;
+		N = GetHoistingActorHorizontalRotatingAxisRight();
+		Value = -Value;
 		break;
 	case Direction_Down:
-		NewRotation.Pitch -= Value;
+		N = GetHoistingActorHorizontalRotatingAxisRight();
 		break;
 	case Direction_Left:
-		NewRotation.Yaw -= Value;
+		N = FVector::UpVector;
 		break;
 	case Direction_Right:
-		NewRotation.Yaw += Value;
+		N = FVector::UpVector;
+		Value = -Value;
 		break;
 	default:
+		N = FVector::UpVector;
 		break;
 	}
 
-	HoistingActor->SetActorRotation(FMath::RInterpTo(HoistingActor->GetActorRotation(), NewRotation,
-	                                                 UGameplayStatics::GetWorldDeltaSeconds(this), 50.f));
+	FQuat Rotation = FQuat(N, Value);
+	FQuat CurrentRotation = HoistingActor->GetActorRotation().Quaternion();
+	FQuat NewRotation = Rotation * CurrentRotation;
+	HoistingActor->SetActorRotation(NewRotation);
+
+	// DrawDebugLine(GetWorld(), HoistingActor->GetActorLocation(),
+	//               HoistingActor->GetActorLocation() + HoistingActor->GetActorForwardVector() * 1000,
+	//               FColor::Red, false, 5);
+
+	// FRotator NewRotation = HoistingActor->GetActorRotation();
+
+
+	// HoistingActor->SetActorRotation(FMath::RInterpTo(HoistingActor->GetActorRotation(), NewRotation,
+	//                                                  UGameplayStatics::GetWorldDeltaSeconds(this), 50.f));
 
 	return true;
 }
@@ -207,4 +224,20 @@ bool UGrabberComponent::InteractWithZoomingHoistable(float Value)
 	//                                  FString::Printf(TEXT("CurrentSelectDistance: %f"), CurrentSelectDistance));
 
 	return true;
+}
+
+FVector UGrabberComponent::GetHoistingActorHorizontalRotatingAxisRight()
+{
+	auto Character = Cast<AItTakesXCharacter>(GetOwner());
+	if (Character == nullptr) { return FVector::RightVector; }
+
+	auto FollowCamera = Character->GetFollowCamera();
+	if (FollowCamera == nullptr) { return FVector::RightVector; }
+
+	FVector Res = FVector::CrossProduct(FollowCamera->GetForwardVector(), FVector::UpVector);
+	Res.Normalize();
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("Res = %s"), *Res.ToString()));
+
+	return Res;
 }

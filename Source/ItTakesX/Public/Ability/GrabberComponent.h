@@ -48,6 +48,8 @@ private:
 	UPROPERTY()
 	class ADottedLazer* CurrentMagnetEffect;
 
+	FVector GetHoistingActorHorizontalRotatingAxisRight();
+
 
 public:
 	bool ToggleHoistingActor();
