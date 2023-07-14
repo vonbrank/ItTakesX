@@ -48,15 +48,17 @@ bool UGrabberComponent::ToggleHoistingActor()
 	}
 
 	AActor* HoistingActor = nullptr;
+	auto Magnet = Cast<AMagnet>(InventoryComponent->GetCurrentEquippable());
 
 	if (CurrentHoistingHoistable)
 	{
 		CurrentHoistingHoistable->OnEndHoisting_Implementation(GetOwner());
 
 		CurrentHoistingHoistable = nullptr;
-		if (CurrentMagnetEffect)
+
+		if (Magnet)
 		{
-			CurrentMagnetEffect->Destroy();
+			Magnet->DestroyCurrentMagnetEffect();
 		}
 
 		// TODO other action for dropdown;
@@ -83,12 +85,9 @@ bool UGrabberComponent::ToggleHoistingActor()
 			                        : Character->GetFollowCameraLocation();
 		CurrentSelectDistance = (StartLocation - HoistingActor->GetActorLocation()).Length();
 		CurrentHoistingHoistable->OnBeginHoisting_Implementation(GetOwner());
-
-		CurrentMagnetEffect = GetWorld()->SpawnActor<ADottedLazer>(MagnetEffectClass, GetOwner()->GetActorLocation(),
-		                                                           FRotator::ZeroRotator);
-		if (CurrentMagnetEffect)
+		if (Magnet)
 		{
-			CurrentMagnetEffect->AttachToActor(GetOwner(), FAttachmentTransformRules::KeepWorldTransform);
+			CurrentMagnetEffect = Magnet->SpawnNewMagnetEffect();
 		}
 
 		// GEngine->AddOnScreenDebugMessage(
@@ -130,7 +129,7 @@ bool UGrabberComponent::InteractWithHoisting()
 		FVector End = Start + FollowCamera->GetForwardVector() * CurrentSelectDistance;
 		HoistingActor->SetActorLocation(FMath::VInterpTo(HoistingActor->GetActorLocation(), End,
 		                                                 UGameplayStatics::GetWorldDeltaSeconds(this), 5.f));
-
+		//
 		if (CurrentMagnetEffect)
 		{
 			CurrentMagnetEffect->SetEndLocation(FMath::VInterpTo(HoistingActor->GetActorLocation(), End,

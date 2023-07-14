@@ -45,9 +45,6 @@ private:
 
 	ERotateDirection CurrentHoistingObjectRotateDirection = Direction_Max;
 
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<class ADottedLazer> MagnetEffectClass;
-
 	UPROPERTY()
 	class ADottedLazer* CurrentMagnetEffect;
 
@@ -57,5 +54,4 @@ public:
 	bool InteractWithComposing();
 	bool InteractWithHoistingObjectRotation(ERotateDirection Direction, float Value);
 	bool InteractWithZoomingHoistable(float Value);
-
 };

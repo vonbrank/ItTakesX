@@ -29,6 +29,9 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	class UStaticMeshComponent* Mesh;
 
+	UPROPERTY(VisibleAnywhere)
+	class USceneComponent* LaserEffectSpawnPoint;
+
 	UFUNCTION()
 	virtual void OnSphereStartOverlap(
 		UPrimitiveComponent* OverlappedComponent,
@@ -46,7 +49,17 @@ private:
 		int32 OtherBodyIndex
 	);
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class ADottedLazer> MagnetEffectClass;
+
+	UPROPERTY()
+	class ADottedLazer* CurrentMagnetEffect;
+
 public:
 	FORCEINLINE virtual EItTakesXViewType GetViewType() override { return EItTakesXViewType_NiceToAiming; };
 	FORCEINLINE virtual float GetMaxWalkingSpeed() override { return 300.f; };
+
+	class ADottedLazer* GetCurrentMagnetEffect();
+	class ADottedLazer* SpawnNewMagnetEffect();
+	void DestroyCurrentMagnetEffect();
 };

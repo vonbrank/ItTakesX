@@ -5,6 +5,7 @@
 
 #include "Character/ItTakesXCharacter.h"
 #include "Components/SphereComponent.h"
+#include "Effect/DottedLazer.h"
 
 // Sets default values
 AMagnet::AMagnet()
@@ -20,6 +21,9 @@ AMagnet::AMagnet()
 	AreaSphere->SetupAttachment(RootComponent);
 	AreaSphere->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	AreaSphere->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
+
+	LaserEffectSpawnPoint = CreateDefaultSubobject<USceneComponent>("LaserEffectSpawnPoint");
+	LaserEffectSpawnPoint->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
@@ -56,4 +60,32 @@ void AMagnet::OnSphereStartOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 void AMagnet::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                  UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
+}
+
+ADottedLazer* AMagnet::GetCurrentMagnetEffect()
+{
+	return CurrentMagnetEffect;
+}
+
+ADottedLazer* AMagnet::SpawnNewMagnetEffect()
+{
+	if (CurrentMagnetEffect)
+	{
+		CurrentMagnetEffect->Destroy();
+	}
+
+	CurrentMagnetEffect = GetWorld()->SpawnActor<ADottedLazer>(MagnetEffectClass,
+	                                                           LaserEffectSpawnPoint->GetComponentLocation(),
+	                                                           FRotator::ZeroRotator);
+	if (CurrentMagnetEffect)
+	{
+		CurrentMagnetEffect->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
+	}
+
+	return CurrentMagnetEffect;
+}
+
+void AMagnet::DestroyCurrentMagnetEffect()
+{
+	CurrentMagnetEffect->Destroy();
 }
