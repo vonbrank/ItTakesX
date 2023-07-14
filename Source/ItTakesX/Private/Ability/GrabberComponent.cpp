@@ -6,6 +6,7 @@
 #include "Ability/AimingComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Character/ItTakesXCharacter.h"
+#include "Effect/DottedLazer.h"
 #include "Interface/Aimable.h"
 #include "Interface/Hoistable.h"
 #include "Interface/VehicleNode.h"
@@ -45,6 +46,10 @@ bool UGrabberComponent::ToggleHoistingActor()
 		CurrentHoistingHoistable->OnEndHoisting_Implementation(GetOwner());
 
 		CurrentHoistingHoistable = nullptr;
+		if (CurrentMagnetEffect)
+		{
+			CurrentMagnetEffect->Destroy();
+		}
 
 		// TODO other action for dropdown;
 
@@ -70,6 +75,13 @@ bool UGrabberComponent::ToggleHoistingActor()
 			                        : Character->GetFollowCameraLocation();
 		CurrentSelectDistance = (StartLocation - HoistingActor->GetActorLocation()).Length();
 		CurrentHoistingHoistable->OnBeginHoisting_Implementation(GetOwner());
+
+		CurrentMagnetEffect = GetWorld()->SpawnActor<ADottedLazer>(MagnetEffectClass, GetOwner()->GetActorLocation(),
+		                                                           FRotator::ZeroRotator);
+		if (CurrentMagnetEffect)
+		{
+			CurrentMagnetEffect->AttachToActor(GetOwner(), FAttachmentTransformRules::KeepWorldTransform);
+		}
 
 		// GEngine->AddOnScreenDebugMessage(
 		// 	-1, 15.f, FColor::Yellow,
@@ -105,6 +117,12 @@ bool UGrabberComponent::InteractWithHoisting()
 		FVector End = Start + FollowCamera->GetForwardVector() * CurrentSelectDistance;
 		HoistingActor->SetActorLocation(FMath::VInterpTo(HoistingActor->GetActorLocation(), End,
 		                                                 UGameplayStatics::GetWorldDeltaSeconds(this), 5.f));
+
+		if (CurrentMagnetEffect)
+		{
+			CurrentMagnetEffect->SetEndLocation(FMath::VInterpTo(HoistingActor->GetActorLocation(), End,
+			                                                     UGameplayStatics::GetWorldDeltaSeconds(this), 5.f));
+		}
 		//
 		// GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan,
 		//                                  FString::Printf(TEXT("CurrentSelectDistance = %f"), CurrentSelectDistance));

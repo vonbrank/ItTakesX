@@ -42,6 +42,11 @@ private:
 
 	ERotateDirection CurrentHoistingObjectRotateDirection = Direction_Max;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class ADottedLazer> MagnetEffectClass;
+
+	class ADottedLazer* CurrentMagnetEffect;
+
 
 public:
 	bool ToggleHoistingActor();
