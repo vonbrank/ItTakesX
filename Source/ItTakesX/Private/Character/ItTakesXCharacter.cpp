@@ -4,6 +4,7 @@
 #include "Character/ItTakesXCharacter.h"
 
 #include "Ability/AimingComponent.h"
+#include "Ability/DrivingComponent.h"
 #include "Ability/GrabberComponent.h"
 #include "Ability/InventoryComponent.h"
 #include "Ability/Magnet.h"
@@ -31,6 +32,8 @@ AItTakesXCharacter::AItTakesXCharacter()
 	Grabber = CreateDefaultSubobject<UGrabberComponent>("GrabberComp");
 
 	Inventory = CreateDefaultSubobject<UInventoryComponent>("InventoryComp");
+
+	Driving = CreateDefaultSubobject<UDrivingComponent>("DrivingComp");
 
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
@@ -62,6 +65,10 @@ void AItTakesXCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAction(TEXT("XAction"), IE_Repeat, this, &ThisClass::HandleRepeatingX);
 	PlayerInputComponent->BindAction(TEXT("LShiftAction"), IE_Repeat, this, &ThisClass::HandleRepeatingLShift);
 	PlayerInputComponent->BindAction(TEXT("LCtrlAction"), IE_Repeat, this, &ThisClass::HandleRepeatingLCtrl);
+	PlayerInputComponent->BindAction(TEXT("ZAction"), IE_Pressed, this, &ThisClass::HandleRepeatingZ);
+	PlayerInputComponent->BindAction(TEXT("XAction"), IE_Pressed, this, &ThisClass::HandleRepeatingX);
+	PlayerInputComponent->BindAction(TEXT("LShiftAction"), IE_Pressed, this, &ThisClass::HandleRepeatingLShift);
+	PlayerInputComponent->BindAction(TEXT("LCtrlAction"), IE_Pressed, this, &ThisClass::HandleRepeatingLCtrl);
 
 	PlayerInputComponent->BindAxis(TEXT("MoveForward"), this, &ThisClass::MoveForward);
 	PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &ThisClass::MoveRight);
@@ -148,6 +155,11 @@ void AItTakesXCharacter::HandlePressingF()
 	{
 		return;
 	}
+	FVehicleCoreCommand NewCommand;
+	if (Driving->ExecuteVehicleCommand(NewCommand))
+	{
+		return;
+	}
 }
 
 bool AItTakesXCharacter::HasMagnetEquipped() const
@@ -203,4 +215,12 @@ void AItTakesXCharacter::OnCurrentEquippableUpdate(TScriptInterface<IEquippable>
 		SwitchToView(EItTakesXViewType_Normal);
 	}
 	ItTakesXView = NewEquippable->GetViewType();
+}
+
+void AItTakesXCharacter::SetCurrentOverlappingVehicleCore(AVehicleCoreActor* VehicleCoreActor)
+{
+	if (Driving)
+	{
+		Driving->SetCurrenOverlappingVehicle(VehicleCoreActor);
+	}
 }

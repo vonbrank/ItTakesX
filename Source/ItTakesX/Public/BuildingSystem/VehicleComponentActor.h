@@ -23,9 +23,6 @@ protected:
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Vehicle Properties")
-	class USphereComponent* AreaSphere;
-
-	UPROPERTY(VisibleAnywhere, Category = "Vehicle Properties")
 	class UStaticMeshComponent* Mesh;
 
 	UPROPERTY()
@@ -33,11 +30,6 @@ private:
 	UPROPERTY()
 	AActor* CurrentHoistingActor;
 
-
-	UPROPERTY()
-	TScriptInterface<IVehicleNode> ParentNode;
-	UPROPERTY()
-	TArray<TScriptInterface<IVehicleNode>> ChildNodes;
 
 	// 该零件所有可连接点的 Component 和材质的引用
 	UPROPERTY()
@@ -59,10 +51,33 @@ private:
 	UPROPERTY()
 	FConnectionInfo CurrentNearestOtherConnection;
 
+	UPROPERTY(EditAnywhere)
+	float CurrenForceLength;
+
+	bool bIsRunning;
+
 	// UPROPERTY()
 	// FVector CurrentPlaceLocation;
 	// UPROPERTY()
 	// int32 CurrentConnectionIndex;
+
+	UFUNCTION()
+	bool InteractWithOverlappingVehicleNode();
+
+protected:
+	// 吸附特效
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class ADottedLazer> AdsorbEffectClass;
+	UPROPERTY()
+	class ADottedLazer* CurrentAdsorbEffect;
+
+	UPROPERTY()
+	TScriptInterface<IVehicleNode> ParentNode;
+	UPROPERTY()
+	TArray<TScriptInterface<IVehicleNode>> ChildNodes;
+
+	UPROPERTY(VisibleAnywhere, Category = "Vehicle Properties")
+	class USphereComponent* AreaSphere;
 
 	UFUNCTION()
 	virtual void OnSphereStartOverlap(
@@ -81,16 +96,6 @@ private:
 		int32 OtherBodyIndex
 	);
 
-	UFUNCTION()
-	bool InteractWithOverlappingVehicleNode();
-
-protected:
-	// 吸附特效
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<class ADottedLazer> AdsorbEffectClass;
-	UPROPERTY()
-	class ADottedLazer* CurrentAdsorbEffect;
-
 public:
 	// UFUNCTION(BlueprintCallable)
 	// void AddConnectionComponent(class USceneComponent* Component);
@@ -105,7 +110,8 @@ public:
 	virtual TArray<FConnectionInfo> GetConnectionInfoList() override;
 	virtual bool
 	GetNearestConnectionInfo(FConnectionInfo& OutConnectionInfo, FConnectionInfo& OutOtherConnectionInfo) override;
-
+	virtual bool PropagateCommand(FVehicleCoreCommand Command) override;
+	virtual bool AddChildNode(TScriptInterface<IVehicleNode> VehicleNode) override;
 
 	ADottedLazer* SpawnNewAdsorbEffect();
 };

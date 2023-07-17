@@ -79,7 +79,15 @@ void AVehicleComponentActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	InteractWithOverlappingVehicleNode();
+	if (InteractWithOverlappingVehicleNode())
+	{
+		return;
+	}
+
+	if (bIsRunning)
+	{
+		Mesh->AddForce(FVector::UpVector * CurrenForceLength, NAME_None, true);
+	}
 }
 
 void AVehicleComponentActor::OnBeginAiming_Implementation(AActor* OtherActor)
@@ -180,6 +188,15 @@ bool AVehicleComponentActor::AttachToCurrentOverlappingVehicleNode()
 	//
 	ParentRootComponent->SetSimulatePhysics(true);
 	Mesh->SetSimulatePhysics(true);
+
+	ParentNode = CurrentOverlappingVehicleNode;
+	if (ParentNode.GetInterface())
+	{
+		TScriptInterface<IVehicleNode> SonNode;
+		SonNode.SetObject(this);
+		SonNode.SetInterface(this);
+		ParentNode->AddChildNode(SonNode);
+	}
 
 	return true;
 }
@@ -316,4 +333,20 @@ ADottedLazer* AVehicleComponentActor::SpawnNewAdsorbEffect()
 	}
 
 	return CurrentAdsorbEffect;
+}
+
+bool AVehicleComponentActor::PropagateCommand(FVehicleCoreCommand Command)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("%s receives command"), *GetName()));
+
+	bIsRunning = true;
+
+	return false;
+}
+
+bool AVehicleComponentActor::AddChildNode(TScriptInterface<IVehicleNode> VehicleNode)
+{
+	ChildNodes.Add(VehicleNode);
+
+	return true;
 }

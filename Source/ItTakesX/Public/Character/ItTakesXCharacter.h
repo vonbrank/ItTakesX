@@ -53,7 +53,10 @@ private:
 	class UGrabberComponent* Grabber;
 
 	UPROPERTY(VisibleAnywhere, Category = "Ability")
+
 	class UInventoryComponent* Inventory;
+	UPROPERTY(VisibleAnywhere, Category = "Ability")
+	class UDrivingComponent* Driving;
 
 	EItTakesXViewType ItTakesXView = EItTakesXViewType_Normal;
 
@@ -75,4 +78,6 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void SwitchToView(EItTakesXViewType NewItTakesXView);
+
+	void SetCurrentOverlappingVehicleCore(class AVehicleCoreActor* VehicleCoreActor);
 };
