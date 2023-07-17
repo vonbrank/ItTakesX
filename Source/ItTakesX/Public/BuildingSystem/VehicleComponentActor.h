@@ -41,19 +41,28 @@ private:
 
 	// 该零件所有可连接点的 Component 和材质的引用
 	UPROPERTY()
-	TArray<class UStaticMeshComponent*> ConnectionComponents;
-	UPROPERTY()
-	TArray<class UMaterialInstanceDynamic*> ConnectionMaterials;
+	TArray<FConnectionInfo> ConnectionInfoList;
+	// UPROPERTY()
+	// TArray<class UStaticMeshComponent*> ConnectionComponents;
+	// UPROPERTY()
+	// TArray<class UMaterialInstanceDynamic*> ConnectionMaterials;
 
 	// 用于吸附父节点的各类信息
 	UPROPERTY()
 	USceneComponent* CurrentOverlappingComponent;
 	UPROPERTY()
 	TScriptInterface<IVehicleNode> CurrentOverlappingVehicleNode;
+
+	bool bHaveCurrentNearestConnectionInfo;
 	UPROPERTY()
-	FVector CurrentPlaceLocation;
+	FConnectionInfo CurrentNearestConnection;
 	UPROPERTY()
-	int32 CurrentConnectionIndex;
+	FConnectionInfo CurrentNearestOtherConnection;
+
+	// UPROPERTY()
+	// FVector CurrentPlaceLocation;
+	// UPROPERTY()
+	// int32 CurrentConnectionIndex;
 
 	UFUNCTION()
 	virtual void OnSphereStartOverlap(
@@ -75,25 +84,28 @@ private:
 	UFUNCTION()
 	bool InteractWithOverlappingVehicleNode();
 
+protected:
+	// 吸附特效
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class ADottedLazer> AdsorbEffectClass;
+	UPROPERTY()
+	class ADottedLazer* CurrentAdsorbEffect;
 
 public:
-	UFUNCTION(BlueprintCallable)
-	void AddConnectionComponent(class USceneComponent* Component);
+	// UFUNCTION(BlueprintCallable)
+	// void AddConnectionComponent(class USceneComponent* Component);
 
 	virtual void OnBeginAiming_Implementation(AActor* OtherActor);
 	virtual void OnEndAiming_Implementation(AActor* OtherActor);
 	virtual void OnBeginHoisting_Implementation(AActor* OtherActor);
 	virtual void OnEndHoisting_Implementation(AActor* OtherActor);
-	virtual void AddChildNode(TScriptInterface<IVehicleNode> ChildNode) override;
+	// virtual void AddChildNode(TScriptInterface<IVehicleNode> ChildNode) override;
 	virtual bool AttachToCurrentOverlappingVehicleNode() override;
 	virtual bool IsHoisting() const override;
-	virtual void NearestConnection(FVector SourceLocation, int32& OutConnectionIndex, FVector& OutConnectionLocation,
-	                               FVector& OutPlaceLocation) const override;
-	virtual void GetBothWayConnectionInfo(const TArray<FVector>& SourceAnchorLocations,
-	                                      const TArray<FVector>& SourceArrowLocations,
-	                                      const TArray<FRotator>& SourceArrowRotation, int32& OutSourceConnectionIndex,
-	                                      int32& OutTargetConnectionIndex, FVector& OutConnectionLocation,
-	                                      FVector& OutPlaceLocation) override;
-	virtual void ActivateConnection(int32 ConnectionIndex) override;
-	virtual void DeactivateAllConnection() override;
+	virtual TArray<FConnectionInfo> GetConnectionInfoList() override;
+	virtual bool
+	GetNearestConnectionInfo(FConnectionInfo& OutConnectionInfo, FConnectionInfo& OutOtherConnectionInfo) override;
+
+
+	ADottedLazer* SpawnNewAdsorbEffect();
 };

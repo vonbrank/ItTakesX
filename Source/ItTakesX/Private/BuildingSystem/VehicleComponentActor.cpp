@@ -5,6 +5,7 @@
 
 #include "Components/ArrowComponent.h"
 #include "Components/SphereComponent.h"
+#include "Effect/DottedLazer.h"
 #include "Kismet/GameplayStatics.h"
 #include "PhysicsEngine/PhysicsConstraintActor.h"
 #include "PhysicsEngine/PhysicsConstraintComponent.h"
@@ -26,8 +27,6 @@ AVehicleComponentActor::AVehicleComponentActor()
 	AreaSphere->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Overlap);
 	AreaSphere->ComponentTags.Add(TEXT("VehicleArea"));
 	// AreaSphere->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
-
-	CurrentConnectionIndex = -1;
 }
 
 // Called when the game starts or when spawned
@@ -45,22 +44,34 @@ void AVehicleComponentActor::BeginPlay()
 	RootComponent->GetChildrenComponents(true, AllComponents);
 	for (auto Comp : AllComponents)
 	{
-		auto StaticMeshComp = Cast<UStaticMeshComponent>(Comp);
-		if (Comp->ComponentTags.Contains(TEXT("ConnectionComp")) && StaticMeshComp)
+		if (!Comp->ComponentTags.Contains(TEXT("ConnectionComp")))
 		{
-			ConnectionComponents.Add(StaticMeshComp);
+			continue;
 		}
+		auto StaticMeshComp = Cast<UStaticMeshComponent>(Comp);
+		if (StaticMeshComp == nullptr)
+		{
+			continue;
+		}
+		auto Material = StaticMeshComp->CreateDynamicMaterialInstance(0);
+		if (Material == nullptr)
+		{
+			continue;
+		}
+		UArrowComponent* ArrowComponent = Cast<UArrowComponent>(StaticMeshComp->GetChildComponent(0));
+		if (ArrowComponent == nullptr)
+		{
+			continue;
+		}
+		FConnectionInfo ConnectionInfo;
+		ConnectionInfo.Mesh = StaticMeshComp;
+		ConnectionInfo.Material = Material;
+		ConnectionInfo.Arrow = ArrowComponent;
+		ConnectionInfoList.Add(ConnectionInfo);
 	}
-
-	for (auto Comp : ConnectionComponents)
-	{
-		auto Material = Comp->CreateDynamicMaterialInstance(0);
-		ConnectionMaterials.Add(Material);
-	}
-
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
 	                                 FString::Printf(
-		                                 TEXT("name: %s, connection num: %d"), *GetName(), ConnectionComponents.Num()));
+		                                 TEXT("name: %s, connection num: %d"), *GetName(), ConnectionInfoList.Num()));
 }
 
 // Called every frame
@@ -99,8 +110,12 @@ void AVehicleComponentActor::OnSphereStartOverlap(UPrimitiveComponent* Overlappe
 {
 	auto VehicleNode = Cast<IVehicleNode>(OtherActor);
 
-	if (CurrentHoistingActor != nullptr && CurrentOverlappingComponent == nullptr && OtherComp->ComponentTags.Contains(
-		TEXT("VehicleArea")))
+	if (CurrentHoistingActor != nullptr && // 必须被举着
+		VehicleNode != nullptr && // 另一个 Actor 必须是一个 IVehicleNode
+		CurrentOverlappingComponent == nullptr && // 当前没有 Overlapping 的 Component
+		OtherComp // 另一个 Component 需要是连接点的 Comp
+		->ComponentTags.Contains(
+			TEXT("VehicleArea")))
 	{
 		CurrentOverlappingComponent = OtherComp;
 		CurrentOverlappingVehicleNode.SetObject(OtherActor);
@@ -125,27 +140,15 @@ void AVehicleComponentActor::OnSphereEndOverlap(UPrimitiveComponent* OverlappedC
 				TEXT("End overlap: %s, owner: %s"), *OtherComp->GetName(), *GetName()));
 
 		auto VehicleNode = CurrentOverlappingVehicleNode.GetInterface();
-		if (VehicleNode)
-		{
-			VehicleNode->DeactivateAllConnection();
-		}
 
 		CurrentOverlappingVehicleNode.SetObject(nullptr);
 		CurrentOverlappingVehicleNode.SetInterface(nullptr);
 	}
 }
 
-void AVehicleComponentActor::AddChildNode(TScriptInterface<IVehicleNode> ChildNode)
-{
-}
-
 bool AVehicleComponentActor::AttachToCurrentOverlappingVehicleNode()
 {
-	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-	//                                  FString::Printf(
-	// 	                                 TEXT("OutConnectionIndex: %d"), CurrentConnectionIndex));
-
-	if (CurrentConnectionIndex == -1) return false;
+	if (!bHaveCurrentNearestConnectionInfo) return false;
 
 	auto ParentActor = Cast<AActor>(CurrentOverlappingVehicleNode.GetInterface());
 
@@ -155,12 +158,9 @@ bool AVehicleComponentActor::AttachToCurrentOverlappingVehicleNode()
 	{
 		return false;
 	}
+	SetActorLocation(CurrentNearestConnection.Arrow->GetComponentLocation());
 
-	// SetActorLocation(FMath::VInterpTo(GetActorLocation(), CurrentPlaceLocation,
-	//                                   UGameplayStatics::GetWorldDeltaSeconds(this), 5.f));
-	SetActorLocation(CurrentPlaceLocation);
-
-	FVector MidLocation = ParentActor->GetActorLocation() + (CurrentPlaceLocation - CurrentPlaceLocation) / 2;
+	FVector MidLocation = ParentActor->GetActorLocation();
 
 	APhysicsConstraintActor* PhysicsConstraintActor = GetWorld()->SpawnActor<APhysicsConstraintActor>();
 	PhysicsConstraintActor->SetActorLocation(MidLocation);
@@ -170,107 +170,12 @@ bool AVehicleComponentActor::AttachToCurrentOverlappingVehicleNode()
 	PhysicsConstraintComponent->SetAngularSwing2Limit(EAngularConstraintMotion::ACM_Locked, 0.f);
 	PhysicsConstraintComponent->SetAngularTwistLimit(EAngularConstraintMotion::ACM_Locked, 0.f);
 	PhysicsConstraintComponent->SetDisableCollision(true);
-	CurrentOverlappingVehicleNode.GetInterface()->DeactivateAllConnection();
-	// Mesh->SetSimulatePhysics(true);
 	return true;
-}
-
-void AVehicleComponentActor::AddConnectionComponent(USceneComponent* Component)
-{
-	auto StaticMesh = Cast<UStaticMeshComponent>(Component);
-	ConnectionComponents.Add(StaticMesh);
 }
 
 bool AVehicleComponentActor::IsHoisting() const
 {
 	return CurrentHoistingActor != nullptr;
-}
-
-void AVehicleComponentActor::NearestConnection(FVector SourceLocation, int32& OutConnectionIndex,
-                                               FVector& OutConnectionLocation,
-                                               FVector& OutPlaceLocation) const
-{
-	OutConnectionIndex = -1;
-	float MinDistance = TNumericLimits<float>::Max();
-
-	for (auto i = 0; i < ConnectionComponents.Num(); i++)
-	{
-		auto ConnectionComponent = ConnectionComponents[i];
-		UArrowComponent* ArrowComponent = Cast<UArrowComponent>(ConnectionComponent->GetChildComponent(0));
-		if (ArrowComponent == nullptr)
-		{
-			continue;
-		}
-		auto ConnectionLocation = ConnectionComponent->GetComponentLocation();
-		auto PlaceLocation = ArrowComponent->GetComponentLocation();
-		auto CurrentDistance = (SourceLocation - ConnectionLocation).Length();
-		if (CurrentDistance < MinDistance)
-		{
-			MinDistance = CurrentDistance;
-			OutConnectionIndex = i;
-			OutConnectionLocation = ConnectionLocation;
-			OutPlaceLocation = PlaceLocation;
-		}
-	}
-}
-
-void AVehicleComponentActor::GetBothWayConnectionInfo(const TArray<FVector>& SourceAnchorLocations,
-                                                      const TArray<FVector>& SourceArrowLocations,
-                                                      const TArray<FRotator>& SourceArrowRotation,
-                                                      int32& OutSourceConnectionIndex,
-                                                      int32& OutTargetConnectionIndex,
-                                                      FVector& OutConnectionLocation,
-                                                      FVector& OutPlaceLocation)
-{
-	// IVehicleNode::GetBothWayConnectionInfo(SourceAnchorLocations, SourceArrowLocations, SourceArrowRotation,
-	//                                        OutSourceConnectionIndex,
-	//                                        OutTargetConnectionIndex, OutConnectionLocation, OutPlaceLocation);
-
-	// OutSourceConnectionIndex = -1;
-	// OutTargetConnectionIndex = -1;
-	// float MinDistance = TNumericLimits<float>::Max();
-	//
-	// if(SourceAnchorLocations.Num() != SourceArrowLocations.Num())
-	//
-	// for (auto i = 0; i < ConnectionComponents.Num(); i++)
-	// {
-	// 	auto ConnectionComponent = ConnectionComponents[i];
-	// 	UArrowComponent* ArrowComponent = Cast<UArrowComponent>(ConnectionComponent->GetChildComponent(0));
-	// 	if (ArrowComponent == nullptr)
-	// 	{
-	// 		continue;
-	// 	}
-	//
-	// 	for(auto j = 0; )
-	// 	
-	// 	
-	// 	auto ConnectionLocation = ConnectionComponent->GetComponentLocation();
-	// 	auto PlaceLocation = ArrowComponent->GetComponentLocation();
-	// 	auto CurrentDistance = (SourceLocation - ConnectionLocation).Length();
-	// 	if (CurrentDistance < MinDistance)
-	// 	{
-	// 		MinDistance = CurrentDistance;
-	// 		OutConnectionIndex = i;
-	// 		OutConnectionLocation = ConnectionLocation;
-	// 		OutPlaceLocation = PlaceLocation;
-	// 	}
-	// }
-}
-
-void AVehicleComponentActor::ActivateConnection(int32 ConnectionIndex)
-{
-	for (int32 i = 0; i < ConnectionMaterials.Num(); i++)
-	{
-		auto Material = ConnectionMaterials[i];
-		if (i == ConnectionIndex)
-		{
-			Material->SetScalarParameterValue(TEXT("Transparent"), 1.f);
-		}
-		else
-		{
-			Material->SetScalarParameterValue(TEXT("Transparent"), 0.f);
-		}
-	}
 }
 
 bool AVehicleComponentActor::InteractWithOverlappingVehicleNode()
@@ -279,49 +184,119 @@ bool AVehicleComponentActor::InteractWithOverlappingVehicleNode()
 
 	auto VehicleNode = CurrentOverlappingVehicleNode.GetInterface();
 
-	//
-	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-	//                                  FString::Printf(
-	// 	                                 TEXT("VehicleNode: %p, CurrentHoistingActor: %p"), VehicleNode,
-	// 	                                 CurrentHoistingActor));
 
 	if (CurrentHoistingActor == nullptr || VehicleNode == nullptr)
 	{
+		if (CurrentAdsorbEffect)
+		{
+			CurrentAdsorbEffect->Destroy();
+			CurrentAdsorbEffect = nullptr;
+		}
 		return false;
 	}
 
-	FVector SourceConnection = GetActorLocation();
-	int32 OutConnectionIndex = -1;
-	FVector OutConnectionLocation;
-	FVector OutPlaceLocation;
+	FConnectionInfo OutCurrentConnectionInfo;
+	FConnectionInfo OutCurrentOtherConnectionInfo;
+	bHaveCurrentNearestConnectionInfo = GetNearestConnectionInfo(OutCurrentConnectionInfo,
+	                                                             OutCurrentOtherConnectionInfo);
+	
 
-
-	VehicleNode->NearestConnection(SourceConnection, OutConnectionIndex, OutConnectionLocation, OutPlaceLocation);
-	VehicleNode->ActivateConnection(OutConnectionIndex);
-
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-	                                 FString::Printf(
-		                                 TEXT("OutConnectionIndex: %d"), OutConnectionIndex));
-
-	CurrentConnectionIndex = OutConnectionIndex;
-
-	if (OutConnectionIndex >= 0)
+	if (bHaveCurrentNearestConnectionInfo)
 	{
-		CurrentPlaceLocation = OutPlaceLocation;
+		if (OutCurrentConnectionInfo == CurrentNearestConnection && OutCurrentOtherConnectionInfo ==
+			CurrentNearestOtherConnection)
+		{
+
+			if (CurrentAdsorbEffect)
+			{
+				CurrentAdsorbEffect->SetEndLocation(OutCurrentOtherConnectionInfo.Mesh->GetComponentLocation());
+			}
+			else
+			{
+				SpawnNewAdsorbEffect();
+			}
+		}
+		else
+		{
+			CurrentNearestConnection = OutCurrentConnectionInfo;
+			CurrentNearestOtherConnection = OutCurrentOtherConnectionInfo;
+			SpawnNewAdsorbEffect();
+		}
+	}
+	else
+	{
+		if (CurrentAdsorbEffect)
+		{
+			CurrentAdsorbEffect->Destroy();
+			CurrentAdsorbEffect = nullptr;
+		}
 	}
 
 	return true;
 }
 
-void AVehicleComponentActor::DeactivateAllConnection()
+TArray<FConnectionInfo> AVehicleComponentActor::GetConnectionInfoList()
 {
-	// for (int32 i = 0; i < ConnectionMaterials.Num(); i++)
-	// {
-	// 	auto Material = ConnectionMaterials[i];
-	// 	Material->SetScalarParameterValue(TEXT("Transparent"), 0.f);
-	// }
-	// for (int32 i = 0; i < ConnectionComponents.Num(); i++)
-	// {
-	// 	
-	// }
+	return ConnectionInfoList;
+}
+
+bool AVehicleComponentActor::GetNearestConnectionInfo(FConnectionInfo& OutConnectionInfo,
+                                                      FConnectionInfo& OutOtherConnectionInfo)
+{
+	auto VehicleNode = CurrentOverlappingVehicleNode.GetInterface();
+	if (VehicleNode == nullptr)
+	{
+		return false;
+	}
+
+	bool bHaveAnswer = false;
+	float MinDistance = TNumericLimits<float>::Max();
+
+	for (auto OtherConnectionInfo : VehicleNode->GetConnectionInfoList())
+	{
+		for (auto ConnectionInfo : ConnectionInfoList)
+		{
+			auto OtherMesh = OtherConnectionInfo.Mesh;
+			auto ThisMesh = ConnectionInfo.Mesh;
+			if (OtherMesh == nullptr || ThisMesh == nullptr)
+			{
+				continue;
+			}
+
+			auto CurrentDistance = (OtherMesh->GetComponentLocation() - ThisMesh->GetComponentLocation()).Length();
+
+			if (CurrentDistance < MinDistance)
+			{
+				MinDistance = CurrentDistance;
+				OutConnectionInfo = ConnectionInfo;
+				OutOtherConnectionInfo = OtherConnectionInfo;
+				bHaveAnswer = true;
+			}
+		}
+	}
+
+	return bHaveAnswer;
+}
+
+ADottedLazer* AVehicleComponentActor::SpawnNewAdsorbEffect()
+{
+	if (!bHaveCurrentNearestConnectionInfo)
+	{
+		return nullptr;
+	}
+
+	if (CurrentAdsorbEffect)
+	{
+		CurrentAdsorbEffect->Destroy();
+		CurrentAdsorbEffect = nullptr;
+	}
+
+	CurrentAdsorbEffect = GetWorld()->SpawnActor<ADottedLazer>(
+		AdsorbEffectClass, CurrentNearestConnection.Mesh->GetComponentLocation(), FRotator::ZeroRotator);
+	if (CurrentAdsorbEffect)
+	{
+		CurrentAdsorbEffect->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
+	}
+
+	return CurrentAdsorbEffect;
 }
