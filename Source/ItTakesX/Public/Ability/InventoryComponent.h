@@ -8,7 +8,7 @@
 #include "InventoryComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
-	FCurrentEquippableUpdateDelegate, TScriptInterface<IEquippable>, NewEquippable);
+	FCurrentHoistableUpdateDelegate, TScriptInterface<IEquippable>, NewEquippable);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class ITTAKESX_API UInventoryComponent : public UActorComponent
@@ -44,7 +44,7 @@ public:
 
 	void AddAndEquip(TScriptInterface<IEquippable> NewEquippable);
 
-	FCurrentEquippableUpdateDelegate OnCurrentEquippableUpdate;
+	FCurrentHoistableUpdateDelegate OnCurrentEquippableUpdate;
 
 	bool HasMagnetEquipped() const;
 };

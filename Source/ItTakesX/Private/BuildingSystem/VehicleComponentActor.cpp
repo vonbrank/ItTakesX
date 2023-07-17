@@ -158,18 +158,29 @@ bool AVehicleComponentActor::AttachToCurrentOverlappingVehicleNode()
 	{
 		return false;
 	}
-	SetActorLocation(CurrentNearestConnection.Arrow->GetComponentLocation());
+	// SetActorLocation(CurrentNearestConnection.Arrow->GetComponentLocation());
+	FVector DeltaLocation = CurrentNearestOtherConnection.Arrow->GetComponentLocation()
+		- CurrentNearestConnection.Arrow->GetComponentLocation();
+	AddActorWorldOffset(DeltaLocation);
 
-	FVector MidLocation = ParentActor->GetActorLocation();
+	FVector MidLocation = CurrentNearestConnection.Mesh->GetComponentLocation() + (CurrentNearestOtherConnection.Mesh->
+		GetComponentLocation() - CurrentNearestConnection.Mesh->GetComponentLocation()) / 2;
+
+	ParentRootComponent->SetSimulatePhysics(false);
+	Mesh->SetSimulatePhysics(false);
 
 	APhysicsConstraintActor* PhysicsConstraintActor = GetWorld()->SpawnActor<APhysicsConstraintActor>();
 	PhysicsConstraintActor->SetActorLocation(MidLocation);
 	UPhysicsConstraintComponent* PhysicsConstraintComponent = PhysicsConstraintActor->GetConstraintComp();
-	PhysicsConstraintComponent->SetConstrainedComponents(ParentRootComponent, TEXT(""), Mesh, TEXT(""));
+	PhysicsConstraintComponent->SetDisableCollision(true);
+	PhysicsConstraintComponent->SetConstrainedComponents(Mesh, TEXT(""), ParentRootComponent, TEXT(""));
 	PhysicsConstraintComponent->SetAngularSwing1Limit(EAngularConstraintMotion::ACM_Locked, 0.f);
 	PhysicsConstraintComponent->SetAngularSwing2Limit(EAngularConstraintMotion::ACM_Locked, 0.f);
 	PhysicsConstraintComponent->SetAngularTwistLimit(EAngularConstraintMotion::ACM_Locked, 0.f);
-	PhysicsConstraintComponent->SetDisableCollision(true);
+	//
+	ParentRootComponent->SetSimulatePhysics(true);
+	Mesh->SetSimulatePhysics(true);
+
 	return true;
 }
 
@@ -199,14 +210,13 @@ bool AVehicleComponentActor::InteractWithOverlappingVehicleNode()
 	FConnectionInfo OutCurrentOtherConnectionInfo;
 	bHaveCurrentNearestConnectionInfo = GetNearestConnectionInfo(OutCurrentConnectionInfo,
 	                                                             OutCurrentOtherConnectionInfo);
-	
+
 
 	if (bHaveCurrentNearestConnectionInfo)
 	{
 		if (OutCurrentConnectionInfo == CurrentNearestConnection && OutCurrentOtherConnectionInfo ==
 			CurrentNearestOtherConnection)
 		{
-
 			if (CurrentAdsorbEffect)
 			{
 				CurrentAdsorbEffect->SetEndLocation(OutCurrentOtherConnectionInfo.Mesh->GetComponentLocation());
@@ -222,6 +232,9 @@ bool AVehicleComponentActor::InteractWithOverlappingVehicleNode()
 			CurrentNearestOtherConnection = OutCurrentOtherConnectionInfo;
 			SpawnNewAdsorbEffect();
 		}
+
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+		                                 FString::Printf(TEXT("Same Connection, effect: %p"), CurrentAdsorbEffect));
 	}
 	else
 	{
@@ -293,6 +306,10 @@ ADottedLazer* AVehicleComponentActor::SpawnNewAdsorbEffect()
 
 	CurrentAdsorbEffect = GetWorld()->SpawnActor<ADottedLazer>(
 		AdsorbEffectClass, CurrentNearestConnection.Mesh->GetComponentLocation(), FRotator::ZeroRotator);
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	                                 FString::Printf(TEXT("Spawn result: %p"), CurrentAdsorbEffect));
+
 	if (CurrentAdsorbEffect)
 	{
 		CurrentAdsorbEffect->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);

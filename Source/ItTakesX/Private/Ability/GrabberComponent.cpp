@@ -51,11 +51,14 @@ bool UGrabberComponent::ToggleHoistingActor()
 	AActor* HoistingActor = nullptr;
 	auto Magnet = Cast<AMagnet>(InventoryComponent->GetCurrentEquippable());
 
+	auto CurrentHoistingHoistable = CurrentHoistingHoistableInterface.GetInterface();
+
 	if (CurrentHoistingHoistable)
 	{
 		CurrentHoistingHoistable->OnEndHoisting_Implementation(GetOwner());
 
-		CurrentHoistingHoistable = nullptr;
+		CurrentHoistingHoistableInterface.SetObject(nullptr);
+		CurrentHoistingHoistableInterface.SetInterface(nullptr);
 
 		if (Magnet)
 		{
@@ -63,6 +66,8 @@ bool UGrabberComponent::ToggleHoistingActor()
 		}
 
 		// TODO other action for dropdown;
+
+		// OnHoistableUpdate.Broadcast();
 
 		return true;
 	}
@@ -72,12 +77,16 @@ bool UGrabberComponent::ToggleHoistingActor()
 	IAimable* Aimable = AimingComponent->GetCurrentAimingAimable();
 	if (Aimable == nullptr) return false;
 
+	AActor* AimableActor = Cast<AActor>(Aimable);
+	if (AimableActor == nullptr) return false;
+
 	IHoistable* Hoistable = Cast<IHoistable>(Aimable);
 	if (Hoistable == nullptr) return false;
 
-	CurrentHoistingHoistable = Hoistable;
+	CurrentHoistingHoistableInterface.SetObject(AimableActor);
+	CurrentHoistingHoistableInterface.SetInterface(Hoistable);
 
-	HoistingActor = Cast<AActor>(CurrentHoistingHoistable);
+	HoistingActor = Cast<AActor>(CurrentHoistingHoistableInterface.GetInterface());
 	if (HoistingActor)
 	{
 		auto Character = Cast<AItTakesXCharacter>(GetOwner());
@@ -85,7 +94,7 @@ bool UGrabberComponent::ToggleHoistingActor()
 			                        ? GetOwner()->GetActorLocation()
 			                        : Character->GetFollowCameraLocation();
 		CurrentSelectDistance = (StartLocation - HoistingActor->GetActorLocation()).Length();
-		CurrentHoistingHoistable->OnBeginHoisting_Implementation(GetOwner());
+		CurrentHoistingHoistableInterface->OnBeginHoisting_Implementation(GetOwner());
 		if (Magnet)
 		{
 			CurrentMagnetEffect = Magnet->SpawnNewMagnetEffect();
@@ -106,8 +115,9 @@ bool UGrabberComponent::InteractWithHoisting()
 	{
 		return false;
 	}
+	auto HoistingActor = Cast<AActor>(CurrentHoistingHoistableInterface.GetInterface());
 
-	if (CurrentHoistingHoistable)
+	if (HoistingActor)
 	{
 		auto Character = Cast<AItTakesXCharacter>(GetOwner());
 		if (Character == nullptr)
@@ -115,11 +125,7 @@ bool UGrabberComponent::InteractWithHoisting()
 			return false;
 		}
 
-		auto HoistingActor = Cast<AActor>(CurrentHoistingHoistable);
-		if (HoistingActor == nullptr)
-		{
-			return false;
-		}
+
 		auto FollowCamera = Character->GetFollowCamera();
 		if (FollowCamera == nullptr)
 		{
@@ -130,15 +136,12 @@ bool UGrabberComponent::InteractWithHoisting()
 		FVector End = Start + FollowCamera->GetForwardVector() * CurrentSelectDistance;
 		HoistingActor->SetActorLocation(FMath::VInterpTo(HoistingActor->GetActorLocation(), End,
 		                                                 UGameplayStatics::GetWorldDeltaSeconds(this), 5.f));
-		//
+
 		if (CurrentMagnetEffect)
 		{
 			CurrentMagnetEffect->SetEndLocation(FMath::VInterpTo(HoistingActor->GetActorLocation(), End,
 			                                                     UGameplayStatics::GetWorldDeltaSeconds(this), 5.f));
 		}
-		//
-		// GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan,
-		//                                  FString::Printf(TEXT("CurrentSelectDistance = %f"), CurrentSelectDistance));
 
 		return true;
 	}
@@ -148,7 +151,7 @@ bool UGrabberComponent::InteractWithHoisting()
 
 bool UGrabberComponent::InteractWithComposing()
 {
-	auto VehicleNode = Cast<IVehicleNode>(CurrentHoistingHoistable);
+	auto VehicleNode = Cast<IVehicleNode>(CurrentHoistingHoistableInterface.GetInterface());
 	if (VehicleNode == nullptr) return false;
 
 	bool bAttachingResult = VehicleNode->AttachToCurrentOverlappingVehicleNode();
@@ -162,7 +165,7 @@ bool UGrabberComponent::InteractWithComposing()
 
 bool UGrabberComponent::InteractWithHoistingObjectRotation(ERotateDirection Direction, float Value)
 {
-	auto HoistingActor = Cast<AActor>(CurrentHoistingHoistable);
+	auto HoistingActor = Cast<AActor>(CurrentHoistingHoistableInterface.GetInterface());
 	if (HoistingActor == nullptr)
 	{
 		return false;
@@ -197,31 +200,18 @@ bool UGrabberComponent::InteractWithHoistingObjectRotation(ERotateDirection Dire
 	FQuat NewRotation = Rotation * CurrentRotation;
 	HoistingActor->SetActorRotation(NewRotation);
 
-	// DrawDebugLine(GetWorld(), HoistingActor->GetActorLocation(),
-	//               HoistingActor->GetActorLocation() + HoistingActor->GetActorForwardVector() * 1000,
-	//               FColor::Red, false, 5);
-
-	// FRotator NewRotation = HoistingActor->GetActorRotation();
-
-
-	// HoistingActor->SetActorRotation(FMath::RInterpTo(HoistingActor->GetActorRotation(), NewRotation,
-	//                                                  UGameplayStatics::GetWorldDeltaSeconds(this), 50.f));
-
 	return true;
 }
 
 bool UGrabberComponent::InteractWithZoomingHoistable(float Value)
 {
-	if (CurrentHoistingHoistable == nullptr)
+	if (CurrentHoistingHoistableInterface.GetInterface() == nullptr)
 	{
 		return false;
 	}
 
 	CurrentSelectDistance += Value;
 	CurrentSelectDistance = FMath::Clamp(CurrentSelectDistance, 1000.f, 10000.f);
-
-	// GEngine->AddOnScreenDebugMessage(-1, 15.f, FColor::Cyan,
-	//                                  FString::Printf(TEXT("CurrentSelectDistance: %f"), CurrentSelectDistance));
 
 	return true;
 }

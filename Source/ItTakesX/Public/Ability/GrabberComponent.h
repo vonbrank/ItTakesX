@@ -7,6 +7,9 @@
 #include "Interface/Hoistable.h"
 #include "GrabberComponent.generated.h"
 
+// DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
+// 	FCurrentHoistableUpdateDelegate, TScriptInterface<IHoistable>, NewHoistable);
+
 UENUM()
 enum ERotateDirection
 {
@@ -37,7 +40,8 @@ private:
 	UPROPERTY()
 	class UInventoryComponent* InventoryComponent;
 
-	IHoistable* CurrentHoistingHoistable;
+	UPROPERTY()
+	TScriptInterface<IHoistable> CurrentHoistingHoistableInterface;
 
 	float CurrentSelectDistance;
 
@@ -56,4 +60,6 @@ public:
 	bool InteractWithComposing();
 	bool InteractWithHoistingObjectRotation(ERotateDirection Direction, float Value);
 	bool InteractWithZoomingHoistable(float Value);
+
+	// FCurrentHoistableUpdateDelegate OnHoistableUpdate;
 };
