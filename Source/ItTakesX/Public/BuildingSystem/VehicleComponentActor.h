@@ -63,6 +63,8 @@ private:
 
 	UFUNCTION()
 	bool InteractWithOverlappingVehicleNode();
+	
+	class UArrowComponent* ForwardArrow;
 
 protected:
 	// 吸附特效

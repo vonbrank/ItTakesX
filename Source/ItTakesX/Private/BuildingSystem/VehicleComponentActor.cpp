@@ -44,6 +44,11 @@ void AVehicleComponentActor::BeginPlay()
 	RootComponent->GetChildrenComponents(true, AllComponents);
 	for (auto Comp : AllComponents)
 	{
+		if (Comp->ComponentTags.Contains(TEXT("ForwardArrow")))
+		{
+			ForwardArrow = Cast<UArrowComponent>(Comp);
+		}
+
 		if (!Comp->ComponentTags.Contains(TEXT("ConnectionComp")))
 		{
 			continue;
@@ -86,7 +91,14 @@ void AVehicleComponentActor::Tick(float DeltaTime)
 
 	if (bIsRunning)
 	{
-		Mesh->AddForce(FVector::UpVector * CurrenForceLength, NAME_None, true);
+		if (ForwardArrow)
+		{
+			Mesh->AddForce(ForwardArrow->GetForwardVector() * CurrenForceLength, NAME_None, true);
+		}
+		else
+		{
+			Mesh->AddForce(FVector::UpVector * CurrenForceLength, NAME_None, true);
+		}
 	}
 }
 
