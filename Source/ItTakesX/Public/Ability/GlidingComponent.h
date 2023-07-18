@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Glider.h"
 #include "Components/ActorComponent.h"
 #include "GlidingComponent.generated.h"
 
@@ -28,12 +29,18 @@ private:
 
 	bool StartGliding();
 	bool StopGliding();
-	bool IsGliding() const;
 
 	UPROPERTY()
-	class ACharacter* Character;
+	class AItTakesXCharacter* Character;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AGlider> GliderClass;
+
+	UPROPERTY()
+	AGlider* CurrenGlider;
 
 protected:
 public:
 	bool ToggleGliding();
+	bool IsGliding() const;
 };

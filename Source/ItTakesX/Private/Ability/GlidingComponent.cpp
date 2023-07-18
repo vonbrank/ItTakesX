@@ -3,6 +3,7 @@
 
 #include "Ability/GlidingComponent.h"
 
+#include "Character/ItTakesXCharacter.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -22,7 +23,7 @@ void UGlidingComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Character = Cast<ACharacter>(GetOwner());
+	Character = Cast<AItTakesXCharacter>(GetOwner());
 }
 
 
@@ -35,7 +36,7 @@ void UGlidingComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 
 	if (Character)
 	{
-		if (Character->GetCharacterMovement()->IsMovingOnGround())
+		if (bIsGliding && Character->GetCharacterMovement()->IsMovingOnGround())
 		{
 			StopGliding();
 		}
@@ -57,10 +58,27 @@ bool UGlidingComponent::StartGliding()
 		auto NewVelocity = Character->GetCharacterMovement()->Velocity;
 		NewVelocity.Z = 0;
 		Character->GetCharacterMovement()->Velocity = NewVelocity;
+
+		if (CurrenGlider)
+		{
+			CurrenGlider->Destroy();
+		}
+		CurrenGlider = GetWorld()->SpawnActor<AGlider>(GliderClass);
+
+		if (Character)
+		{
+			TScriptInterface<IEquippable> EquippableInterface;
+			EquippableInterface.SetObject(CurrenGlider);
+			EquippableInterface.SetInterface(CurrenGlider);
+
+			Character->PickUpAndEquip(EquippableInterface);
+		}
 	}
 	else if (Character->GetCharacterMovement()->IsMovingOnGround())
 	{
 	}
+
+
 	return true;
 }
 
@@ -74,6 +92,14 @@ bool UGlidingComponent::StopGliding()
 	bIsGliding = false;
 	Character->GetCharacterMovement()->GravityScale = 1.0;
 	Character->GetCharacterMovement()->AirControl = 0.2;
+
+	TScriptInterface<IEquippable> EquippableInterface;
+	Character->PickUpAndEquip(EquippableInterface);
+	if (CurrenGlider)
+	{
+		CurrenGlider->Destroy();
+		CurrenGlider = nullptr;
+	}
 
 	return true;
 }

@@ -34,5 +34,8 @@ private:
 	bool bEquippingMagnet;
 
 	UPROPERTY(BlueprintReadOnly, Category = INVALID_NAME_CHARACTERS, meta = (AllowPrivateAccess = "true"))
+	bool bIsGliding;
+
+	UPROPERTY(BlueprintReadOnly, Category = INVALID_NAME_CHARACTERS, meta = (AllowPrivateAccess = "true"))
 	float YawOffset;
 };

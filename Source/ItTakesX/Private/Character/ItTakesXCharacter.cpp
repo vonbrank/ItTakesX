@@ -182,6 +182,7 @@ void AItTakesXCharacter::PickUpAndEquip(TScriptInterface<IEquippable> Equippable
 	Inventory->AddAndEquip(Equippable);
 
 	auto MagnetToEquip = Cast<AMagnet>(Equippable.GetInterface());
+	auto GliderToEquip = Cast<AGlider>(Equippable.GetInterface());
 
 	if (MagnetToEquip)
 	{
@@ -191,6 +192,16 @@ void AItTakesXCharacter::PickUpAndEquip(TScriptInterface<IEquippable> Equippable
 			HandSocket->AttachActor(MagnetToEquip, GetMesh());
 		}
 		MagnetToEquip->SetOwner(this);
+	}
+	else if (GliderToEquip)
+	{
+		const auto GliderSocket = GetMesh()->GetSocketByName(TEXT("GliderSocket"));
+		if (GliderSocket)
+		{
+			GliderSocket->AttachActor(GliderToEquip, GetMesh());
+			GliderToEquip->SetOwner(this);
+		}
+		// GliderToEquip->SetActorScale3D(FVector(1, 1, 1));
 	}
 }
 
@@ -205,6 +216,7 @@ void AItTakesXCharacter::OnCurrentEquippableUpdate(TScriptInterface<IEquippable>
 		bUseControllerRotationYaw = false;
 		GetCharacterMovement()->bOrientRotationToMovement = true;
 		GetCharacterMovement()->MaxWalkSpeed = 600.f;
+		return;
 	}
 
 	bUseControllerRotationYaw = true;
@@ -238,4 +250,9 @@ void AItTakesXCharacter::SetCurrentOverlappingVehicleCore(AVehicleCoreActor* Veh
 void AItTakesXCharacter::SwitchGliding()
 {
 	Gliding->ToggleGliding();
+}
+
+bool AItTakesXCharacter::IsGliding() const
+{
+	return Gliding->IsGliding();
 }

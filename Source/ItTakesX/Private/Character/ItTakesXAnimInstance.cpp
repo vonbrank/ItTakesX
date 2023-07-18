@@ -34,6 +34,8 @@ void UItTakesXAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	bEquippingMagnet = ItTakesXCharacter->HasMagnetEquipped();
 
+	bIsGliding = ItTakesXCharacter->IsGliding();
+
 	FRotator AimRotation = ItTakesXCharacter->GetBaseAimRotation();
 	FRotator MovementRotation = UKismetMathLibrary::MakeRotFromX(ItTakesXCharacter->GetVelocity());
 	YawOffset = UKismetMathLibrary::NormalizedDeltaRotator(MovementRotation, AimRotation).Yaw;

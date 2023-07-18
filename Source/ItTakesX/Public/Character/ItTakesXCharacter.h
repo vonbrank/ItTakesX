@@ -54,10 +54,10 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Ability")
 	class UInventoryComponent* Inventory;
-	
+
 	UPROPERTY(VisibleAnywhere, Category = "Ability")
 	class UDrivingComponent* Driving;
-	
+
 	UPROPERTY(VisibleAnywhere, Category = "Ability")
 	class UGlidingComponent* Gliding;
 
@@ -73,14 +73,13 @@ private:
 	bool bIsSwitching;
 
 
-
-
 public:
 	FORCEINLINE class UCameraComponent* GetFollowCamera() { return FollowCamera; }
 	FVector GetFollowCameraLocation() const;
 
 	// void EquipMagnet(AMagnet* MagnetToEquip);
 	bool HasMagnetEquipped() const;
+	bool IsGliding() const;
 
 	void PickUpAndEquip(TScriptInterface<IEquippable> Equippable);
 
