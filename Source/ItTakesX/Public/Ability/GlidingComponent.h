@@ -39,6 +39,12 @@ private:
 	UPROPERTY()
 	AGlider* CurrenGlider;
 
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	float ForceRatioToCharacterGravity = 0.9;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	float CharacterLaunchSpeed = 1;
+
 protected:
 public:
 	bool ToggleGliding();

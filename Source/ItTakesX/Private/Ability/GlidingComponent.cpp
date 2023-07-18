@@ -40,6 +40,12 @@ void UGlidingComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 		{
 			StopGliding();
 		}
+		else if (bIsGliding)
+		{
+			float CharacterMass = Character->GetCharacterMovement()->Mass;
+			Character->GetCharacterMovement()->AddForce(
+				FVector::UpVector * CharacterMass * ForceRatioToCharacterGravity * 1000);
+		}
 	}
 }
 
@@ -50,10 +56,18 @@ bool UGlidingComponent::StartGliding()
 		return false;
 	}
 
-	bIsGliding = true;
+	if (Character->GetCharacterMovement()->IsMovingOnGround())
+	{
+		float CharacterMass = Character->GetCharacterMovement()->Mass;
+		Character->GetCharacterMovement()->AddImpulse(FVector::UpVector * CharacterMass * CharacterLaunchSpeed * 1000);
+
+		return false;
+	}
+
 	if (Character->GetCharacterMovement()->IsFalling())
 	{
-		Character->GetCharacterMovement()->GravityScale = 0.07;
+		// Character->GetCharacterMovement()->GravityScale = 0.15;
+		bIsGliding = true;
 		Character->GetCharacterMovement()->AirControl = 0.7;
 		auto NewVelocity = Character->GetCharacterMovement()->Velocity;
 		NewVelocity.Z = 0;
@@ -74,8 +88,9 @@ bool UGlidingComponent::StartGliding()
 			Character->PickUpAndEquip(EquippableInterface);
 		}
 	}
-	else if (Character->GetCharacterMovement()->IsMovingOnGround())
+	else
 	{
+		return false;
 	}
 
 
@@ -90,7 +105,7 @@ bool UGlidingComponent::StopGliding()
 	}
 
 	bIsGliding = false;
-	Character->GetCharacterMovement()->GravityScale = 1.0;
+	// Character->GetCharacterMovement()->GravityScale = 1.0;
 	Character->GetCharacterMovement()->AirControl = 0.2;
 
 	TScriptInterface<IEquippable> EquippableInterface;
