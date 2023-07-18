@@ -5,6 +5,7 @@
 
 #include "Ability/AimingComponent.h"
 #include "Ability/DrivingComponent.h"
+#include "Ability/GlidingComponent.h"
 #include "Ability/GrabberComponent.h"
 #include "Ability/InventoryComponent.h"
 #include "Ability/Magnet.h"
@@ -35,6 +36,8 @@ AItTakesXCharacter::AItTakesXCharacter()
 
 	Driving = CreateDefaultSubobject<UDrivingComponent>("DrivingComp");
 
+	Gliding = CreateDefaultSubobject<UGlidingComponent>("GlidingComp");
+
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 }
@@ -51,6 +54,12 @@ void AItTakesXCharacter::BeginPlay()
 void AItTakesXCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (GetCharacterMovement()->IsMovingOnGround())
+	{
+		GetCharacterMovement()->GravityScale = 1.0;
+		GetCharacterMovement()->AirControl = 0.2;
+	}
 }
 
 // Called to bind functionality to input
@@ -59,6 +68,7 @@ void AItTakesXCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	PlayerInputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction(TEXT("Glide"), IE_Pressed, this, &ThisClass::SwitchGliding);
 	PlayerInputComponent->BindAction(TEXT("Operate"), IE_Pressed, this, &ThisClass::HandlePressingE);
 	PlayerInputComponent->BindAction(TEXT("FAction"), IE_Pressed, this, &ThisClass::HandlePressingF);
 	PlayerInputComponent->BindAction(TEXT("ZAction"), IE_Repeat, this, &ThisClass::HandleRepeatingZ);
@@ -223,4 +233,9 @@ void AItTakesXCharacter::SetCurrentOverlappingVehicleCore(AVehicleCoreActor* Veh
 	{
 		Driving->SetCurrenOverlappingVehicle(VehicleCoreActor);
 	}
+}
+
+void AItTakesXCharacter::SwitchGliding()
+{
+	Gliding->ToggleGliding();
 }

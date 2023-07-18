@@ -53,18 +53,26 @@ private:
 	class UGrabberComponent* Grabber;
 
 	UPROPERTY(VisibleAnywhere, Category = "Ability")
-
 	class UInventoryComponent* Inventory;
+	
 	UPROPERTY(VisibleAnywhere, Category = "Ability")
 	class UDrivingComponent* Driving;
+	
+	UPROPERTY(VisibleAnywhere, Category = "Ability")
+	class UGlidingComponent* Gliding;
 
 	EItTakesXViewType ItTakesXView = EItTakesXViewType_Normal;
 
 	UFUNCTION()
 	void OnCurrentEquippableUpdate(TScriptInterface<IEquippable> NewEquippableInterface);
 
+	UFUNCTION()
+	void SwitchGliding();
+
 	UPROPERTY(BlueprintReadWrite, meta=(AllowPrivateAccess = "true"))
 	bool bIsSwitching;
+
+
 
 
 public:
