@@ -42,9 +42,16 @@ void UGlidingComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 		}
 		else if (bIsGliding)
 		{
-			float CharacterMass = Character->GetCharacterMovement()->Mass;
-			Character->GetCharacterMovement()->AddForce(
-				FVector::UpVector * CharacterMass * ForceRatioToCharacterGravity * 1000);
+			if (Character->GetCharacterMovement()->Velocity.Z <= 0)
+			{
+				float CharacterMass = Character->GetCharacterMovement()->Mass;
+				Character->GetCharacterMovement()->AddForce(
+					FVector::UpVector * CharacterMass * ForceRatioToCharacterGravity * 980);
+			}
+			// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+			//                                  FString::Printf(
+			// 	                                 TEXT("Character velocity: %s"),
+			// 	                                 *Character->GetCharacterMovement()->Velocity.ToString()));
 		}
 	}
 }
