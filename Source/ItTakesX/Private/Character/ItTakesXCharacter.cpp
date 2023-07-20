@@ -187,12 +187,30 @@ void AItTakesXCharacter::PickUpAndEquip(TScriptInterface<IEquippable> Equippable
 
 void AItTakesXCharacter::OnCurrentEquippableUpdate(TScriptInterface<IEquippable> NewEquippableInterface)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("Equip Update")));
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("start on Equip Update")));
 
 	auto NewEquippable = NewEquippableInterface.GetInterface();
 
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	//                                  FString::Printf(
+	// 	                                 TEXT("curren equippable before gliding check: %p"),
+	// 	                                 Inventory->GetCurrentEquippable()));
+
+	if (Cast<AGlider>(NewEquippable) == nullptr && IsGliding())
+	{
+		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("toggle after gliding")));
+		Gliding->ToggleGliding();
+	}
+
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	//                                  FString::Printf(
+	// 	                                 TEXT("curren equippable after gliding check: %p"),
+	// 	                                 Inventory->GetCurrentEquippable()));
+
 	if (NewEquippable == nullptr)
 	{
+		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("reset animation")));
+
 		bUseControllerRotationYaw = false;
 		GetCharacterMovement()->bOrientRotationToMovement = true;
 		GetCharacterMovement()->MaxWalkSpeed = 600.f;
@@ -206,8 +224,14 @@ void AItTakesXCharacter::OnCurrentEquippableUpdate(TScriptInterface<IEquippable>
 	auto MagnetToEquip = Cast<AMagnet>(NewEquippable);
 	auto GliderToEquip = Cast<AGlider>(NewEquippable);
 
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	//                                  FString::Printf(
+	// 	                                 TEXT("curren equippable before attaching check: %p"),
+	// 	                                 Inventory->GetCurrentEquippable()));
+
 	if (MagnetToEquip)
 	{
+		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("Equip MagnetToEquip")));
 		const auto HandSocket = GetMesh()->GetSocketByName(TEXT("hand_rSocket"));
 		if (HandSocket)
 		{
@@ -225,6 +249,11 @@ void AItTakesXCharacter::OnCurrentEquippableUpdate(TScriptInterface<IEquippable>
 		}
 		GliderToEquip->SetActorScale3D(FVector(1, 1, 1));
 	}
+
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	//                                  FString::Printf(
+	// 	                                 TEXT("curren equippable after attaching check: %p"),
+	// 	                                 Inventory->GetCurrentEquippable()));
 
 	if (bIsSwitching)
 	{
@@ -272,5 +301,5 @@ void AItTakesXCharacter::HandlePressingTwo()
 
 void AItTakesXCharacter::HandlePressingThree()
 {
-	Inventory->SwitchToEquippableByIndex(3);
+	// Inventory->SwitchToEquippableByIndex(3);
 }

@@ -32,12 +32,15 @@ private:
 
 	UPROPERTY()
 	class AItTakesXCharacter* Character;
-
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AGlider> GliderClass;
+	//
+	// UPROPERTY(EditDefaultsOnly)
+	// TSubclassOf<AGlider> GliderClass;
+	//
+	// UPROPERTY()
+	// AGlider* CurrenGlider;
 
 	UPROPERTY()
-	AGlider* CurrenGlider;
+	class UInventoryComponent* InventoryComponent;
 
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	float ForceRatioToCharacterGravity = 0.9;

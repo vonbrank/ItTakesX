@@ -3,6 +3,7 @@
 
 #include "Ability/GlidingComponent.h"
 
+#include "Ability/InventoryComponent.h"
 #include "Character/ItTakesXCharacter.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -24,6 +25,7 @@ void UGlidingComponent::BeginPlay()
 	Super::BeginPlay();
 
 	Character = Cast<AItTakesXCharacter>(GetOwner());
+	InventoryComponent = GetOwner()->FindComponentByClass<UInventoryComponent>();
 }
 
 
@@ -58,8 +60,11 @@ void UGlidingComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 
 bool UGlidingComponent::StartGliding()
 {
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("Start Gliding")));
+
 	if (Character == nullptr)
 	{
+		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("Character is null")));
 		return false;
 	}
 
@@ -80,20 +85,22 @@ bool UGlidingComponent::StartGliding()
 		NewVelocity.Z = 0;
 		Character->GetCharacterMovement()->Velocity = NewVelocity;
 
-		if (CurrenGlider)
-		{
-			CurrenGlider->Destroy();
-		}
-		CurrenGlider = GetWorld()->SpawnActor<AGlider>(GliderClass);
+		InventoryComponent->SwitchToEquippableByIndex(3);
 
-		if (Character)
-		{
-			TScriptInterface<IEquippable> EquippableInterface;
-			EquippableInterface.SetObject(CurrenGlider);
-			EquippableInterface.SetInterface(CurrenGlider);
-
-			Character->PickUpAndEquip(EquippableInterface);
-		}
+		// if (CurrenGlider)
+		// {
+		// 	CurrenGlider->Destroy();
+		// }
+		// CurrenGlider = GetWorld()->SpawnActor<AGlider>(GliderClass);
+		//
+		// if (Character)
+		// {
+		// 	TScriptInterface<IEquippable> EquippableInterface;
+		// 	EquippableInterface.SetObject(CurrenGlider);
+		// 	EquippableInterface.SetInterface(CurrenGlider);
+		//
+		// 	Character->PickUpAndEquip(EquippableInterface);
+		// }
 	}
 	else
 	{
@@ -106,6 +113,8 @@ bool UGlidingComponent::StartGliding()
 
 bool UGlidingComponent::StopGliding()
 {
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("start stop gliding")));
+
 	if (Character == nullptr)
 	{
 		return false;
@@ -115,13 +124,24 @@ bool UGlidingComponent::StopGliding()
 	// Character->GetCharacterMovement()->GravityScale = 1.0;
 	Character->GetCharacterMovement()->AirControl = 0.2;
 
-	TScriptInterface<IEquippable> EquippableInterface;
-	Character->PickUpAndEquip(EquippableInterface);
-	if (CurrenGlider)
+	// TScriptInterface<IEquippable> EquippableInterface;
+	// Character->PickUpAndEquip(EquippableInterface);
+
+	if (InventoryComponent)
 	{
-		CurrenGlider->Destroy();
-		CurrenGlider = nullptr;
+		if (Cast<AGlider>(InventoryComponent->GetCurrentEquippable()))
+		{
+			// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+			//                                  FString::Printf(TEXT("toggle after glading un equip")));
+			InventoryComponent->UnEquipCurrenEquippableWithBroadcast();
+		}
 	}
+
+	// if (CurrenGlider)
+	// {
+	// 	CurrenGlider->Destroy();
+	// 	CurrenGlider = nullptr;
+	// }
 
 	return true;
 }
@@ -133,6 +153,8 @@ bool UGlidingComponent::IsGliding() const
 
 bool UGlidingComponent::ToggleGliding()
 {
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("start toggle gliding")));
+
 	if (bIsGliding)
 	{
 		return StopGliding();

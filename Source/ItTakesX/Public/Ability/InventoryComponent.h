@@ -40,6 +40,8 @@ private:
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AGlider> GliderClass;
 
+	void UnEquipCurrenEquippable();
+	
 	bool bHaveUnArm;
 	bool bHaveMagnet;
 	bool bHaveGlider;
@@ -58,11 +60,11 @@ public:
 
 	/**
 	 * 
-	 * @param Index 0: UnArm, 1: Magnet, 2: Glider, Others: Default
+	 * @param Index 1: UnArm, 2: Magnet, 3: Glider, Others: Default
 	 */
 	bool SwitchToEquippableByIndex(int Index);
 
-	void UnEquipCurrenEquippable();
+	void UnEquipCurrenEquippableWithBroadcast();
 
 	bool HasMagnetEquipped() const;
 };

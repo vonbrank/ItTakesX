@@ -77,43 +77,58 @@ bool UInventoryComponent::SwitchToEquippableByIndex(int Index)
 		}
 		else
 		{
-			bSwitchResult = false;
+			return false;
 		}
 		break;
 	case 2:
 		if (bHaveMagnet)
 		{
+			// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("new magnet")));
+
 			AMagnet* NewMagnet = GetWorld()->SpawnActor<AMagnet>(MagnetClass);
 			NewEquippableInterface.SetObject(NewMagnet);
 			NewEquippableInterface.SetInterface(NewMagnet);
 		}
 		else
 		{
-			bSwitchResult = false;
+			return false;
 		}
 		break;
 	case 3:
 		if (bHaveGlider)
 		{
+			// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("new glider")));
+
 			AGlider* NewGlider = GetWorld()->SpawnActor<AGlider>(GliderClass);
 			NewEquippableInterface.SetObject(NewGlider);
 			NewEquippableInterface.SetInterface(NewGlider);
 		}
 		else
 		{
-			bSwitchResult = false;
+			return false;
 		}
 		break;
 	default:
 		NewEquippableInterface.SetObject(nullptr);
 		NewEquippableInterface.SetInterface(nullptr);
-		bSwitchResult = false;
+		return false;
 		break;
 	}
 
 	UnEquipCurrenEquippable();
 	CurrentEquippableInterface = NewEquippableInterface;
+
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	//                                  FString::Printf(
+	// 	                                 TEXT("current equippable = %p"), CurrentEquippableInterface.GetInterface()));
+
 	OnCurrentEquippableUpdate.Broadcast(NewEquippableInterface);
+
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	//                                  FString::Printf(
+	// 	                                 TEXT("current equippable after broadcast = %p"),
+	// 	                                 CurrentEquippableInterface.GetInterface()));
+
 
 	return bSwitchResult;
 }
@@ -133,4 +148,10 @@ void UInventoryComponent::UnEquipCurrenEquippable()
 bool UInventoryComponent::HasMagnetEquipped() const
 {
 	return Cast<AMagnet>(GetCurrentEquippable()) != nullptr;
+}
+
+void UInventoryComponent::UnEquipCurrenEquippableWithBroadcast()
+{
+	UnEquipCurrenEquippable();
+	OnCurrentEquippableUpdate.Broadcast(CurrentEquippableInterface);
 }
