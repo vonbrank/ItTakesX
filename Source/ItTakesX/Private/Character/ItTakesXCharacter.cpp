@@ -247,7 +247,7 @@ void AItTakesXCharacter::OnCurrentEquippableUpdate(TScriptInterface<IEquippable>
 			GliderSocket->AttachActor(GliderToEquip, GetMesh());
 			GliderToEquip->SetOwner(this);
 		}
-		GliderToEquip->SetActorScale3D(FVector(1, 1, 1));
+		// GliderToEquip->SetActorScale3D(FVector(1, 1, 1));
 	}
 
 	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
