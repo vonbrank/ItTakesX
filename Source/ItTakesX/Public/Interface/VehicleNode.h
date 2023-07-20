@@ -48,7 +48,6 @@ class ITTAKESX_API IVehicleNode
 public:
 	// virtual void AddChildNode(TScriptInterface<IVehicleNode> ChildNode) = 0;
 	virtual bool AttachToCurrentOverlappingVehicleNode() = 0;
-	virtual bool IsHoisting() const = 0;
 	virtual TArray<FConnectionInfo> GetConnectionInfoList() = 0;
 	virtual bool GetNearestConnectionInfo(FConnectionInfo& OutConnectionInfo, FConnectionInfo& OutOtherConnectionInfo) =
 	0;

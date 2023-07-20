@@ -53,3 +53,8 @@ void AHoistableActor::OnEndHoisting_Implementation(AActor* OtherActor)
 		PrimitiveComponent->SetSimulatePhysics(true);
 	}
 }
+
+bool AHoistableActor::IsHoisting() const
+{
+	return CurrentHoistingActor != nullptr;
+}

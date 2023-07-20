@@ -12,8 +12,8 @@ UCLASS()
 class ITTAKESX_API AHoistableActor : public AActor, public IAimable, public IHoistable
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	AHoistableActor();
 	// Called every frame
@@ -24,16 +24,16 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	
 protected:
 	UPROPERTY()
 	AActor* CurrentAimingActor;
 	UPROPERTY()
 	AActor* CurrentHoistingActor;
-	
-public:	
+
+public:
 	virtual void OnBeginAiming_Implementation(AActor* OtherActor);
 	virtual void OnEndAiming_Implementation(AActor* OtherActor);
 	virtual void OnBeginHoisting_Implementation(AActor* OtherActor);
 	virtual void OnEndHoisting_Implementation(AActor* OtherActor);
+	virtual bool IsHoisting() const override;
 };

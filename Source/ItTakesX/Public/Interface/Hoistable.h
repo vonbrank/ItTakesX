@@ -27,4 +27,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void OnEndHoisting(AActor* OtherActor);
+
+	virtual bool IsHoisting() const = 0;
 };

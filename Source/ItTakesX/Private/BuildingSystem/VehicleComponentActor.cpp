@@ -46,7 +46,7 @@ void AVehicleComponentActor::BeginPlay()
 	{
 		if (Comp->ComponentTags.Contains(TEXT("ForwardArrow")))
 		{
-			ForwardArrow = Cast<UArrowComponent>(Comp);
+			BP_ForwardArrowRef = Cast<UArrowComponent>(Comp);
 		}
 
 		if (!Comp->ComponentTags.Contains(TEXT("ConnectionComp")))
@@ -91,9 +91,9 @@ void AVehicleComponentActor::Tick(float DeltaTime)
 
 	if (bIsRunning)
 	{
-		if (ForwardArrow)
+		if (BP_ForwardArrowRef)
 		{
-			Mesh->AddForce(ForwardArrow->GetForwardVector() * CurrenForceLength, NAME_None, true);
+			Mesh->AddForce(BP_ForwardArrowRef->GetForwardVector() * CurrenForceLength, NAME_None, true);
 		}
 		else
 		{
@@ -190,11 +190,6 @@ bool AVehicleComponentActor::AttachToCurrentOverlappingVehicleNode()
 	}
 
 	return true;
-}
-
-bool AVehicleComponentActor::IsHoisting() const
-{
-	return CurrentHoistingActor != nullptr;
 }
 
 bool AVehicleComponentActor::InteractWithOverlappingVehicleNode()

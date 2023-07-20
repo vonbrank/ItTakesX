@@ -47,7 +47,8 @@ private:
 	UFUNCTION()
 	bool InteractWithOverlappingVehicleNode();
 
-	class UArrowComponent* ForwardArrow;
+	UPROPERTY()
+	class UArrowComponent* BP_ForwardArrowRef;
 
 protected:
 	// 吸附特效
@@ -90,7 +91,7 @@ public:
 
 	// virtual void AddChildNode(TScriptInterface<IVehicleNode> ChildNode) override;
 	virtual bool AttachToCurrentOverlappingVehicleNode() override;
-	virtual bool IsHoisting() const override;
+
 	virtual TArray<FConnectionInfo> GetConnectionInfoList() override;
 	virtual bool
 	GetNearestConnectionInfo(FConnectionInfo& OutConnectionInfo, FConnectionInfo& OutOtherConnectionInfo) override;
