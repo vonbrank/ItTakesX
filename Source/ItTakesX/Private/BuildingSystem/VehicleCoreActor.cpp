@@ -32,16 +32,3 @@ void AVehicleCoreActor::OnSphereEndOverlap(UPrimitiveComponent* OverlappedCompon
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("End overlapping character")));
 	}
 }
-
-bool AVehicleCoreActor::PropagateCommand(FVehicleCoreCommand Command)
-{
-	for (auto ChildNodeInterface : ChildNodes)
-	{
-		auto ChildNode = ChildNodeInterface.GetInterface();
-		if (ChildNode)
-		{
-			ChildNode->PropagateCommand(Command);
-		}
-	}
-	return true;
-}

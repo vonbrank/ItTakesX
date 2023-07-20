@@ -20,9 +20,6 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	UPROPERTY(VisibleAnywhere, Category = "Vehicle Properties")
-	class UStaticMeshComponent* Mesh;
-
 	// 该零件所有可连接点的数据
 	UPROPERTY()
 	TArray<FConnectionInfo> ConnectionInfoList;
@@ -39,18 +36,15 @@ private:
 	UPROPERTY()
 	FConnectionInfo CurrentNearestOtherConnection;
 
-	UPROPERTY(EditAnywhere)
-	float CurrenForceLength;
-
-	bool bIsRunning;
 
 	UFUNCTION()
 	bool InteractWithOverlappingVehicleNode();
 
-	UPROPERTY()
-	class UArrowComponent* BP_ForwardArrowRef;
-
 protected:
+	UPROPERTY(VisibleAnywhere, Category = "Vehicle Properties")
+	class UStaticMeshComponent* Mesh;
+
+	bool bIsRunning;
 	// 吸附特效
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class ADottedLazer> AdsorbEffectClass;

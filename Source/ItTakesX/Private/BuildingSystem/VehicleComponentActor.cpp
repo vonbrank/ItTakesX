@@ -44,11 +44,6 @@ void AVehicleComponentActor::BeginPlay()
 	RootComponent->GetChildrenComponents(true, AllComponents);
 	for (auto Comp : AllComponents)
 	{
-		if (Comp->ComponentTags.Contains(TEXT("ForwardArrow")))
-		{
-			BP_ForwardArrowRef = Cast<UArrowComponent>(Comp);
-		}
-
 		if (!Comp->ComponentTags.Contains(TEXT("ConnectionComp")))
 		{
 			continue;
@@ -87,18 +82,6 @@ void AVehicleComponentActor::Tick(float DeltaTime)
 	if (InteractWithOverlappingVehicleNode())
 	{
 		return;
-	}
-
-	if (bIsRunning)
-	{
-		if (BP_ForwardArrowRef)
-		{
-			Mesh->AddForce(BP_ForwardArrowRef->GetForwardVector() * CurrenForceLength, NAME_None, true);
-		}
-		else
-		{
-			Mesh->AddForce(FVector::UpVector * CurrenForceLength, NAME_None, true);
-		}
 	}
 }
 
