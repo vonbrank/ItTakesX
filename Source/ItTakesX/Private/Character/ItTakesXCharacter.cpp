@@ -79,6 +79,9 @@ void AItTakesXCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAction(TEXT("XAction"), IE_Pressed, this, &ThisClass::HandleRepeatingX);
 	PlayerInputComponent->BindAction(TEXT("LShiftAction"), IE_Pressed, this, &ThisClass::HandleRepeatingLShift);
 	PlayerInputComponent->BindAction(TEXT("LCtrlAction"), IE_Pressed, this, &ThisClass::HandleRepeatingLCtrl);
+	PlayerInputComponent->BindAction(TEXT("OneAction"), IE_Pressed, this, &ThisClass::HandlePressingOne);
+	PlayerInputComponent->BindAction(TEXT("TwoAction"), IE_Pressed, this, &ThisClass::HandlePressingTwo);
+	PlayerInputComponent->BindAction(TEXT("ThreeAction"), IE_Pressed, this, &ThisClass::HandlePressingThree);
 
 	PlayerInputComponent->BindAxis(TEXT("MoveForward"), this, &ThisClass::MoveForward);
 	PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &ThisClass::MoveRight);
@@ -180,29 +183,6 @@ bool AItTakesXCharacter::HasMagnetEquipped() const
 void AItTakesXCharacter::PickUpAndEquip(TScriptInterface<IEquippable> Equippable)
 {
 	Inventory->AddAndEquip(Equippable);
-
-	auto MagnetToEquip = Cast<AMagnet>(Equippable.GetInterface());
-	auto GliderToEquip = Cast<AGlider>(Equippable.GetInterface());
-
-	if (MagnetToEquip)
-	{
-		const auto HandSocket = GetMesh()->GetSocketByName(TEXT("hand_rSocket"));
-		if (HandSocket)
-		{
-			HandSocket->AttachActor(MagnetToEquip, GetMesh());
-		}
-		MagnetToEquip->SetOwner(this);
-	}
-	else if (GliderToEquip)
-	{
-		const auto GliderSocket = GetMesh()->GetSocketByName(TEXT("GliderSocket"));
-		if (GliderSocket)
-		{
-			GliderSocket->AttachActor(GliderToEquip, GetMesh());
-			GliderToEquip->SetOwner(this);
-		}
-		// GliderToEquip->SetActorScale3D(FVector(1, 1, 1));
-	}
 }
 
 void AItTakesXCharacter::OnCurrentEquippableUpdate(TScriptInterface<IEquippable> NewEquippableInterface)
@@ -222,6 +202,29 @@ void AItTakesXCharacter::OnCurrentEquippableUpdate(TScriptInterface<IEquippable>
 	bUseControllerRotationYaw = true;
 	GetCharacterMovement()->bOrientRotationToMovement = false;
 	GetCharacterMovement()->MaxWalkSpeed = NewEquippable->GetMaxWalkingSpeed();
+
+	auto MagnetToEquip = Cast<AMagnet>(NewEquippable);
+	auto GliderToEquip = Cast<AGlider>(NewEquippable);
+
+	if (MagnetToEquip)
+	{
+		const auto HandSocket = GetMesh()->GetSocketByName(TEXT("hand_rSocket"));
+		if (HandSocket)
+		{
+			HandSocket->AttachActor(MagnetToEquip, GetMesh());
+		}
+		MagnetToEquip->SetOwner(this);
+	}
+	else if (GliderToEquip)
+	{
+		const auto GliderSocket = GetMesh()->GetSocketByName(TEXT("GliderSocket"));
+		if (GliderSocket)
+		{
+			GliderSocket->AttachActor(GliderToEquip, GetMesh());
+			GliderToEquip->SetOwner(this);
+		}
+		GliderToEquip->SetActorScale3D(FVector(1, 1, 1));
+	}
 
 	if (bIsSwitching)
 	{
@@ -255,4 +258,19 @@ void AItTakesXCharacter::SwitchGliding()
 bool AItTakesXCharacter::IsGliding() const
 {
 	return Gliding->IsGliding();
+}
+
+void AItTakesXCharacter::HandlePressingOne()
+{
+	Inventory->SwitchToEquippableByIndex(1);
+}
+
+void AItTakesXCharacter::HandlePressingTwo()
+{
+	Inventory->SwitchToEquippableByIndex(2);
+}
+
+void AItTakesXCharacter::HandlePressingThree()
+{
+	Inventory->SwitchToEquippableByIndex(3);
 }

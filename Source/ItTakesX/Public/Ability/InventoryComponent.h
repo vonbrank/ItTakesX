@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Glider.h"
+#include "Magnet.h"
 #include "Components/ActorComponent.h"
 #include "Interface/Equippable.h"
 #include "InventoryComponent.generated.h"
@@ -27,24 +29,40 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	UPROPERTY()
-	TArray<TScriptInterface<IEquippable>> Equippables;
+	// UPROPERTY()
+	// TArray<TScriptInterface<IEquippable>> Equippables;
 
 	UPROPERTY()
-	TScriptInterface<IEquippable> CurrentEquippable;
+	TScriptInterface<IEquippable> CurrentEquippableInterface;
 
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<AMagnet> MagnetClass;
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<AGlider> GliderClass;
+
+	bool bHaveUnArm;
+	bool bHaveMagnet;
+	bool bHaveGlider;
 
 public:
-	FORCEINLINE IEquippable* GetCurrentEquippable() const { return CurrentEquippable.GetInterface(); }
-	FORCEINLINE void SetCurrentEquippable(TScriptInterface<IEquippable> NewEquippable)
-	{
-		CurrentEquippable = NewEquippable;
-		OnCurrentEquippableUpdate.Broadcast(NewEquippable);
-	}
+	FORCEINLINE IEquippable* GetCurrentEquippable() const { return CurrentEquippableInterface.GetInterface(); }
+	// FORCEINLINE void SetCurrentEquippable(TScriptInterface<IEquippable> NewEquippable)
+	// {
+	// 	CurrentEquippableInterface = NewEquippable;
+	// 	OnCurrentEquippableUpdate.Broadcast(NewEquippable);
+	// }
 
-	void AddAndEquip(TScriptInterface<IEquippable> NewEquippable);
+	void AddAndEquip(TScriptInterface<IEquippable> NewEquippableInterface);
 
 	FCurrentHoistableUpdateDelegate OnCurrentEquippableUpdate;
+
+	/**
+	 * 
+	 * @param Index 0: UnArm, 1: Magnet, 2: Glider, Others: Default
+	 */
+	bool SwitchToEquippableByIndex(int Index);
+
+	void UnEquipCurrenEquippable();
 
 	bool HasMagnetEquipped() const;
 };

@@ -32,6 +32,9 @@ protected:
 	void HandleRepeatingLCtrl();
 	void HandleRepeatingZ();
 	void HandleRepeatingX();
+	void HandlePressingOne();
+	void HandlePressingTwo();
+	void HandlePressingThree();
 
 
 private:
@@ -52,7 +55,7 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Ability")
 	class UGrabberComponent* Grabber;
 
-	UPROPERTY(VisibleAnywhere, Category = "Ability")
+	UPROPERTY(VisibleDefaultsOnly, Category = "Ability")
 	class UInventoryComponent* Inventory;
 
 	UPROPERTY(VisibleAnywhere, Category = "Ability")

@@ -12,6 +12,10 @@ UInventoryComponent::UInventoryComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
+
+	bHaveUnArm = true;
+	bHaveGlider = true;
+	bHaveMagnet = false;
 	// ...
 }
 
@@ -34,12 +38,97 @@ void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	// ...
 }
 
-void UInventoryComponent::AddAndEquip(TScriptInterface<IEquippable> NewEquippable)
+void UInventoryComponent::AddAndEquip(TScriptInterface<IEquippable> NewEquippableInterface)
 {
-	Equippables.Add(NewEquippable);
-	CurrentEquippable = NewEquippable;
-	OnCurrentEquippableUpdate.Broadcast(NewEquippable);
+	if (NewEquippableInterface.GetInterface() == CurrentEquippableInterface.GetInterface())
+	{
+		return;
+	}
+
+	if (Cast<AMagnet>(NewEquippableInterface.GetInterface()))
+	{
+		bHaveMagnet = true;
+	}
+
+	UnEquipCurrenEquippable();
+	CurrentEquippableInterface = NewEquippableInterface;
+	OnCurrentEquippableUpdate.Broadcast(NewEquippableInterface);
 }
+
+// bool UInventoryComponent::HasMagnetEquipped() const
+// {
+// 	return Cast<AMagnet>(GetCurrentEquippable()) != nullptr;
+// }
+bool UInventoryComponent::SwitchToEquippableByIndex(int Index)
+{
+	bool bSwitchResult = true;
+
+	TScriptInterface<IEquippable> NewEquippableInterface;
+	NewEquippableInterface.SetObject(nullptr);
+	NewEquippableInterface.SetInterface(nullptr);
+
+	switch (Index)
+	{
+	case 1:
+		if (bHaveUnArm)
+		{
+			NewEquippableInterface.SetObject(nullptr);
+			NewEquippableInterface.SetInterface(nullptr);
+		}
+		else
+		{
+			bSwitchResult = false;
+		}
+		break;
+	case 2:
+		if (bHaveMagnet)
+		{
+			AMagnet* NewMagnet = GetWorld()->SpawnActor<AMagnet>(MagnetClass);
+			NewEquippableInterface.SetObject(NewMagnet);
+			NewEquippableInterface.SetInterface(NewMagnet);
+		}
+		else
+		{
+			bSwitchResult = false;
+		}
+		break;
+	case 3:
+		if (bHaveGlider)
+		{
+			AGlider* NewGlider = GetWorld()->SpawnActor<AGlider>(GliderClass);
+			NewEquippableInterface.SetObject(NewGlider);
+			NewEquippableInterface.SetInterface(NewGlider);
+		}
+		else
+		{
+			bSwitchResult = false;
+		}
+		break;
+	default:
+		NewEquippableInterface.SetObject(nullptr);
+		NewEquippableInterface.SetInterface(nullptr);
+		bSwitchResult = false;
+		break;
+	}
+
+	UnEquipCurrenEquippable();
+	CurrentEquippableInterface = NewEquippableInterface;
+	OnCurrentEquippableUpdate.Broadcast(NewEquippableInterface);
+
+	return bSwitchResult;
+}
+
+void UInventoryComponent::UnEquipCurrenEquippable()
+{
+	AActor* CurrenEquippableActor = Cast<AActor>(CurrentEquippableInterface.GetInterface());
+	if (CurrenEquippableActor)
+	{
+		CurrenEquippableActor->Destroy();
+		CurrentEquippableInterface.SetObject(nullptr);
+		CurrentEquippableInterface.SetInterface(nullptr);
+	}
+}
+
 
 bool UInventoryComponent::HasMagnetEquipped() const
 {
