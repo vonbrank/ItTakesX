@@ -29,7 +29,7 @@ void AWindField::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (CurrenOverlappingCharacter)
+	if (CurrenOverlappingCharacter && CurrenOverlappingCharacter->IsGliding())
 	{
 		CurrenOverlappingCharacter->GetCharacterMovement()->AddForce(FVector::UpVector * ForceLength);
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("Adding force")));
