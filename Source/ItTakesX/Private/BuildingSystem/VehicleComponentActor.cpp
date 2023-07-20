@@ -102,27 +102,6 @@ void AVehicleComponentActor::Tick(float DeltaTime)
 	}
 }
 
-void AVehicleComponentActor::OnBeginAiming_Implementation(AActor* OtherActor)
-{
-	CurrentAimingActor = OtherActor;
-}
-
-void AVehicleComponentActor::OnEndAiming_Implementation(AActor* OtherActor)
-{
-	CurrentAimingActor = nullptr;
-}
-
-void AVehicleComponentActor::OnBeginHoisting_Implementation(AActor* OtherActor)
-{
-	CurrentHoistingActor = OtherActor;
-	Mesh->SetSimulatePhysics(false);
-}
-
-void AVehicleComponentActor::OnEndHoisting_Implementation(AActor* OtherActor)
-{
-	CurrentHoistingActor = nullptr;
-	Mesh->SetSimulatePhysics(true);
-}
 
 void AVehicleComponentActor::OnSphereStartOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                                   UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
@@ -361,4 +340,16 @@ bool AVehicleComponentActor::AddChildNode(TScriptInterface<IVehicleNode> Vehicle
 	ChildNodes.Add(VehicleNode);
 
 	return true;
+}
+
+void AVehicleComponentActor::OnBeginHoisting_Implementation(AActor* OtherActor)
+{
+	Super::OnBeginHoisting_Implementation(OtherActor);
+	Mesh->SetSimulatePhysics(false);
+}
+
+void AVehicleComponentActor::OnEndHoisting_Implementation(AActor* OtherActor)
+{
+	Super::OnEndHoisting_Implementation(OtherActor);
+	Mesh->SetSimulatePhysics(true);
 }

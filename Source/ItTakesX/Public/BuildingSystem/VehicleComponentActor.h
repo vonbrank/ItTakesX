@@ -3,14 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
-#include "Interface/Aimable.h"
-#include "Interface/Hoistable.h"
+#include "Environment/HoistableActor.h"
 #include "Interface/VehicleNode.h"
 #include "VehicleComponentActor.generated.h"
 
 UCLASS()
-class ITTAKESX_API AVehicleComponentActor : public AActor, public IAimable, public IHoistable, public IVehicleNode
+class ITTAKESX_API AVehicleComponentActor : public AHoistableActor, public IVehicleNode
 {
 	GENERATED_BODY()
 
@@ -25,19 +23,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Vehicle Properties")
 	class UStaticMeshComponent* Mesh;
 
-	UPROPERTY()
-	AActor* CurrentAimingActor;
-	UPROPERTY()
-	AActor* CurrentHoistingActor;
-
-
-	// 该零件所有可连接点的 Component 和材质的引用
+	// 该零件所有可连接点的数据
 	UPROPERTY()
 	TArray<FConnectionInfo> ConnectionInfoList;
-	// UPROPERTY()
-	// TArray<class UStaticMeshComponent*> ConnectionComponents;
-	// UPROPERTY()
-	// TArray<class UMaterialInstanceDynamic*> ConnectionMaterials;
 
 	// 用于吸附父节点的各类信息
 	UPROPERTY()
@@ -56,14 +44,9 @@ private:
 
 	bool bIsRunning;
 
-	// UPROPERTY()
-	// FVector CurrentPlaceLocation;
-	// UPROPERTY()
-	// int32 CurrentConnectionIndex;
-
 	UFUNCTION()
 	bool InteractWithOverlappingVehicleNode();
-	
+
 	class UArrowComponent* ForwardArrow;
 
 protected:
@@ -102,10 +85,9 @@ public:
 	// UFUNCTION(BlueprintCallable)
 	// void AddConnectionComponent(class USceneComponent* Component);
 
-	virtual void OnBeginAiming_Implementation(AActor* OtherActor);
-	virtual void OnEndAiming_Implementation(AActor* OtherActor);
-	virtual void OnBeginHoisting_Implementation(AActor* OtherActor);
-	virtual void OnEndHoisting_Implementation(AActor* OtherActor);
+	virtual void OnBeginHoisting_Implementation(AActor* OtherActor) override;
+	virtual void OnEndHoisting_Implementation(AActor* OtherActor) override;
+
 	// virtual void AddChildNode(TScriptInterface<IVehicleNode> ChildNode) override;
 	virtual bool AttachToCurrentOverlappingVehicleNode() override;
 	virtual bool IsHoisting() const override;
