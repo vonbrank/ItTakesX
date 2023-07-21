@@ -89,8 +89,9 @@ public:
 	virtual TArray<FConnectionInfo> GetConnectionInfoList() override;
 	virtual bool
 	GetNearestConnectionInfo(FConnectionInfo& OutConnectionInfo, FConnectionInfo& OutOtherConnectionInfo) override;
-	virtual bool PropagateCommand(FVehicleCoreCommand Command) override;
+	// virtual bool PropagateCommand(FVehicleCoreCommand Command) override;
 	virtual bool AddChildNode(TScriptInterface<IVehicleNode> VehicleNode) override;
+	virtual void SetIsRunning(bool bNewIsRunning) override;
 
 	ADottedLazer* SpawnNewAdsorbEffect();
 };

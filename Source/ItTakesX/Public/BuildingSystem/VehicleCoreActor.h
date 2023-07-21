@@ -25,4 +25,9 @@ protected:
 	                                  const FHitResult& SweepResult) override;
 	virtual void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	                                UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) override;
+
+public:
+	bool IsVehicleStartup() const;
+	bool StartupVehicle();
+	bool ShutdownVehicle();
 };

@@ -43,7 +43,6 @@ class UVehicleNode : public UInterface
 class ITTAKESX_API IVehicleNode
 {
 	GENERATED_BODY()
-
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	// virtual void AddChildNode(TScriptInterface<IVehicleNode> ChildNode) = 0;
@@ -51,6 +50,7 @@ public:
 	virtual TArray<FConnectionInfo> GetConnectionInfoList() = 0;
 	virtual bool GetNearestConnectionInfo(FConnectionInfo& OutConnectionInfo, FConnectionInfo& OutOtherConnectionInfo) =
 	0;
-	virtual bool PropagateCommand(FVehicleCoreCommand Command) = 0;
+	// virtual bool PropagateCommand(FVehicleCoreCommand Command) = 0;
 	virtual bool AddChildNode(TScriptInterface<IVehicleNode> VehicleNode) = 0;
+	virtual void SetIsRunning(bool bNewIsRunning) = 0;
 };

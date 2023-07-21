@@ -74,6 +74,11 @@ void AVehicleComponentActor::BeginPlay()
 		                                 TEXT("name: %s, connection num: %d"), *GetName(), ConnectionInfoList.Num()));
 }
 
+void AVehicleComponentActor::SetIsRunning(bool bNewIsRunning)
+{
+	bIsRunning = bNewIsRunning;
+}
+
 // Called every frame
 void AVehicleComponentActor::Tick(float DeltaTime)
 {
@@ -304,14 +309,14 @@ ADottedLazer* AVehicleComponentActor::SpawnNewAdsorbEffect()
 	return CurrentAdsorbEffect;
 }
 
-bool AVehicleComponentActor::PropagateCommand(FVehicleCoreCommand Command)
-{
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("%s receives command"), *GetName()));
-
-	bIsRunning = true;
-
-	return false;
-}
+// bool AVehicleComponentActor::PropagateCommand(FVehicleCoreCommand Command)
+// {
+// 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("%s receives command"), *GetName()));
+//
+// 	bIsRunning = true;
+//
+// 	return false;
+// }
 
 bool AVehicleComponentActor::AddChildNode(TScriptInterface<IVehicleNode> VehicleNode)
 {

@@ -13,5 +13,12 @@ UCLASS()
 class ITTAKESX_API AVehicleComponentHoveringWheel : public AVehicleComponentActor
 {
 	GENERATED_BODY()
-	
+public:
+	virtual void Tick(float DeltaSeconds) override;
+
+private:
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	float TraceLength;
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	float HoverForce;
 };

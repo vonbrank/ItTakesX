@@ -3,6 +3,8 @@
 
 #include "Ability/DrivingComponent.h"
 
+#include "BuildingSystem/Core/VehicleCoreHoveringCar.h"
+
 // Sets default values for this component's properties
 UDrivingComponent::UDrivingComponent()
 {
@@ -37,14 +39,82 @@ void UDrivingComponent::SetCurrenOverlappingVehicle(AVehicleCoreActor* NewOverla
 	CurrentOverlappingVehicle = NewOverlappingVehicle;
 }
 
-bool UDrivingComponent::ExecuteVehicleCommand(FVehicleCoreCommand Command)
+// bool UDrivingComponent::ExecuteVehicleCommand(FVehicleCoreCommand Command)
+// {
+// 	if (CurrentOverlappingVehicle == nullptr)
+// 	{
+// 		return false;
+// 	}
+//
+// 	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("Start executing command")));
+//
+// 	return CurrentOverlappingVehicle->PropagateCommand(Command);
+// }
+
+bool UDrivingComponent::InteractWithMoveForward(float Value)
 {
 	if (CurrentOverlappingVehicle == nullptr)
 	{
 		return false;
 	}
 
-	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("Start executing command")));
+	if (!CurrentOverlappingVehicle->IsVehicleStartup())
+	{
+		return false;
+	}
 
-	return CurrentOverlappingVehicle->PropagateCommand(Command);
+	AVehicleCoreHoveringCar* VehicleCoreHoveringCar = Cast<AVehicleCoreHoveringCar>(CurrentOverlappingVehicle);
+	if (VehicleCoreHoveringCar)
+	{
+		VehicleCoreHoveringCar->HandleControl(EHoveringCarControl_MoveForward, Value);
+		return true;
+	}
+
+	return false;
+}
+
+bool UDrivingComponent::InteractWithTurnRight(float Value)
+{
+	if (CurrentOverlappingVehicle == nullptr)
+	{
+		return false;
+	}
+	if (!CurrentOverlappingVehicle->IsVehicleStartup())
+	{
+		return false;
+	}
+
+	AVehicleCoreHoveringCar* VehicleCoreHoveringCar = Cast<AVehicleCoreHoveringCar>(CurrentOverlappingVehicle);
+	if (VehicleCoreHoveringCar)
+	{
+		VehicleCoreHoveringCar->HandleControl(EHoveringCarControl_TurnRight, Value);
+		return true;
+	}
+	return false;
+}
+
+bool UDrivingComponent::InteractWithPitchUp(float Value)
+{
+	if (CurrentOverlappingVehicle == nullptr)
+	{
+		return false;
+	}
+	return false;
+}
+
+bool UDrivingComponent::ToggleVehicle()
+{
+	if (CurrentOverlappingVehicle == nullptr)
+	{
+		return false;
+	}
+
+	if (CurrentOverlappingVehicle->IsVehicleStartup())
+	{
+		return CurrentOverlappingVehicle->ShutdownVehicle();
+	}
+	else
+	{
+		return CurrentOverlappingVehicle->StartupVehicle();
+	}
 }

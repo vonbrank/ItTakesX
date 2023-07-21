@@ -3,15 +3,15 @@
 
 #include "BuildingSystem/Core/VehicleCoreQuadcopter.h"
 
-bool AVehicleCoreQuadcopter::PropagateCommand(FVehicleCoreCommand Command)
-{
-	for (auto ChildNodeInterface : ChildNodes)
-	{
-		auto ChildNode = ChildNodeInterface.GetInterface();
-		if (ChildNode)
-		{
-			ChildNode->PropagateCommand(Command);
-		}
-	}
-	return true;
-}
+// bool AVehicleCoreQuadcopter::PropagateCommand(FVehicleCoreCommand Command)
+// {
+// 	for (auto ChildNodeInterface : ChildNodes)
+// 	{
+// 		auto ChildNode = ChildNodeInterface.GetInterface();
+// 		if (ChildNode)
+// 		{
+// 			ChildNode->PropagateCommand(Command);
+// 		}
+// 	}
+// 	return true;
+// }

@@ -32,3 +32,36 @@ void AVehicleCoreActor::OnSphereEndOverlap(UPrimitiveComponent* OverlappedCompon
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("End overlapping character")));
 	}
 }
+
+bool AVehicleCoreActor::IsVehicleStartup() const
+{
+	return bIsRunning;
+}
+
+bool AVehicleCoreActor::StartupVehicle()
+{
+	bIsRunning = true;
+	for (auto ChildNodeInterface : ChildNodes)
+	{
+		auto ChildNode = ChildNodeInterface.GetInterface();
+		if (ChildNode)
+		{
+			ChildNode->SetIsRunning(true);
+		}
+	}
+	return true;
+}
+
+bool AVehicleCoreActor::ShutdownVehicle()
+{
+	bIsRunning = false;
+	for (auto ChildNodeInterface : ChildNodes)
+	{
+		auto ChildNode = ChildNodeInterface.GetInterface();
+		if (ChildNode)
+		{
+			ChildNode->SetIsRunning(false);
+		}
+	}
+	return true;
+}

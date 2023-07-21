@@ -15,5 +15,5 @@ class ITTAKESX_API AVehicleCoreQuadcopter : public AVehicleCoreActor
 	GENERATED_BODY()
 
 public:
-	virtual bool PropagateCommand(FVehicleCoreCommand Command) override;
+	// virtual bool PropagateCommand(FVehicleCoreCommand Command) override;
 };

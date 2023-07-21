@@ -92,6 +92,11 @@ void AItTakesXCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 
 void AItTakesXCharacter::MoveForward(float Value)
 {
+	if (Driving->InteractWithMoveForward(Value))
+	{
+		return;
+	}
+
 	if (Controller != nullptr && Value != 0.f)
 	{
 		const FRotator YawRotation(0.f, Controller->GetControlRotation().Yaw, 0.f);
@@ -102,6 +107,11 @@ void AItTakesXCharacter::MoveForward(float Value)
 
 void AItTakesXCharacter::MoveRight(float Value)
 {
+	if (Driving->InteractWithTurnRight(Value))
+	{
+		return;
+	}
+
 	if (Controller != nullptr && Value != 0.f)
 	{
 		const FRotator YawRotation(0.f, Controller->GetControlRotation().Yaw, 0.f);
@@ -168,8 +178,8 @@ void AItTakesXCharacter::HandlePressingF()
 	{
 		return;
 	}
-	FVehicleCoreCommand NewCommand;
-	if (Driving->ExecuteVehicleCommand(NewCommand))
+
+	if (Driving->ToggleVehicle())
 	{
 		return;
 	}
