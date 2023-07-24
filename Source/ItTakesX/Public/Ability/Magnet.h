@@ -3,13 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "Environment/PickupableActor.h"
 #include "Interface/Equippable.h"
-#include "Interface/Pickupable.h"
 #include "Magnet.generated.h"
 
 UCLASS()
-class ITTAKESX_API AMagnet : public AActor, public IPickupable, public IEquippable
+class ITTAKESX_API AMagnet : public APickupableActor, public IEquippable
 {
 	GENERATED_BODY()
 
@@ -24,36 +23,20 @@ protected:
 
 private:
 	UPROPERTY(VisibleAnywhere)
-	class USphereComponent* AreaSphere;
-
-	UPROPERTY(VisibleAnywhere)
-	class UStaticMeshComponent* Mesh;
-
-	UPROPERTY(VisibleAnywhere)
 	class USceneComponent* LaserEffectSpawnPoint;
-
-	UFUNCTION()
-	virtual void OnSphereStartOverlap(
-		UPrimitiveComponent* OverlappedComponent,
-		AActor* OtherActor,
-		UPrimitiveComponent* OtherComp,
-		int32 OtherBodyIndex,
-		bool bFromSweep,
-		const FHitResult& SweepResult
-	);
-	UFUNCTION()
-	virtual void OnSphereEndOverlap(
-		UPrimitiveComponent* OverlappedComponent,
-		AActor* OtherActor,
-		UPrimitiveComponent* OtherComp,
-		int32 OtherBodyIndex
-	);
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class ADottedLazer> MagnetEffectClass;
 
 	UPROPERTY()
 	class ADottedLazer* CurrentMagnetEffect;
+
+protected:
+	virtual void OnSphereStartOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	                                  UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+	                                  const FHitResult& SweepResult) override;
+	virtual void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	                                UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) override;
 
 public:
 	FORCEINLINE virtual EItTakesXViewType GetViewType() override { return EItTakesXViewType_NiceToAiming; };
