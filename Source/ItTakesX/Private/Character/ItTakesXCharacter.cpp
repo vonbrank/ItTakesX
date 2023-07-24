@@ -4,6 +4,7 @@
 #include "Character/ItTakesXCharacter.h"
 
 #include "Ability/AimingComponent.h"
+#include "Ability/CombatComponent.h"
 #include "Ability/DrivingComponent.h"
 #include "Ability/GlidingComponent.h"
 #include "Ability/GrabberComponent.h"
@@ -38,6 +39,8 @@ AItTakesXCharacter::AItTakesXCharacter()
 	Driving = CreateDefaultSubobject<UDrivingComponent>("DrivingComp");
 
 	Gliding = CreateDefaultSubobject<UGlidingComponent>("GlidingComp");
+
+	Combat = CreateDefaultSubobject<UCombatComponent>("CombatComp");
 
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
@@ -83,6 +86,7 @@ void AItTakesXCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAction(TEXT("OneAction"), IE_Pressed, this, &ThisClass::HandlePressingOne);
 	PlayerInputComponent->BindAction(TEXT("TwoAction"), IE_Pressed, this, &ThisClass::HandlePressingTwo);
 	PlayerInputComponent->BindAction(TEXT("ThreeAction"), IE_Pressed, this, &ThisClass::HandlePressingThree);
+	PlayerInputComponent->BindAction(TEXT("LMBAction"), IE_Pressed, this, &ThisClass::HandlePressingLMB);
 
 	PlayerInputComponent->BindAxis(TEXT("MoveForward"), this, &ThisClass::MoveForward);
 	PlayerInputComponent->BindAxis(TEXT("MoveRight"), this, &ThisClass::MoveRight);
@@ -329,4 +333,12 @@ void AItTakesXCharacter::HandlePressingTwo()
 void AItTakesXCharacter::HandlePressingThree()
 {
 	// Inventory->SwitchToEquippableByIndex(3);
+}
+
+void AItTakesXCharacter::HandlePressingLMB()
+{
+	if (Combat->InteractWithShoot())
+	{
+		return;
+	}
 }

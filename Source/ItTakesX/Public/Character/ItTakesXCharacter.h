@@ -35,6 +35,7 @@ protected:
 	void HandlePressingOne();
 	void HandlePressingTwo();
 	void HandlePressingThree();
+	void HandlePressingLMB();
 
 
 private:
@@ -63,6 +64,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Ability")
 	class UGlidingComponent* Gliding;
+
+	UPROPERTY(VisibleAnywhere, Category = "Ability")
+	class UCombatComponent* Combat;
 
 	EItTakesXViewType ItTakesXView = EItTakesXViewType_Normal;
 
