@@ -9,6 +9,7 @@
 #include "Ability/GrabberComponent.h"
 #include "Ability/InventoryComponent.h"
 #include "Ability/Magnet.h"
+#include "Ability/Weapon/Weapon.h"
 #include "Camera/CameraComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -190,6 +191,12 @@ bool AItTakesXCharacter::HasMagnetEquipped() const
 	return Inventory != nullptr && Inventory->HasMagnetEquipped();
 }
 
+bool AItTakesXCharacter::HasWeaponEquipped() const
+{
+	return Inventory != nullptr && Inventory->HasWeaponEquipped();
+}
+
+
 void AItTakesXCharacter::PickUpAndEquip(TScriptInterface<IEquippable> Equippable)
 {
 	Inventory->AddAndEquip(Equippable);
@@ -233,6 +240,7 @@ void AItTakesXCharacter::OnCurrentEquippableUpdate(TScriptInterface<IEquippable>
 
 	auto MagnetToEquip = Cast<AMagnet>(NewEquippable);
 	auto GliderToEquip = Cast<AGlider>(NewEquippable);
+	auto WeaponToEquip = Cast<AWeapon>(NewEquippable);
 
 	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
 	//                                  FString::Printf(
@@ -242,7 +250,7 @@ void AItTakesXCharacter::OnCurrentEquippableUpdate(TScriptInterface<IEquippable>
 	if (MagnetToEquip)
 	{
 		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("Equip MagnetToEquip")));
-		const auto HandSocket = GetMesh()->GetSocketByName(TEXT("hand_rSocket"));
+		const auto HandSocket = GetMesh()->GetSocketByName(TEXT("MagnetSocket"));
 		if (HandSocket)
 		{
 			HandSocket->AttachActor(MagnetToEquip, GetMesh());
@@ -255,9 +263,18 @@ void AItTakesXCharacter::OnCurrentEquippableUpdate(TScriptInterface<IEquippable>
 		if (GliderSocket)
 		{
 			GliderSocket->AttachActor(GliderToEquip, GetMesh());
-			GliderToEquip->SetOwner(this);
 		}
+		GliderToEquip->SetOwner(this);
 		// GliderToEquip->SetActorScale3D(FVector(1, 1, 1));
+	}
+	else if (WeaponToEquip)
+	{
+		const auto WeaponSocket = GetMesh()->GetSocketByName(TEXT("RifleSocket"));
+		if (WeaponSocket)
+		{
+			WeaponSocket->AttachActor(WeaponToEquip, GetMesh());
+		}
+		WeaponToEquip->SetOwner(this);
 	}
 
 	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,

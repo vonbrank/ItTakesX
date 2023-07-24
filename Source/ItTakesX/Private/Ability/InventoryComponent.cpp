@@ -4,6 +4,7 @@
 #include "Ability/InventoryComponent.h"
 
 #include "Ability/Magnet.h"
+#include "Ability/Weapon/Weapon.h"
 
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
@@ -148,6 +149,11 @@ void UInventoryComponent::UnEquipCurrenEquippable()
 bool UInventoryComponent::HasMagnetEquipped() const
 {
 	return Cast<AMagnet>(GetCurrentEquippable()) != nullptr;
+}
+
+bool UInventoryComponent::HasWeaponEquipped() const
+{
+	return Cast<AWeapon>(GetCurrentEquippable()) != nullptr;
 }
 
 void UInventoryComponent::UnEquipCurrenEquippableWithBroadcast()

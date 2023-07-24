@@ -67,4 +67,5 @@ public:
 	void UnEquipCurrenEquippableWithBroadcast();
 
 	bool HasMagnetEquipped() const;
+	bool HasWeaponEquipped() const;
 };

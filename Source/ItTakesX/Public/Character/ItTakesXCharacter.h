@@ -83,6 +83,7 @@ public:
 	// void EquipMagnet(AMagnet* MagnetToEquip);
 	bool HasMagnetEquipped() const;
 	bool IsGliding() const;
+	bool HasWeaponEquipped() const;
 
 	void PickUpAndEquip(TScriptInterface<IEquippable> Equippable);
 

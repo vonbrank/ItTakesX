@@ -33,6 +33,7 @@ void UItTakesXAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	bIsAccelerating = ItTakesXCharacter->GetCharacterMovement()->GetCurrentAcceleration().Size() > 0.f;
 
 	bEquippingMagnet = ItTakesXCharacter->HasMagnetEquipped();
+	bEquippingWeapon = ItTakesXCharacter->HasWeaponEquipped();
 	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
 	//                                  FString::Printf(TEXT("bEquippingMagnet = %d"), bEquippingMagnet));
 
