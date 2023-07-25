@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "HoistableActor.h"
+#include "TimeReversingActor.h"
 #include "GameFramework/Actor.h"
 #include "Interface/Aimable.h"
 #include "BombActor.generated.h"
@@ -30,8 +31,30 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AActor> ExplosionActorClass;
 
+
 	bool bHasExplode;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	float CaptureTime = 10.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	float ExplodeAgainInterval = 10.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	bool bIsReversing;
+
+	UPROPERTY()
+	TArray<ATimeReversingActor*> AreaTimeReversingActors;
+
 
 public:
 	void Explode();
+
+	UFUNCTION(BlueprintCallable)
+	void TimeReverse();
+	UFUNCTION(BlueprintCallable)
+	void ExplodeAgain();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void HandHasExploded();
 };

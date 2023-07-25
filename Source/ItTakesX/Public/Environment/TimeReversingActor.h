@@ -33,15 +33,15 @@ private:
 
 	bool bReversing;
 
-	UPROPERTY(EditAnywhere)
-	float RecordTime = 10.f;
+	// UPROPERTY(EditAnywhere)
+	// float RecordTime = 10.f;
 
 	float CurrentLeftTime;
 
 protected:
 public:
 	UFUNCTION(BlueprintCallable)
-	void StartRecording();
+	void StartRecording(float RecordTime);
 
 	UFUNCTION(BlueprintCallable)
 	void StartReplaying();

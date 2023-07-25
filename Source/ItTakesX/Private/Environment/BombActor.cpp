@@ -3,6 +3,8 @@
 
 #include "Environment/BombActor.h"
 
+#include "Environment/TimeReversingActor.h"
+#include "Kismet/GameplayStatics.h"
 #include "PhysicsEngine/RadialForceComponent.h"
 
 // Sets default values
@@ -33,17 +35,62 @@ void ABombActor::Explode()
 {
 	if (bHasExplode)
 	{
-		return;
+		HandHasExploded();
+	}
+	else
+	{
+		if (ExplosionActorClass)
+		{
+			TArray<AActor*> OutActors;
+			UGameplayStatics::GetAllActorsOfClass(this, ATimeReversingActor::StaticClass(), OutActors);
+			for (auto Actor : OutActors)
+			{
+				ATimeReversingActor* TimeReversingActor = Cast<ATimeReversingActor>(Actor);
+				if (TimeReversingActor == nullptr)
+				{
+					continue;
+				}
+				if ((TimeReversingActor->GetActorLocation() - GetActorLocation()).Length() > 500.f)
+				{
+					continue;
+				}
+
+				AreaTimeReversingActors.Add(TimeReversingActor);
+			}
+
+			for (auto Actor : AreaTimeReversingActors)
+			{
+				Actor->StartRecording(CaptureTime);
+			}
+
+			auto ExplosionActor = GetWorld()->SpawnActor<AActor>(ExplosionActorClass);
+			if (ExplosionActor)
+			{
+				ExplosionActor->SetActorLocation(GetActorLocation());
+				bHasExplode = true;
+			}
+		}
+	}
+}
+
+void ABombActor::TimeReverse()
+{
+	for (auto Actor : AreaTimeReversingActors)
+	{
+		Actor->StartReplaying();
+	}
+}
+
+void ABombActor::ExplodeAgain()
+{
+	for (auto Actor : AreaTimeReversingActors)
+	{
+		Actor->StartRecording(CaptureTime);
 	}
 
-	if (ExplosionActorClass)
+	auto ExplosionActor = GetWorld()->SpawnActor<AActor>(ExplosionActorClass);
+	if (ExplosionActor)
 	{
-		auto ExplosionActor = GetWorld()->SpawnActor<AActor>(ExplosionActorClass);
-		if (ExplosionActor)
-		{
-			ExplosionActor->SetActorLocation(GetActorLocation());
-			bHasExplode = true;
-			Destroy();
-		}
+		ExplosionActor->SetActorLocation(GetActorLocation());
 	}
 }

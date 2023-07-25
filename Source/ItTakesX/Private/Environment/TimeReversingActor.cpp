@@ -55,7 +55,7 @@ void ATimeReversingActor::Tick(float DeltaTime)
 	}
 }
 
-void ATimeReversingActor::StartRecording()
+void ATimeReversingActor::StartRecording(float RecordTime)
 {
 	bReversing = false;
 	CurrentLeftTime = RecordTime;
