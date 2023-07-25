@@ -144,6 +144,15 @@ void AItTakesXCharacter::HandlePressingE()
 {
 	if (Grabber->ToggleHoistingActor())
 	{
+		if (Grabber->IsHoisting())
+		{
+			SwitchToView(EItTakesXViewType_NiceToGrabbing);
+		}
+		else
+		{
+			SwitchToView(EItTakesXViewType_NiceToAiming);
+		}
+
 		return;
 	}
 }
@@ -235,6 +244,8 @@ void AItTakesXCharacter::OnCurrentEquippableUpdate(TScriptInterface<IEquippable>
 		bUseControllerRotationYaw = false;
 		GetCharacterMovement()->bOrientRotationToMovement = true;
 		GetCharacterMovement()->MaxWalkSpeed = 600.f;
+		SwitchToView(EItTakesXViewType_Normal);
+		ItTakesXView = EItTakesXViewType_Normal;
 		return;
 	}
 
@@ -291,14 +302,7 @@ void AItTakesXCharacter::OnCurrentEquippableUpdate(TScriptInterface<IEquippable>
 		return;
 	}
 
-	if (ItTakesXView == EItTakesXViewType_Normal && NewEquippable->GetViewType() == EItTakesXViewType_NiceToAiming)
-	{
-		SwitchToView(EItTakesXViewType_NiceToAiming);
-	}
-	else if (ItTakesXView == EItTakesXViewType_NiceToAiming && NewEquippable->GetViewType() == EItTakesXViewType_Normal)
-	{
-		SwitchToView(EItTakesXViewType_Normal);
-	}
+	SwitchToView(NewEquippable->GetViewType());
 	ItTakesXView = NewEquippable->GetViewType();
 }
 

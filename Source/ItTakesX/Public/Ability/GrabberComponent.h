@@ -60,6 +60,7 @@ public:
 	bool InteractWithComposing();
 	bool InteractWithHoistingObjectRotation(ERotateDirection Direction, float Value);
 	bool InteractWithZoomingHoistable(float Value);
+	bool IsHoisting() const;
 
 	// FCurrentHoistableUpdateDelegate OnHoistableUpdate;
 };

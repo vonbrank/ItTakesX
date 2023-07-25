@@ -231,3 +231,8 @@ FVector UGrabberComponent::GetHoistingActorHorizontalRotatingAxisRight()
 
 	return Res;
 }
+
+bool UGrabberComponent::IsHoisting() const
+{
+	return CurrentHoistingHoistableInterface.GetInterface() != nullptr;
+}

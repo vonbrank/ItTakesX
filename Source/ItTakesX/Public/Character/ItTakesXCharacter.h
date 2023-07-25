@@ -45,10 +45,13 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	class UCameraComponent* FollowCamera;
 
+	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera, meta=(AllowPrivateAccess = "true"))
+	// float CameraSocketOffsetDefault = 0.f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera, meta=(AllowPrivateAccess = "true"))
-	float CameraSocketOffsetDefault = 0.f;
+	FVector CameraSocketOffsetNiceToAiming = FVector(0, 240.f, 0);
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Camera, meta=(AllowPrivateAccess = "true"))
-	float CameraSocketOffsetNiceToAiming = 240.f;
+	FVector CameraSocketOffsetNiceToGrab = FVector(0, 0, 80.f);
 
 	UPROPERTY(VisibleAnywhere, Category = "Ability")
 	class UAimingComponent* Aiming;

@@ -11,6 +11,7 @@ enum EItTakesXViewType
 {
 	EItTakesXViewType_Normal,
 	EItTakesXViewType_NiceToAiming,
+	EItTakesXViewType_NiceToGrabbing,
 
 	EItTakesXViewType_Max
 };
