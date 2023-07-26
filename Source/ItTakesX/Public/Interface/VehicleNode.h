@@ -48,7 +48,8 @@ public:
 	// virtual void AddChildNode(TScriptInterface<IVehicleNode> ChildNode) = 0;
 	virtual bool AttachToCurrentOverlappingVehicleNode() = 0;
 	virtual TArray<FConnectionInfo> GetConnectionInfoList() = 0;
-	virtual bool GetNearestConnectionInfo(FConnectionInfo& OutConnectionInfo, FConnectionInfo& OutOtherConnectionInfo) =
+	virtual bool GetNearestConnectionInfo(FConnectionInfo& OutConnectionInfo, FConnectionInfo& OutOtherConnectionInfo,
+	                                      TScriptInterface<IVehicleNode>& OutNearestVehicleNode) =
 	0;
 	// virtual bool PropagateCommand(FVehicleCoreCommand Command) = 0;
 	virtual bool AddChildNode(TScriptInterface<IVehicleNode> VehicleNode) = 0;

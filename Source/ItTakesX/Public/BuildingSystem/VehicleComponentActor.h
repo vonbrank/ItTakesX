@@ -25,20 +25,25 @@ private:
 	TArray<FConnectionInfo> ConnectionInfoList;
 
 	// 用于吸附父节点的各类信息
+	// UPROPERTY()
+	// USceneComponent* CurrentOverlappingComponent;
 	UPROPERTY()
-	USceneComponent* CurrentOverlappingComponent;
-	UPROPERTY()
-	TScriptInterface<IVehicleNode> CurrentOverlappingVehicleNode;
+	TArray<TScriptInterface<IVehicleNode>> CurrentOverlappingVehicleNodes;
 
 	bool bHaveCurrentNearestConnectionInfo;
 	UPROPERTY()
 	FConnectionInfo CurrentNearestConnection;
 	UPROPERTY()
 	FConnectionInfo CurrentNearestOtherConnection;
+	UPROPERTY()
+	TScriptInterface<IVehicleNode> CurrenNearestVehicleNode;
 
 
 	UFUNCTION()
 	bool InteractWithOverlappingVehicleNode();
+
+	void AddNewNodeToVehicleNodeList(IVehicleNode* VehicleNode, AActor* Actor);
+	void RemoveNodeFromVehicleNodeList(IVehicleNode* VehicleNode);
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Vehicle Properties")
@@ -88,7 +93,7 @@ public:
 
 	virtual TArray<FConnectionInfo> GetConnectionInfoList() override;
 	virtual bool
-	GetNearestConnectionInfo(FConnectionInfo& OutConnectionInfo, FConnectionInfo& OutOtherConnectionInfo) override;
+	GetNearestConnectionInfo(FConnectionInfo& OutConnectionInfo, FConnectionInfo& OutOtherConnectionInfo,  TScriptInterface<IVehicleNode>& OutNearestVehicleNode) override;
 	// virtual bool PropagateCommand(FVehicleCoreCommand Command) override;
 	virtual bool AddChildNode(TScriptInterface<IVehicleNode> VehicleNode) override;
 	virtual void SetIsRunning(bool bNewIsRunning) override;

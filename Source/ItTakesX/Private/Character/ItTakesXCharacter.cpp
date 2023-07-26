@@ -190,6 +190,7 @@ void AItTakesXCharacter::HandlePressingF()
 {
 	if (Grabber->InteractWithComposing())
 	{
+		SwitchToView(EItTakesXViewType_NiceToAiming);
 		return;
 	}
 

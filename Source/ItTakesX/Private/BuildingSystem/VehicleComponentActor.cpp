@@ -99,45 +99,100 @@ void AVehicleComponentActor::OnSphereStartOverlap(UPrimitiveComponent* Overlappe
 
 	if (CurrentHoistingActor != nullptr && // 必须被举着
 		VehicleNode != nullptr && // 另一个 Actor 必须是一个 IVehicleNode
-		CurrentOverlappingComponent == nullptr && // 当前没有 Overlapping 的 Component
 		OtherComp // 另一个 Component 需要是连接点的 Comp
-		->ComponentTags.Contains(
-			TEXT("VehicleArea")))
+		->ComponentTags.Contains(TEXT("VehicleArea")))
 	{
-		CurrentOverlappingComponent = OtherComp;
-		CurrentOverlappingVehicleNode.SetObject(OtherActor);
-		CurrentOverlappingVehicleNode.SetInterface(VehicleNode);
+		AddNewNodeToVehicleNodeList(VehicleNode, OtherActor);
 
 		GEngine->AddOnScreenDebugMessage(
 			-1, 15.f, FColor::Yellow,
 			FString::Printf(
-				TEXT("Start overlap: %s, owner: %s"), *OtherComp->GetName(), *GetName()));
+				TEXT("Start overlap: %s, owner: %s, list length: %d"), *OtherComp->GetName(), *OtherActor->GetName(),
+				CurrentOverlappingVehicleNodes.Num()));
 	}
 }
 
 void AVehicleComponentActor::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                                 UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (OtherComp == CurrentOverlappingComponent)
+	auto VehicleNode = Cast<IVehicleNode>(OtherActor);
+	if (CurrentHoistingActor != nullptr && VehicleNode != nullptr && OtherComp
+	                                                                 ->ComponentTags.Contains(TEXT("VehicleArea")))
+	// 另一个 Component 需要是连接点的 Comp
 	{
-		CurrentOverlappingComponent = nullptr;
+		// CurrentOverlappingComponent = nullptr;
+		// GEngine->AddOnScreenDebugMessage(
+		// 	-1, 15.f, FColor::Yellow,
+		// 	FString::Printf(
+		// 		TEXT("End overlap: %s, owner: %s"), *OtherComp->GetName(), *GetName()));
+		//
+		// auto VehicleNode = CurrentOverlappingVehicleNode.GetInterface();
+		//
+		// CurrentOverlappingVehicleNode.SetObject(nullptr);
+		// CurrentOverlappingVehicleNode.SetInterface(nullptr);
+
+		RemoveNodeFromVehicleNodeList(VehicleNode);
+
 		GEngine->AddOnScreenDebugMessage(
 			-1, 15.f, FColor::Yellow,
 			FString::Printf(
-				TEXT("End overlap: %s, owner: %s"), *OtherComp->GetName(), *GetName()));
-
-		auto VehicleNode = CurrentOverlappingVehicleNode.GetInterface();
-
-		CurrentOverlappingVehicleNode.SetObject(nullptr);
-		CurrentOverlappingVehicleNode.SetInterface(nullptr);
+				TEXT("End overlap: %s, owner: %s, list length: %d"), *OtherComp->GetName(), *OtherActor->GetName(),
+				CurrentOverlappingVehicleNodes.Num()));
 	}
+}
+
+void AVehicleComponentActor::AddNewNodeToVehicleNodeList(IVehicleNode* VehicleNode, AActor* Actor)
+{
+	if (VehicleNode == nullptr || Actor == nullptr)
+	{
+		return;
+	}
+
+	bool bInList = false;
+	for (auto NodeInterface : CurrentOverlappingVehicleNodes)
+	{
+		if (NodeInterface.GetInterface() == VehicleNode)
+		{
+			bInList = true;
+			break;
+		}
+	}
+	if (bInList)
+	{
+		return;
+	}
+
+	TScriptInterface<IVehicleNode> NewNodeInterface;
+	NewNodeInterface.SetObject(Actor);
+	NewNodeInterface.SetInterface(VehicleNode);
+
+	CurrentOverlappingVehicleNodes.Add(NewNodeInterface);
+}
+
+void AVehicleComponentActor::RemoveNodeFromVehicleNodeList(IVehicleNode* VehicleNode)
+{
+	int Index = -1;
+
+	for (int i = 0; i < CurrentOverlappingVehicleNodes.Num(); i++)
+	{
+		if (CurrentOverlappingVehicleNodes[i].GetInterface() == VehicleNode)
+		{
+			Index = i;
+			break;
+		}
+	}
+	if (Index == -1)
+	{
+		return;
+	}
+	CurrentOverlappingVehicleNodes.RemoveAt(Index);
 }
 
 bool AVehicleComponentActor::AttachToCurrentOverlappingVehicleNode()
 {
 	if (!bHaveCurrentNearestConnectionInfo) return false;
 
-	auto ParentActor = Cast<AActor>(CurrentOverlappingVehicleNode.GetInterface());
+	auto ParentActor = Cast<AActor>(CurrenNearestVehicleNode.GetInterface());
 
 	if (ParentActor == nullptr) return false;
 	auto ParentRootComponent = Cast<UPrimitiveComponent>(ParentActor->GetRootComponent());
@@ -168,7 +223,7 @@ bool AVehicleComponentActor::AttachToCurrentOverlappingVehicleNode()
 	ParentRootComponent->SetSimulatePhysics(true);
 	Mesh->SetSimulatePhysics(true);
 
-	ParentNode = CurrentOverlappingVehicleNode;
+	ParentNode = CurrenNearestVehicleNode;
 	if (ParentNode.GetInterface())
 	{
 		TScriptInterface<IVehicleNode> SonNode;
@@ -184,10 +239,10 @@ bool AVehicleComponentActor::InteractWithOverlappingVehicleNode()
 {
 	//TODO Waiting for optimizing action between this and other vehicle node
 
-	auto VehicleNode = CurrentOverlappingVehicleNode.GetInterface();
+	// auto VehicleNode = CurrenNearestVehicleNode.GetInterface();
 
 
-	if (CurrentHoistingActor == nullptr || VehicleNode == nullptr)
+	if (CurrentHoistingActor == nullptr || CurrentOverlappingVehicleNodes.Num() == 0)
 	{
 		if (CurrentAdsorbEffect)
 		{
@@ -199,14 +254,21 @@ bool AVehicleComponentActor::InteractWithOverlappingVehicleNode()
 
 	FConnectionInfo OutCurrentConnectionInfo;
 	FConnectionInfo OutCurrentOtherConnectionInfo;
-	bHaveCurrentNearestConnectionInfo = GetNearestConnectionInfo(OutCurrentConnectionInfo,
-	                                                             OutCurrentOtherConnectionInfo);
+	TScriptInterface<IVehicleNode> OutNearestVehicleNode;
 
+	bHaveCurrentNearestConnectionInfo = GetNearestConnectionInfo(OutCurrentConnectionInfo,
+	                                                             OutCurrentOtherConnectionInfo,
+	                                                             OutNearestVehicleNode);
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	//                                  FString::Printf(
+	// 	                                 TEXT("bHaveCurrentNearestConnectionInfo: %d"),
+	// 	                                 bHaveCurrentNearestConnectionInfo));
 
 	if (bHaveCurrentNearestConnectionInfo)
 	{
 		if (OutCurrentConnectionInfo == CurrentNearestConnection && OutCurrentOtherConnectionInfo ==
-			CurrentNearestOtherConnection)
+			CurrentNearestOtherConnection && OutNearestVehicleNode.GetInterface() == CurrenNearestVehicleNode.
+			GetInterface())
 		{
 			if (CurrentAdsorbEffect)
 			{
@@ -221,6 +283,7 @@ bool AVehicleComponentActor::InteractWithOverlappingVehicleNode()
 		{
 			CurrentNearestConnection = OutCurrentConnectionInfo;
 			CurrentNearestOtherConnection = OutCurrentOtherConnectionInfo;
+			CurrenNearestVehicleNode = OutNearestVehicleNode;
 			SpawnNewAdsorbEffect();
 		}
 
@@ -245,36 +308,35 @@ TArray<FConnectionInfo> AVehicleComponentActor::GetConnectionInfoList()
 }
 
 bool AVehicleComponentActor::GetNearestConnectionInfo(FConnectionInfo& OutConnectionInfo,
-                                                      FConnectionInfo& OutOtherConnectionInfo)
+                                                      FConnectionInfo& OutOtherConnectionInfo,
+                                                      TScriptInterface<IVehicleNode>& OutNearestVehicleNode)
 {
-	auto VehicleNode = CurrentOverlappingVehicleNode.GetInterface();
-	if (VehicleNode == nullptr)
-	{
-		return false;
-	}
-
 	bool bHaveAnswer = false;
 	float MinDistance = TNumericLimits<float>::Max();
 
-	for (auto OtherConnectionInfo : VehicleNode->GetConnectionInfoList())
+	for (auto VehicleNode : CurrentOverlappingVehicleNodes)
 	{
-		for (auto ConnectionInfo : ConnectionInfoList)
+		for (auto OtherConnectionInfo : VehicleNode->GetConnectionInfoList())
 		{
-			auto OtherMesh = OtherConnectionInfo.Mesh;
-			auto ThisMesh = ConnectionInfo.Mesh;
-			if (OtherMesh == nullptr || ThisMesh == nullptr)
+			for (auto ConnectionInfo : ConnectionInfoList)
 			{
-				continue;
-			}
+				auto OtherMesh = OtherConnectionInfo.Mesh;
+				auto ThisMesh = ConnectionInfo.Mesh;
+				if (OtherMesh == nullptr || ThisMesh == nullptr)
+				{
+					continue;
+				}
 
-			auto CurrentDistance = (OtherMesh->GetComponentLocation() - ThisMesh->GetComponentLocation()).Length();
+				auto CurrentDistance = (OtherMesh->GetComponentLocation() - ThisMesh->GetComponentLocation()).Length();
 
-			if (CurrentDistance < MinDistance)
-			{
-				MinDistance = CurrentDistance;
-				OutConnectionInfo = ConnectionInfo;
-				OutOtherConnectionInfo = OtherConnectionInfo;
-				bHaveAnswer = true;
+				if (CurrentDistance < MinDistance)
+				{
+					MinDistance = CurrentDistance;
+					OutConnectionInfo = ConnectionInfo;
+					OutOtherConnectionInfo = OtherConnectionInfo;
+					OutNearestVehicleNode = VehicleNode;
+					bHaveAnswer = true;
+				}
 			}
 		}
 	}
