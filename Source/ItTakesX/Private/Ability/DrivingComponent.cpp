@@ -5,6 +5,7 @@
 
 #include "BuildingSystem/Core/VehicleCoreHoveringCar.h"
 #include "BuildingSystem/Core/VehicleCoreQuadcopter.h"
+#include "BuildingSystem/Core/VehicleCoreSimpleAirplane.h"
 #include "Character/ItTakesXCharacter.h"
 #include "GameFramework/PawnMovementComponent.h"
 #include "PhysicsEngine/PhysicsConstraintActor.h"
@@ -151,6 +152,13 @@ bool UDrivingComponent::Throttle(float Value)
 		return true;
 	}
 
+	AVehicleCoreSimpleAirplane* VehicleCoreSimpleAirplane = Cast<AVehicleCoreSimpleAirplane>(CurrentOverlappingVehicle);
+	if (VehicleCoreSimpleAirplane)
+	{
+		VehicleCoreSimpleAirplane->Throttle(Value);
+		return true;
+	}
+
 	return false;
 }
 
@@ -165,6 +173,13 @@ bool UDrivingComponent::Pitch(float Value)
 	if (VehicleCoreQuadcopter)
 	{
 		VehicleCoreQuadcopter->Pitch(Value);
+		return true;
+	}
+
+	AVehicleCoreSimpleAirplane* VehicleCoreSimpleAirplane = Cast<AVehicleCoreSimpleAirplane>(CurrentOverlappingVehicle);
+	if (VehicleCoreSimpleAirplane)
+	{
+		VehicleCoreSimpleAirplane->Pitch(Value);
 		return true;
 	}
 
@@ -185,6 +200,13 @@ bool UDrivingComponent::Roll(float Value)
 		return true;
 	}
 
+	AVehicleCoreSimpleAirplane* VehicleCoreSimpleAirplane = Cast<AVehicleCoreSimpleAirplane>(CurrentOverlappingVehicle);
+	if (VehicleCoreSimpleAirplane)
+	{
+		VehicleCoreSimpleAirplane->Roll(Value);
+		return true;
+	}
+
 	return false;
 }
 
@@ -201,5 +223,13 @@ bool UDrivingComponent::Yaw(float Value)
 		VehicleCoreQuadcopter->Yaw(Value);
 		return true;
 	}
+
+	AVehicleCoreSimpleAirplane* VehicleCoreSimpleAirplane = Cast<AVehicleCoreSimpleAirplane>(CurrentOverlappingVehicle);
+	if (VehicleCoreSimpleAirplane)
+	{
+		VehicleCoreSimpleAirplane->Yaw(Value);
+		return true;
+	}
+
 	return false;
 }
