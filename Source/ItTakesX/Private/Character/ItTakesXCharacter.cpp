@@ -93,6 +93,10 @@ void AItTakesXCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &ThisClass::Turn);
 	PlayerInputComponent->BindAxis(TEXT("LookUp"), this, &ThisClass::LookUp);
 	PlayerInputComponent->BindAxis(TEXT("Zoom"), this, &ThisClass::Zoom);
+	PlayerInputComponent->BindAxis(TEXT("Throttle"), this, &ThisClass::Throttle);
+	PlayerInputComponent->BindAxis(TEXT("Pitch"), this, &ThisClass::Pitch);
+	PlayerInputComponent->BindAxis(TEXT("Roll"), this, &ThisClass::Roll);
+	PlayerInputComponent->BindAxis(TEXT("Yaw"), this, &ThisClass::Yaw);
 }
 
 void AItTakesXCharacter::MoveForward(float Value)
@@ -343,6 +347,38 @@ void AItTakesXCharacter::HandlePressingThree()
 void AItTakesXCharacter::HandlePressingLMB()
 {
 	if (Combat->InteractWithShoot())
+	{
+		return;
+	}
+}
+
+void AItTakesXCharacter::Throttle(float Value)
+{
+	if (Driving->Throttle(Value))
+	{
+		return;
+	}
+}
+
+void AItTakesXCharacter::Pitch(float Value)
+{
+	if (Driving->Pitch(Value))
+	{
+		return;
+	}
+}
+
+void AItTakesXCharacter::Roll(float Value)
+{
+	if (Driving->Roll(Value))
+	{
+		return;
+	}
+}
+
+void AItTakesXCharacter::Yaw(float Value)
+{
+	if (Driving->Yaw(Value))
 	{
 		return;
 	}

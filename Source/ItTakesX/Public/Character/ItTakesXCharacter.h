@@ -26,6 +26,11 @@ protected:
 	void LookUp(float Value);
 	void Zoom(float Value);
 
+	void Throttle(float Value);
+	void Pitch(float Value);
+	void Roll(float Value);
+	void Yaw(float Value);
+
 	void HandlePressingE();
 	void HandlePressingF();
 	void HandleRepeatingLShift();

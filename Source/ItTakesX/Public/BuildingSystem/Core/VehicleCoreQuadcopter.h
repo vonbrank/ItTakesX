@@ -14,6 +14,21 @@ class ITTAKESX_API AVehicleCoreQuadcopter : public AVehicleCoreActor
 {
 	GENERATED_BODY()
 
+private:
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	float RollBackTorqueLength = 200.f;
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	float RollBackMaxDegrees = 180.f;
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	float ThrottleForceLength = 1000.f;
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	float PitchTorqueLength = 10.f;
+
 public:
-	// virtual bool PropagateCommand(FVehicleCoreCommand Command) override;
+	virtual void Tick(float DeltaSeconds) override;
+
+	void Throttle(float Value);
+	void Pitch(float Value);
+	void Roll(float Value);
+	void Yaw(float Value);
 };

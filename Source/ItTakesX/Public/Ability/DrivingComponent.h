@@ -28,6 +28,9 @@ private:
 	UPROPERTY()
 	class AVehicleCoreActor* CurrentOverlappingVehicle;
 
+	UPROPERTY()
+	class AItTakesXCharacter* Character;
+
 protected:
 public:
 	void SetCurrenOverlappingVehicle(class AVehicleCoreActor* NewOverlappingVehicle);
@@ -37,4 +40,8 @@ public:
 	bool InteractWithMoveForward(float Value);
 	bool InteractWithTurnRight(float Value);
 	bool InteractWithPitchUp(float Value);
+	bool Throttle(float Value);
+	bool Pitch(float Value);
+	bool Roll(float Value);
+	bool Yaw(float Value);
 };

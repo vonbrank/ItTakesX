@@ -26,13 +26,15 @@ void AVehicleComponentThruster::Tick(float DeltaTime)
 
 	if (bIsRunning)
 	{
-		if (BP_ForwardArrowRef)
-		{
-			Mesh->AddForce(BP_ForwardArrowRef->GetForwardVector() * CurrenForceLength, NAME_None, true);
-		}
-		else
-		{
-			Mesh->AddForce(FVector::UpVector * CurrenForceLength, NAME_None, true);
-		}
+		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("thruster is running")));
+
+		// if (BP_ForwardArrowRef)
+		// {
+		// 	Mesh->AddForce(BP_ForwardArrowRef->GetForwardVector() * CurrenForceLength, NAME_None, true);
+		// }
+		// else
+		// {
+		// 	Mesh->AddForce(FVector::UpVector * CurrenForceLength, NAME_None, true);
+		// }
 	}
 }

@@ -4,6 +4,11 @@
 #include "Ability/DrivingComponent.h"
 
 #include "BuildingSystem/Core/VehicleCoreHoveringCar.h"
+#include "BuildingSystem/Core/VehicleCoreQuadcopter.h"
+#include "Character/ItTakesXCharacter.h"
+#include "GameFramework/PawnMovementComponent.h"
+#include "PhysicsEngine/PhysicsConstraintActor.h"
+#include "PhysicsEngine/PhysicsConstraintComponent.h"
 
 // Sets default values for this component's properties
 UDrivingComponent::UDrivingComponent()
@@ -21,7 +26,7 @@ void UDrivingComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
+	Character = Cast<AItTakesXCharacter>(GetOwner());
 }
 
 
@@ -31,25 +36,18 @@ void UDrivingComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	if (CurrentOverlappingVehicle && CurrentOverlappingVehicle->IsVehicleStartup())
+	{
+		FRotator NewRotation = Character->Controller->GetControlRotation();
+		NewRotation.Yaw = CurrentOverlappingVehicle->GetActorRotation().Yaw;
+		Character->Controller->SetControlRotation(NewRotation);
+	}
 }
 
 void UDrivingComponent::SetCurrenOverlappingVehicle(AVehicleCoreActor* NewOverlappingVehicle)
 {
 	CurrentOverlappingVehicle = NewOverlappingVehicle;
 }
-
-// bool UDrivingComponent::ExecuteVehicleCommand(FVehicleCoreCommand Command)
-// {
-// 	if (CurrentOverlappingVehicle == nullptr)
-// 	{
-// 		return false;
-// 	}
-//
-// 	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("Start executing command")));
-//
-// 	return CurrentOverlappingVehicle->PropagateCommand(Command);
-// }
 
 bool UDrivingComponent::InteractWithMoveForward(float Value)
 {
@@ -111,10 +109,97 @@ bool UDrivingComponent::ToggleVehicle()
 
 	if (CurrentOverlappingVehicle->IsVehicleStartup())
 	{
-		return CurrentOverlappingVehicle->ShutdownVehicle();
+		bool bShutdownResult = CurrentOverlappingVehicle->ShutdownVehicle();
+		if (Character)
+		{
+			Character->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+			// Character->SetActorLocation(CurrentOverlappingVehicle->GetActorLocation());
+			Character->GetMovementComponent()->Activate();
+			// Character->();
+		}
+		return bShutdownResult;
 	}
 	else
 	{
+		// auto VehicleRootComp = Cast<UPrimitiveComponent>(CurrentOverlappingVehicle->GetRootComponent());
+
+		if (Character)
+		{
+			Character->AttachToActor(CurrentOverlappingVehicle, FAttachmentTransformRules::KeepWorldTransform);
+			Character->GetMovementComponent()->Deactivate();
+		}
+		else
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("character is null")));
+		}
+
 		return CurrentOverlappingVehicle->StartupVehicle();
 	}
+}
+
+bool UDrivingComponent::Throttle(float Value)
+{
+	if (CurrentOverlappingVehicle == nullptr || !CurrentOverlappingVehicle->IsVehicleStartup())
+	{
+		return false;
+	}
+
+	AVehicleCoreQuadcopter* VehicleCoreQuadcopter = Cast<AVehicleCoreQuadcopter>(CurrentOverlappingVehicle);
+	if (VehicleCoreQuadcopter)
+	{
+		VehicleCoreQuadcopter->Throttle(Value);
+		return true;
+	}
+
+	return false;
+}
+
+bool UDrivingComponent::Pitch(float Value)
+{
+	if (CurrentOverlappingVehicle == nullptr || !CurrentOverlappingVehicle->IsVehicleStartup())
+	{
+		return false;
+	}
+
+	AVehicleCoreQuadcopter* VehicleCoreQuadcopter = Cast<AVehicleCoreQuadcopter>(CurrentOverlappingVehicle);
+	if (VehicleCoreQuadcopter)
+	{
+		VehicleCoreQuadcopter->Pitch(Value);
+		return true;
+	}
+
+	return false;
+}
+
+bool UDrivingComponent::Roll(float Value)
+{
+	if (CurrentOverlappingVehicle == nullptr || !CurrentOverlappingVehicle->IsVehicleStartup())
+	{
+		return false;
+	}
+
+	AVehicleCoreQuadcopter* VehicleCoreQuadcopter = Cast<AVehicleCoreQuadcopter>(CurrentOverlappingVehicle);
+	if (VehicleCoreQuadcopter)
+	{
+		VehicleCoreQuadcopter->Roll(Value);
+		return true;
+	}
+
+	return false;
+}
+
+bool UDrivingComponent::Yaw(float Value)
+{
+	if (CurrentOverlappingVehicle == nullptr || !CurrentOverlappingVehicle->IsVehicleStartup())
+	{
+		return false;
+	}
+
+	AVehicleCoreQuadcopter* VehicleCoreQuadcopter = Cast<AVehicleCoreQuadcopter>(CurrentOverlappingVehicle);
+	if (VehicleCoreQuadcopter)
+	{
+		VehicleCoreQuadcopter->Yaw(Value);
+		return true;
+	}
+	return false;
 }
