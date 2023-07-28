@@ -24,6 +24,9 @@ private:
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	float PitchTorqueLength = 10.f;
 
+	UPROPERTY()
+	TArray<class AVehicleComponentThruster*> Thrusters;
+
 public:
 	virtual void Tick(float DeltaSeconds) override;
 
@@ -31,4 +34,7 @@ public:
 	void Pitch(float Value);
 	void Roll(float Value);
 	void Yaw(float Value);
+
+	virtual bool StartupVehicle() override;
+	
 };

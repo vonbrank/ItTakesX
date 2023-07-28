@@ -42,8 +42,8 @@ protected:
 
 public:
 	bool IsVehicleStartup() const;
-	bool StartupVehicle();
-	bool ShutdownVehicle();
+	virtual  bool StartupVehicle();
+	virtual  bool ShutdownVehicle();
 
 	void AttachCharacter(ACharacter* Character);
 	void DetachCurrentCharacter();

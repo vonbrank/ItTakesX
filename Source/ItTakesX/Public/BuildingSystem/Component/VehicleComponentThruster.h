@@ -26,4 +26,7 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float CurrenForceLength;
+
+public:
+	void Throttle(float Value);
 };

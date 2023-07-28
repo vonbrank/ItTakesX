@@ -38,3 +38,15 @@ void AVehicleComponentThruster::Tick(float DeltaTime)
 		// }
 	}
 }
+
+void AVehicleComponentThruster::Throttle(float Value)
+{
+	if (BP_ForwardArrowRef)
+	{
+		Mesh->AddForce(BP_ForwardArrowRef->GetForwardVector() * Value, NAME_None, true);
+	}
+	else
+	{
+		Mesh->AddForce(FVector::UpVector * Value, NAME_None, true);
+	}
+}
