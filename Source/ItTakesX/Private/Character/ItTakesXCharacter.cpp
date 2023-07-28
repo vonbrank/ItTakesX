@@ -198,8 +198,14 @@ void AItTakesXCharacter::HandlePressingF()
 		return;
 	}
 
-	if (Driving->ToggleVehicle())
+	bool bOutShouldActiveMovement = false;
+	if (Driving->ToggleVehicle(bOutShouldActiveMovement))
 	{
+		if (bOutShouldActiveMovement)
+		{
+			AfterDetachFromVehicle();
+		}
+
 		return;
 	}
 }

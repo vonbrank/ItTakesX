@@ -35,7 +35,7 @@ protected:
 public:
 	void SetCurrenOverlappingVehicle(class AVehicleCoreActor* NewOverlappingVehicle);
 
-	bool ToggleVehicle();
+	bool ToggleVehicle(bool& bOutShouldActiveMovement);
 	// bool ExecuteVehicleCommand(FVehicleCoreCommand Command);
 	bool InteractWithMoveForward(float Value);
 	bool InteractWithTurnRight(float Value);

@@ -101,8 +101,10 @@ bool UDrivingComponent::InteractWithPitchUp(float Value)
 	return false;
 }
 
-bool UDrivingComponent::ToggleVehicle()
+bool UDrivingComponent::ToggleVehicle(bool& bOutShouldActiveMovement)
 {
+	bOutShouldActiveMovement = false;
+
 	if (CurrentOverlappingVehicle == nullptr)
 	{
 		return false;
@@ -113,26 +115,28 @@ bool UDrivingComponent::ToggleVehicle()
 		bool bShutdownResult = CurrentOverlappingVehicle->ShutdownVehicle();
 		if (Character)
 		{
-			Character->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-			// Character->SetActorLocation(CurrentOverlappingVehicle->GetActorLocation());
-			Character->GetMovementComponent()->Activate();
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+			                                 FString::Printf(
+				                                 TEXT("location of character %s"),
+				                                 *Character->GetActorLocation().ToString()));
+
+			CurrentOverlappingVehicle->DetachCurrentCharacter();
+			bOutShouldActiveMovement = true;
+
+			// Character->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+			// Character->SetActorLocation(CurrentOverlappingVehicle->GetActorLocation() + FVector::UpVector * 100);
+			// Character->GetMovementComponent()->Velocity = FVector::Zero();
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+			                                 FString::Printf(
+				                                 TEXT("location of character %s"),
+				                                 *Character->GetActorLocation().ToString()));
 			// Character->();
 		}
 		return bShutdownResult;
 	}
 	else
 	{
-		// auto VehicleRootComp = Cast<UPrimitiveComponent>(CurrentOverlappingVehicle->GetRootComponent());
-
-		if (Character)
-		{
-			Character->AttachToActor(CurrentOverlappingVehicle, FAttachmentTransformRules::KeepWorldTransform);
-			Character->GetMovementComponent()->Deactivate();
-		}
-		else
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("character is null")));
-		}
+		CurrentOverlappingVehicle->AttachCharacter(Character);
 
 		return CurrentOverlappingVehicle->StartupVehicle();
 	}

@@ -14,6 +14,8 @@ class ITTAKESX_API AVehicleCoreActor : public AVehicleComponentActor
 {
 	GENERATED_BODY()
 
+public:
+	AVehicleCoreActor();
 
 private:
 protected:
@@ -25,9 +27,24 @@ protected:
 	                                  const FHitResult& SweepResult) override;
 	virtual void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	                                UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) override;
+	UPROPERTY()
+	class APhysicsConstraintActor* CharacterConstraintActor;
+
+	UPROPERTY(VisibleAnywhere)
+	class UArrowComponent* CharacterEnterMark;
+
+	UPROPERTY(VisibleAnywhere)
+	class UArrowComponent* CharacterExistMark;
+
+	UPROPERTY()
+	class ACharacter* CurrenAttachCharacter;
+
 
 public:
 	bool IsVehicleStartup() const;
 	bool StartupVehicle();
 	bool ShutdownVehicle();
+
+	void AttachCharacter(ACharacter* Character);
+	void DetachCurrentCharacter();
 };
