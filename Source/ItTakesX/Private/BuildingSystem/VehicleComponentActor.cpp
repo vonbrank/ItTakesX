@@ -172,27 +172,61 @@ bool AVehicleComponentActor::AttachToCurrentOverlappingVehicleNode()
 	{
 		return false;
 	}
+
+
+	ParentRootComponent->SetSimulatePhysics(false);
+	Mesh->SetSimulatePhysics(false);
+
+
+	ParentActor->AddActorWorldOffset(FVector::UpVector * 100);
+	AddActorWorldOffset(FVector::UpVector * 100);
+	ParentRootComponent->SetPhysicsLinearVelocity(FVector::Zero());
+	Mesh->SetPhysicsLinearVelocity(FVector::Zero());
+
+	// 修正旋转
+	auto DirectionRotation = CurrentNearestOtherConnectionComponent->GetDirectionRotation(
+		CurrentNearestConnectionComponent);
+	SetActorRotation(DirectionRotation * GetActorRotation().Quaternion());
+	// Mesh->SetPhysicsAngularVelocityInRadians(FVector::Zero());
+
+	auto AlignmentRotation = CurrentNearestOtherConnectionComponent->GetAlignmentRotation(
+		CurrentNearestConnectionComponent);
+	SetActorRotation(AlignmentRotation * GetActorRotation().Quaternion());
+	// Mesh->SetPhysicsAngularVelocityInRadians(FVector::Zero());
+
+
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	//                                  FString::Printf(TEXT("curren rotation: %s"), *GetActorRotation().ToString()));
+
+	// 修正位置
 	// SetActorLocation(CurrentNearestConnection.Arrow->GetComponentLocation());
 	FVector DeltaLocation = CurrentNearestOtherConnectionComponent->GetDirectionArrowLocation()
 		- CurrentNearestConnectionComponent->GetDirectionArrowLocation();
 	AddActorWorldOffset(DeltaLocation);
 
-	FVector MidLocation = CurrentNearestConnectionComponent->GetComponentLocation() + (
-		CurrentNearestOtherConnectionComponent->
-		GetComponentLocation() - CurrentNearestConnectionComponent->GetComponentLocation()) / 2;
+	Mesh->SetPhysicsLinearVelocity(FVector::Zero());
+	Mesh->SetPhysicsAngularVelocityInRadians(FVector::Zero());
 
-	ParentRootComponent->SetSimulatePhysics(false);
-	Mesh->SetSimulatePhysics(false);
+	// FVector MidLocation = CurrentNearestConnectionComponent->GetComponentLocation() + (
+	// 	CurrentNearestOtherConnectionComponent->
+	// 	GetComponentLocation() - CurrentNearestConnectionComponent->GetComponentLocation()) / 2;
 
+	// 生成物理约束
 	APhysicsConstraintActor* PhysicsConstraintActor = GetWorld()->SpawnActor<APhysicsConstraintActor>();
-	PhysicsConstraintActor->SetActorLocation(MidLocation);
+	PhysicsConstraintActor->SetActorLocation(GetActorLocation());
 	UPhysicsConstraintComponent* PhysicsConstraintComponent = PhysicsConstraintActor->GetConstraintComp();
 	PhysicsConstraintComponent->SetDisableCollision(true);
 	PhysicsConstraintComponent->SetConstrainedComponents(Mesh, TEXT(""), ParentRootComponent, TEXT(""));
 	PhysicsConstraintComponent->SetAngularSwing1Limit(EAngularConstraintMotion::ACM_Locked, 0.f);
 	PhysicsConstraintComponent->SetAngularSwing2Limit(EAngularConstraintMotion::ACM_Locked, 0.f);
 	PhysicsConstraintComponent->SetAngularTwistLimit(EAngularConstraintMotion::ACM_Locked, 0.f);
+
+	Mesh->SetPhysicsLinearVelocity(FVector::Zero());
+	Mesh->SetPhysicsAngularVelocityInRadians(FVector::Zero());
+
 	//
+	// ParentRootComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	// Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	ParentRootComponent->SetSimulatePhysics(true);
 	Mesh->SetSimulatePhysics(true);
 

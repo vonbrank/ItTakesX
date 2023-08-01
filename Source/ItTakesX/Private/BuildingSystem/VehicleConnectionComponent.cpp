@@ -67,3 +67,65 @@ FVector UVehicleConnectionComponent::GetDirectionArrowLocation()
 	}
 	return GetComponentLocation();
 }
+
+FQuat UVehicleConnectionComponent::GetDirectionRotation(UVehicleConnectionComponent* OtherConnectionComponent)
+{
+	if (OtherConnectionComponent == nullptr || ConnectionDirection == nullptr || OtherConnectionComponent->
+		ConnectionDirection == nullptr)
+	{
+		return FQuat::Identity;
+	}
+
+	auto OutAxis = FVector::CrossProduct(ConnectionDirection->GetForwardVector(),
+	                                     OtherConnectionComponent->ConnectionDirection->GetForwardVector());
+	auto OutAngle = 180 - FMath::RadiansToDegrees(
+		FMath::Acos(FVector::DotProduct(ConnectionDirection->GetForwardVector(),
+		                                OtherConnectionComponent->ConnectionDirection->GetForwardVector())));
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	                                 FString::Printf(
+		                                 TEXT("OutAxis = %s, OutDegree = %f"), *OutAxis.ToString(), OutAngle));
+	OutAxis.Normalize();
+	return FQuat(OutAxis, FMath::DegreesToRadians(OutAngle));
+}
+
+FQuat UVehicleConnectionComponent::GetAlignmentRotation(UVehicleConnectionComponent* OtherConnectionComponent)
+{
+	if (OtherConnectionComponent == nullptr || ConnectionDirection == nullptr)
+	{
+		return FQuat::Identity;
+	}
+
+	if (ConnectionAlignments.Num() < 1)
+	{
+		return FQuat::Identity;
+	}
+
+	auto FirstArrow = ConnectionAlignments[0];
+	FVector Axis = FVector::UpVector;
+	float MinAngle = 180;
+	for (auto OtherArrow : OtherConnectionComponent->ConnectionAlignments)
+	{
+		float CurrenAngle = FMath::RadiansToDegrees(
+			FMath::Acos(FVector::DotProduct(FirstArrow->GetForwardVector(), OtherArrow->GetForwardVector())));
+		if (CurrenAngle < MinAngle)
+		{
+			Axis = FVector::CrossProduct(OtherArrow->GetForwardVector(), FirstArrow->GetForwardVector());
+			MinAngle = CurrenAngle;
+		}
+	}
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	                                 FString::Printf(
+		                                 TEXT("OutAxis = %s, OutDegree = %f, ConnectionAlignments num: %d "),
+		                                 *ConnectionDirection->GetForwardVector().ToString(), MinAngle,
+		                                 ConnectionAlignments.Num()));
+
+	if (MinAngle >= 180)
+	{
+		return FQuat::Identity;
+	}
+
+	Axis.Normalize();
+
+	return FQuat(Axis, FMath::DegreesToRadians(MinAngle));
+}

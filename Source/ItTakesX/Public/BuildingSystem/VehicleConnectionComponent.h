@@ -32,4 +32,6 @@ private:
 
 public:
 	FVector GetDirectionArrowLocation();
+	FQuat GetDirectionRotation(UVehicleConnectionComponent* OtherConnectionComponent);
+	FQuat GetAlignmentRotation(UVehicleConnectionComponent* OtherConnectionComponent);
 };
