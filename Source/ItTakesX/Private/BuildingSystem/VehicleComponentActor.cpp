@@ -3,6 +3,7 @@
 
 #include "BuildingSystem/VehicleComponentActor.h"
 
+#include "BuildingSystem/VehicleConnectionComponent.h"
 #include "Components/ArrowComponent.h"
 #include "Components/SphereComponent.h"
 #include "Effect/DottedLazer.h"
@@ -44,34 +45,16 @@ void AVehicleComponentActor::BeginPlay()
 	RootComponent->GetChildrenComponents(true, AllComponents);
 	for (auto Comp : AllComponents)
 	{
-		if (!Comp->ComponentTags.Contains(TEXT("ConnectionComp")))
+		UVehicleConnectionComponent* VehicleConnectionComponent = Cast<UVehicleConnectionComponent>(Comp);
+		if (VehicleConnectionComponent)
 		{
-			continue;
+			VehicleConnectionComponentList.Add(VehicleConnectionComponent);
 		}
-		auto StaticMeshComp = Cast<UStaticMeshComponent>(Comp);
-		if (StaticMeshComp == nullptr)
-		{
-			continue;
-		}
-		auto Material = StaticMeshComp->CreateDynamicMaterialInstance(0);
-		if (Material == nullptr)
-		{
-			continue;
-		}
-		UArrowComponent* ArrowComponent = Cast<UArrowComponent>(StaticMeshComp->GetChildComponent(0));
-		if (ArrowComponent == nullptr)
-		{
-			continue;
-		}
-		FConnectionInfo ConnectionInfo;
-		ConnectionInfo.Mesh = StaticMeshComp;
-		ConnectionInfo.Material = Material;
-		ConnectionInfo.Arrow = ArrowComponent;
-		ConnectionInfoList.Add(ConnectionInfo);
 	}
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
 	                                 FString::Printf(
-		                                 TEXT("name: %s, connection num: %d"), *GetName(), ConnectionInfoList.Num()));
+		                                 TEXT("name: %s, connection num: %d"), *GetName(),
+		                                 VehicleConnectionComponentList.Num()));
 }
 
 void AVehicleComponentActor::SetIsRunning(bool bNewIsRunning)
@@ -120,17 +103,6 @@ void AVehicleComponentActor::OnSphereEndOverlap(UPrimitiveComponent* OverlappedC
 	                                                                 ->ComponentTags.Contains(TEXT("VehicleArea")))
 	// 另一个 Component 需要是连接点的 Comp
 	{
-		// CurrentOverlappingComponent = nullptr;
-		// GEngine->AddOnScreenDebugMessage(
-		// 	-1, 15.f, FColor::Yellow,
-		// 	FString::Printf(
-		// 		TEXT("End overlap: %s, owner: %s"), *OtherComp->GetName(), *GetName()));
-		//
-		// auto VehicleNode = CurrentOverlappingVehicleNode.GetInterface();
-		//
-		// CurrentOverlappingVehicleNode.SetObject(nullptr);
-		// CurrentOverlappingVehicleNode.SetInterface(nullptr);
-
 		RemoveNodeFromVehicleNodeList(VehicleNode);
 
 		GEngine->AddOnScreenDebugMessage(
@@ -201,12 +173,13 @@ bool AVehicleComponentActor::AttachToCurrentOverlappingVehicleNode()
 		return false;
 	}
 	// SetActorLocation(CurrentNearestConnection.Arrow->GetComponentLocation());
-	FVector DeltaLocation = CurrentNearestOtherConnection.Arrow->GetComponentLocation()
-		- CurrentNearestConnection.Arrow->GetComponentLocation();
+	FVector DeltaLocation = CurrentNearestOtherConnectionComponent->GetDirectionArrowLocation()
+		- CurrentNearestConnectionComponent->GetDirectionArrowLocation();
 	AddActorWorldOffset(DeltaLocation);
 
-	FVector MidLocation = CurrentNearestConnection.Mesh->GetComponentLocation() + (CurrentNearestOtherConnection.Mesh->
-		GetComponentLocation() - CurrentNearestConnection.Mesh->GetComponentLocation()) / 2;
+	FVector MidLocation = CurrentNearestConnectionComponent->GetComponentLocation() + (
+		CurrentNearestOtherConnectionComponent->
+		GetComponentLocation() - CurrentNearestConnectionComponent->GetComponentLocation()) / 2;
 
 	ParentRootComponent->SetSimulatePhysics(false);
 	Mesh->SetSimulatePhysics(false);
@@ -252,27 +225,23 @@ bool AVehicleComponentActor::InteractWithOverlappingVehicleNode()
 		return false;
 	}
 
-	FConnectionInfo OutCurrentConnectionInfo;
-	FConnectionInfo OutCurrentOtherConnectionInfo;
+	UVehicleConnectionComponent* OutConnectionComponent = nullptr;
+	UVehicleConnectionComponent* OutOtherConnectionComponent = nullptr;
 	TScriptInterface<IVehicleNode> OutNearestVehicleNode;
 
-	bHaveCurrentNearestConnectionInfo = GetNearestConnectionInfo(OutCurrentConnectionInfo,
-	                                                             OutCurrentOtherConnectionInfo,
+	bHaveCurrentNearestConnectionInfo = GetNearestConnectionInfo(OutConnectionComponent,
+	                                                             OutOtherConnectionComponent,
 	                                                             OutNearestVehicleNode);
-	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-	//                                  FString::Printf(
-	// 	                                 TEXT("bHaveCurrentNearestConnectionInfo: %d"),
-	// 	                                 bHaveCurrentNearestConnectionInfo));
 
 	if (bHaveCurrentNearestConnectionInfo)
 	{
-		if (OutCurrentConnectionInfo == CurrentNearestConnection && OutCurrentOtherConnectionInfo ==
-			CurrentNearestOtherConnection && OutNearestVehicleNode.GetInterface() == CurrenNearestVehicleNode.
+		if (CurrentNearestConnectionComponent == OutConnectionComponent && CurrentNearestOtherConnectionComponent ==
+			OutOtherConnectionComponent && OutNearestVehicleNode.GetInterface() == CurrenNearestVehicleNode.
 			GetInterface())
 		{
 			if (CurrentAdsorbEffect)
 			{
-				CurrentAdsorbEffect->SetEndLocation(OutCurrentOtherConnectionInfo.Mesh->GetComponentLocation());
+				CurrentAdsorbEffect->SetEndLocation(OutOtherConnectionComponent->GetComponentLocation());
 			}
 			else
 			{
@@ -281,8 +250,8 @@ bool AVehicleComponentActor::InteractWithOverlappingVehicleNode()
 		}
 		else
 		{
-			CurrentNearestConnection = OutCurrentConnectionInfo;
-			CurrentNearestOtherConnection = OutCurrentOtherConnectionInfo;
+			CurrentNearestConnectionComponent = OutConnectionComponent;
+			CurrentNearestOtherConnectionComponent = OutOtherConnectionComponent;
 			CurrenNearestVehicleNode = OutNearestVehicleNode;
 			SpawnNewAdsorbEffect();
 		}
@@ -302,13 +271,13 @@ bool AVehicleComponentActor::InteractWithOverlappingVehicleNode()
 	return true;
 }
 
-TArray<FConnectionInfo> AVehicleComponentActor::GetConnectionInfoList()
+TArray<UVehicleConnectionComponent*> AVehicleComponentActor::GetConnectionInfoList()
 {
-	return ConnectionInfoList;
+	return VehicleConnectionComponentList;
 }
 
-bool AVehicleComponentActor::GetNearestConnectionInfo(FConnectionInfo& OutConnectionInfo,
-                                                      FConnectionInfo& OutOtherConnectionInfo,
+bool AVehicleComponentActor::GetNearestConnectionInfo(UVehicleConnectionComponent*& OutConnectionComponent,
+                                                      UVehicleConnectionComponent*& OutOtherConnectionComponent,
                                                       TScriptInterface<IVehicleNode>& OutNearestVehicleNode)
 {
 	bool bHaveAnswer = false;
@@ -316,24 +285,18 @@ bool AVehicleComponentActor::GetNearestConnectionInfo(FConnectionInfo& OutConnec
 
 	for (auto VehicleNode : CurrentOverlappingVehicleNodes)
 	{
-		for (auto OtherConnectionInfo : VehicleNode->GetConnectionInfoList())
+		for (auto OtherVehicleConnectionComponent : VehicleNode->GetConnectionInfoList())
 		{
-			for (auto ConnectionInfo : ConnectionInfoList)
+			for (auto VehicleConnectionComponent : VehicleConnectionComponentList)
 			{
-				auto OtherMesh = OtherConnectionInfo.Mesh;
-				auto ThisMesh = ConnectionInfo.Mesh;
-				if (OtherMesh == nullptr || ThisMesh == nullptr)
-				{
-					continue;
-				}
-
-				auto CurrentDistance = (OtherMesh->GetComponentLocation() - ThisMesh->GetComponentLocation()).Length();
+				auto CurrentDistance = (OtherVehicleConnectionComponent->GetComponentLocation() -
+					VehicleConnectionComponent->GetComponentLocation()).Length();
 
 				if (CurrentDistance < MinDistance)
 				{
 					MinDistance = CurrentDistance;
-					OutConnectionInfo = ConnectionInfo;
-					OutOtherConnectionInfo = OtherConnectionInfo;
+					OutConnectionComponent = VehicleConnectionComponent;
+					OutOtherConnectionComponent = OtherVehicleConnectionComponent;
 					OutNearestVehicleNode = VehicleNode;
 					bHaveAnswer = true;
 				}
@@ -358,7 +321,7 @@ ADottedLazer* AVehicleComponentActor::SpawnNewAdsorbEffect()
 	}
 
 	CurrentAdsorbEffect = GetWorld()->SpawnActor<ADottedLazer>(
-		AdsorbEffectClass, CurrentNearestConnection.Mesh->GetComponentLocation(), FRotator::ZeroRotator);
+		AdsorbEffectClass, CurrentNearestConnectionComponent->GetComponentLocation(), FRotator::ZeroRotator);
 
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
 	                                 FString::Printf(TEXT("Spawn result: %p"), CurrentAdsorbEffect));

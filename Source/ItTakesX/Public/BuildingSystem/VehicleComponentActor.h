@@ -7,6 +7,8 @@
 #include "Interface/VehicleNode.h"
 #include "VehicleComponentActor.generated.h"
 
+class UVehicleConnectionComponent;
+
 UCLASS()
 class ITTAKESX_API AVehicleComponentActor : public AHoistableActor, public IVehicleNode
 {
@@ -22,7 +24,7 @@ protected:
 private:
 	// 该零件所有可连接点的数据
 	UPROPERTY()
-	TArray<FConnectionInfo> ConnectionInfoList;
+	TArray<UVehicleConnectionComponent*> VehicleConnectionComponentList;
 
 	// 用于吸附父节点的各类信息
 	// UPROPERTY()
@@ -31,10 +33,14 @@ private:
 	TArray<TScriptInterface<IVehicleNode>> CurrentOverlappingVehicleNodes;
 
 	bool bHaveCurrentNearestConnectionInfo;
+	// UPROPERTY()
+	// FConnectionInfo CurrentNearestConnection;
+	// UPROPERTY()
+	// FConnectionInfo CurrentNearestOtherConnection;
 	UPROPERTY()
-	FConnectionInfo CurrentNearestConnection;
+	UVehicleConnectionComponent* CurrentNearestConnectionComponent;
 	UPROPERTY()
-	FConnectionInfo CurrentNearestOtherConnection;
+	UVehicleConnectionComponent* CurrentNearestOtherConnectionComponent;
 	UPROPERTY()
 	TScriptInterface<IVehicleNode> CurrenNearestVehicleNode;
 
@@ -91,9 +97,12 @@ public:
 	// virtual void AddChildNode(TScriptInterface<IVehicleNode> ChildNode) override;
 	virtual bool AttachToCurrentOverlappingVehicleNode() override;
 
-	virtual TArray<FConnectionInfo> GetConnectionInfoList() override;
-	virtual bool
-	GetNearestConnectionInfo(FConnectionInfo& OutConnectionInfo, FConnectionInfo& OutOtherConnectionInfo,  TScriptInterface<IVehicleNode>& OutNearestVehicleNode) override;
+	virtual TArray<UVehicleConnectionComponent*> GetConnectionInfoList() override;
+	virtual bool GetNearestConnectionInfo(UVehicleConnectionComponent*& OutConnectionComponent,
+	                                      UVehicleConnectionComponent*&
+	                                      OutOtherConnectionComponent,
+	                                      TScriptInterface<IVehicleNode>&
+	                                      OutNearestVehicleNode) override;
 	// virtual bool PropagateCommand(FVehicleCoreCommand Command) override;
 	virtual bool AddChildNode(TScriptInterface<IVehicleNode> VehicleNode) override;
 	virtual void SetIsRunning(bool bNewIsRunning) override;
