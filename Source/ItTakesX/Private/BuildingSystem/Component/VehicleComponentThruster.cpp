@@ -43,6 +43,7 @@ void AVehicleComponentThruster::Throttle(float Value)
 {
 	if (BP_ForwardArrowRef)
 	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("throttling: %f"), Value));
 		Mesh->AddForce(BP_ForwardArrowRef->GetForwardVector() * Value, NAME_None, true);
 	}
 	else

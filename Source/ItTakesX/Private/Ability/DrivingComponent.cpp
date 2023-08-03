@@ -3,6 +3,8 @@
 
 #include "Ability/DrivingComponent.h"
 
+#include "BuildingSystem/Component/VehicleComponentThruster.h"
+#include "BuildingSystem/Core/VehicleCoreFloatingPanel.h"
 #include "BuildingSystem/Core/VehicleCoreHoveringCar.h"
 #include "BuildingSystem/Core/VehicleCoreQuadcopter.h"
 #include "BuildingSystem/Core/VehicleCoreSimpleAirplane.h"
@@ -163,6 +165,12 @@ bool UDrivingComponent::Throttle(float Value)
 		return true;
 	}
 
+	AVehicleCoreFloatingPanel* VehicleCoreFloatingPanel = Cast<AVehicleCoreFloatingPanel>(CurrentOverlappingVehicle);
+	if (VehicleCoreFloatingPanel)
+	{
+		VehicleCoreFloatingPanel->Throttle(Value);
+	}
+
 	return false;
 }
 
@@ -233,6 +241,12 @@ bool UDrivingComponent::Yaw(float Value)
 	{
 		VehicleCoreSimpleAirplane->Yaw(Value);
 		return true;
+	}
+
+	AVehicleCoreFloatingPanel* VehicleCoreFloatingPanel = Cast<AVehicleCoreFloatingPanel>(CurrentOverlappingVehicle);
+	if (VehicleCoreFloatingPanel)
+	{
+		VehicleCoreFloatingPanel->Turn(Value);
 	}
 
 	return false;
