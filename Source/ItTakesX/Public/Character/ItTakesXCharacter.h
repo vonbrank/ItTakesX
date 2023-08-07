@@ -102,7 +102,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void SwitchToView(EItTakesXViewType NewItTakesXView);
 
-	void SetCurrentOverlappingVehicleCore(class AVehicleCoreActor* VehicleCoreActor);
+	void SetCurrentOverlappingVehicleCore(class AVehicleControllerActor* VehicleController);
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void AfterDetachFromVehicle();

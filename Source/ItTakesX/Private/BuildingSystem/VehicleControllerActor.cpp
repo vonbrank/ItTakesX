@@ -1,16 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "BuildingSystem/VehicleCoreActor.h"
+#include "BuildingSystem/VehicleControllerActor.h"
 
 #include "Character/ItTakesXCharacter.h"
 #include "Components/ArrowComponent.h"
-#include "Components/CapsuleComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
-#include "PhysicsEngine/PhysicsConstraintActor.h"
-#include "PhysicsEngine/PhysicsConstraintComponent.h"
 
-AVehicleCoreActor::AVehicleCoreActor()
+AVehicleControllerActor::AVehicleControllerActor()
 {
 	CharacterEnterMark = CreateDefaultSubobject<UArrowComponent>("CharacterEnterMark");
 	CharacterExistMark = CreateDefaultSubobject<UArrowComponent>("CharacterExistMark");
@@ -18,23 +15,22 @@ AVehicleCoreActor::AVehicleCoreActor()
 	CharacterExistMark->SetupAttachment(RootComponent);
 }
 
-void AVehicleCoreActor::OnSphereStartOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-                                             UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
-                                             const FHitResult& SweepResult)
+void AVehicleControllerActor::OnSphereStartOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+                                                   UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
+                                                   bool bFromSweep, const FHitResult& SweepResult)
 {
 	Super::OnSphereStartOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
-
 	AItTakesXCharacter* Character = Cast<AItTakesXCharacter>(OtherActor);
 	if (Character && CurrentOverlappingCharacter == nullptr)
 	{
-		Character->SetCurrentOverlappingVehicleCore(nullptr);
+		Character->SetCurrentOverlappingVehicleCore(this);
 		CurrentOverlappingCharacter = Character;
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("Start overlapping character")));
 	}
 }
 
-void AVehicleCoreActor::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-                                           UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+void AVehicleControllerActor::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+                                                 UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	Super::OnSphereEndOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex);
 
@@ -46,12 +42,12 @@ void AVehicleCoreActor::OnSphereEndOverlap(UPrimitiveComponent* OverlappedCompon
 	}
 }
 
-bool AVehicleCoreActor::IsVehicleStartup() const
+bool AVehicleControllerActor::IsVehicleStartup() const
 {
 	return bIsRunning;
 }
 
-bool AVehicleCoreActor::StartupVehicle()
+bool AVehicleControllerActor::StartupVehicle()
 {
 	bIsRunning = true;
 	for (auto ChildNodeInterface : ChildNodes)
@@ -62,10 +58,20 @@ bool AVehicleCoreActor::StartupVehicle()
 			ChildNode->SetIsRunning(true);
 		}
 	}
+
+	auto RootActor = Cast<AActor>(GetVehicleRoot().GetInterface());
+	if (RootActor)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+		                                 FString::Printf(
+			                                 TEXT("root name %s, tree nodes num %d"), *RootActor->GetName(),
+			                                 Cast<IVehicleNode>(RootActor)->GetAllChildNodes().Num()));
+	}
+
 	return true;
 }
 
-bool AVehicleCoreActor::ShutdownVehicle()
+bool AVehicleControllerActor::ShutdownVehicle()
 {
 	bIsRunning = false;
 	for (auto ChildNodeInterface : ChildNodes)
@@ -79,7 +85,7 @@ bool AVehicleCoreActor::ShutdownVehicle()
 	return true;
 }
 
-void AVehicleCoreActor::AttachCharacter(ACharacter* Character)
+void AVehicleControllerActor::AttachCharacter(ACharacter* Character)
 {
 	if (Character == nullptr)
 	{
@@ -103,42 +109,13 @@ void AVehicleCoreActor::AttachCharacter(ACharacter* Character)
 	CurrenAttachCharacter->SetActorRotation(CharacterEnterMark->GetComponentRotation());
 
 	CurrenAttachCharacter->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
-
-	// CharacterConstraintActor = GetWorld()->SpawnActor<APhysicsConstraintActor>();
-	// CharacterConstraintActor->SetActorLocation(GetActorLocation());
-
-	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-	//                                  FString::Printf(TEXT("New Constraint: %s"), *CharacterConstraintActor->GetName()));
-
-	// UPhysicsConstraintComponent* PhysicsConstraintComponent = CharacterConstraintActor->GetConstraintComp();
-	// PhysicsConstraintComponent->SetDisableCollision(true);
-	// PhysicsConstraintComponent->SetConstrainedComponents(CharacterRootComp, TEXT(""), Mesh, TEXT(""));
-	//
-	// CharacterRootComp->SetSimulatePhysics(true);
-	//
-	// PhysicsConstraintComponent->SetAngularSwing1Limit(EAngularConstraintMotion::ACM_Locked, 0.f);
-	// PhysicsConstraintComponent->SetAngularSwing2Limit(EAngularConstraintMotion::ACM_Locked, 0.f);
-	// PhysicsConstraintComponent->SetAngularTwistLimit(EAngularConstraintMotion::ACM_Locked, 0.f);
 }
 
-void AVehicleCoreActor::DetachCurrentCharacter()
+void AVehicleControllerActor::DetachCurrentCharacter()
 {
-	// if (CharacterConstraintActor)
-	// {
-	// 	CharacterConstraintActor->Destroy();
-	// 	CharacterConstraintActor = nullptr;
-	// }
 	if (CurrenAttachCharacter)
 	{
 		CurrenAttachCharacter->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-
-		// UPrimitiveComponent* CharacterRootComp = Cast<UPrimitiveComponent>(CurrenAttachCharacter->GetRootComponent());
-		// if (CharacterRootComp)
-		// {
-		// 	CharacterRootComp->SetSimulatePhysics(false);
-		// }
-		// CurrenAttachCharacter->SetActorLocation(CharacterExistMark->GetComponentLocation());
-		// CurrenAttachCharacter->GetMovementComponent()->Activate();
 		CurrenAttachCharacter = nullptr;
 	}
 }

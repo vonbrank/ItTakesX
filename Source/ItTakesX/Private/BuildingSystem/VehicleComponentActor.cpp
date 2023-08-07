@@ -62,6 +62,44 @@ void AVehicleComponentActor::SetIsRunning(bool bNewIsRunning)
 	bIsRunning = bNewIsRunning;
 }
 
+TScriptInterface<IVehicleNode> AVehicleComponentActor::GetVehicleRoot()
+{
+	if (ParentNode.GetInterface())
+	{
+		return ParentNode.GetInterface()->GetVehicleRoot();
+	}
+	TScriptInterface<IVehicleNode> VehicleRoot;
+	VehicleRoot.SetInterface(this);
+	VehicleRoot.SetObject(this);
+	return VehicleRoot;
+}
+
+TArray<TScriptInterface<IVehicleNode>> AVehicleComponentActor::GetAllChildNodes()
+{
+	TArray<TScriptInterface<IVehicleNode>> AllChildNodes;
+
+	for (auto ChildNode : ChildNodes)
+	{
+		auto ChildVehicleNode = ChildNode.GetInterface();
+
+		if (ChildVehicleNode)
+		{
+			TArray<TScriptInterface<IVehicleNode>> ChildNodesArr = ChildVehicleNode->GetAllChildNodes();
+			for (auto ChildChildNode : ChildNodesArr)
+			{
+				AllChildNodes.Add(ChildChildNode);
+			}
+		}
+	}
+
+	TScriptInterface<IVehicleNode> ThisNode;
+	ThisNode.SetObject(this);
+	ThisNode.SetInterface(this);
+	AllChildNodes.Add(ThisNode);
+
+	return AllChildNodes;
+}
+
 // Called every frame
 void AVehicleComponentActor::Tick(float DeltaTime)
 {

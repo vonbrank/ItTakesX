@@ -107,5 +107,8 @@ public:
 	virtual bool AddChildNode(TScriptInterface<IVehicleNode> VehicleNode) override;
 	virtual void SetIsRunning(bool bNewIsRunning) override;
 
+	virtual TScriptInterface<IVehicleNode> GetVehicleRoot() override;
+	virtual TArray<TScriptInterface<IVehicleNode>> GetAllChildNodes() override;
+
 	ADottedLazer* SpawnNewAdsorbEffect();
 };

@@ -317,11 +317,11 @@ void AItTakesXCharacter::OnCurrentEquippableUpdate(TScriptInterface<IEquippable>
 	ItTakesXView = NewEquippable->GetViewType();
 }
 
-void AItTakesXCharacter::SetCurrentOverlappingVehicleCore(AVehicleCoreActor* VehicleCoreActor)
+void AItTakesXCharacter::SetCurrentOverlappingVehicleCore(AVehicleControllerActor* VehicleController)
 {
 	if (Driving)
 	{
-		Driving->SetCurrenOverlappingVehicle(VehicleCoreActor);
+		Driving->SetCurrenOverlappingVehicle(VehicleController);
 	}
 }
 

@@ -3,6 +3,7 @@
 
 #include "Ability/DrivingComponent.h"
 
+#include "BuildingSystem/VehicleControllerActor.h"
 #include "BuildingSystem/Component/VehicleComponentThruster.h"
 #include "BuildingSystem/Core/VehicleCoreFloatingPanel.h"
 #include "BuildingSystem/Core/VehicleCoreHoveringCar.h"
@@ -47,7 +48,7 @@ void UDrivingComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	}
 }
 
-void UDrivingComponent::SetCurrenOverlappingVehicle(AVehicleCoreActor* NewOverlappingVehicle)
+void UDrivingComponent::SetCurrenOverlappingVehicle(AVehicleControllerActor* NewOverlappingVehicle)
 {
 	CurrentOverlappingVehicle = NewOverlappingVehicle;
 }

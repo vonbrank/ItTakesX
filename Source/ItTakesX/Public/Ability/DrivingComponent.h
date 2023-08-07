@@ -26,14 +26,14 @@ protected:
 
 private:
 	UPROPERTY()
-	class AVehicleCoreActor* CurrentOverlappingVehicle;
+	class AVehicleControllerActor* CurrentOverlappingVehicle;
 
 	UPROPERTY()
 	class AItTakesXCharacter* Character;
 
 protected:
 public:
-	void SetCurrenOverlappingVehicle(class AVehicleCoreActor* NewOverlappingVehicle);
+	void SetCurrenOverlappingVehicle(class AVehicleControllerActor* NewOverlappingVehicle);
 
 	bool ToggleVehicle(bool& bOutShouldActiveMovement);
 	// bool ExecuteVehicleCommand(FVehicleCoreCommand Command);
