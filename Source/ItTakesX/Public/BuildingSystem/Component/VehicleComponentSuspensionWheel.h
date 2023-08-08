@@ -26,6 +26,12 @@ private:
 	class UPhysicsConstraintComponent* AxisConstraint;
 
 	UPROPERTY(VisibleAnywhere)
+	class UPhysicsConstraintComponent* TurnConstraint;
+
+	UPROPERTY(VisibleAnywhere)
+	class UStaticMeshComponent* TurnConnection;
+
+	UPROPERTY(VisibleAnywhere)
 	class UStaticMeshComponent* WheelBody;
 
 	void ResetSuspensionDirection();
@@ -34,5 +40,6 @@ protected:
 public:
 	void Throttle(float Value, FVector VehicleForwardVector = FVector::ForwardVector,
 	              FVector VehicleRightVector = FVector::RightVector);
+	void Turn(float Value, FTransform VehicleCenterTransform = FTransform::Identity);
 	virtual void SetIsRunning(bool bNewIsRunning) override;
 };

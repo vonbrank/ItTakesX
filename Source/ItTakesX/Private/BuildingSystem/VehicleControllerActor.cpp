@@ -137,3 +137,16 @@ void AVehicleControllerActor::Throttle(float Value)
 		}
 	}
 }
+
+void AVehicleControllerActor::Turn(float Value)
+{
+	for (auto VehicleNodeInterface : CurrentVehicleNodes)
+	{
+		auto VehicleNode = VehicleNodeInterface.GetInterface();
+		auto VehicleSuspensionWheel = Cast<AVehicleComponentSuspensionWheel>(VehicleNode);
+		if (VehicleSuspensionWheel)
+		{
+			VehicleSuspensionWheel->Turn(Value, GetActorTransform());
+		}
+	}
+}

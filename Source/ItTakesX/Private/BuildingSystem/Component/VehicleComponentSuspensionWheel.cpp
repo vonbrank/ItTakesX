@@ -13,6 +13,12 @@ AVehicleComponentSuspensionWheel::AVehicleComponentSuspensionWheel()
 	AxisConstraint = CreateDefaultSubobject<UPhysicsConstraintComponent>(TEXT("PC_Axis"));
 	AxisConstraint->SetupAttachment(RootComponent);
 
+	TurnConstraint = CreateDefaultSubobject<UPhysicsConstraintComponent>(TEXT("PC_Turn"));
+	TurnConstraint->SetupAttachment(RootComponent);
+
+	TurnConnection = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TurnConnection"));
+	TurnConnection->SetupAttachment(RootComponent);
+
 	WheelBody = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WheelBody"));
 	WheelBody->SetupAttachment(RootComponent);
 }
@@ -32,8 +38,20 @@ void AVehicleComponentSuspensionWheel::Throttle(float Value, FVector VehicleForw
 			Value = -Value;
 		}
 
-		AxisConstraint->SetAngularVelocityTarget(FVector(Value, 0, 0));
+		AxisConstraint->SetAngularVelocityTarget(FVector(Value * 2, 0, 0));	
 	}
+}
+
+void AVehicleComponentSuspensionWheel::Turn(float Value, FTransform VehicleCenterTransform)
+{
+	FVector RelativePosition = VehicleCenterTransform.InverseTransformPosition(GetActorLocation());
+
+	if (RelativePosition.X > 0)
+	{
+		Value = -Value;
+	}
+
+	TurnConnection->AddTorqueInRadians(TurnConnection->GetUpVector() * Value * 4000, NAME_None, true);
 }
 
 void AVehicleComponentSuspensionWheel::SetIsRunning(bool bNewIsRunning)
@@ -43,7 +61,7 @@ void AVehicleComponentSuspensionWheel::SetIsRunning(bool bNewIsRunning)
 	if (bNewIsRunning)
 	{
 		AxisConstraint->SetAngularVelocityDriveTwistAndSwing(true, true);
-		AxisConstraint->SetAngularDriveParams(50, 100, 0);
+		AxisConstraint->SetAngularDriveParams(50, 50000, 0);
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
 		                                 FString::Printf(TEXT("startup vehicle")));
 	}

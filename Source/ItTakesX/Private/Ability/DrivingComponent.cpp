@@ -256,5 +256,10 @@ bool UDrivingComponent::Yaw(float Value)
 		VehicleCoreFloatingPanel->Turn(Value);
 	}
 
+	if (CurrentOverlappingVehicle)
+	{
+		CurrentOverlappingVehicle->Turn(Value);
+	}
+
 	return false;
 }

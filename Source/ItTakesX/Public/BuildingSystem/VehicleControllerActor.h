@@ -51,4 +51,5 @@ public:
 	void DetachCurrentCharacter();
 
 	void Throttle(float Value);
+	void Turn(float Value);
 };
