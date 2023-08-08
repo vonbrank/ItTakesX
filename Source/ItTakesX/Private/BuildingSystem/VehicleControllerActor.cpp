@@ -3,6 +3,7 @@
 
 #include "BuildingSystem/VehicleControllerActor.h"
 
+#include "BuildingSystem/Component/VehicleComponentSuspensionWheel.h"
 #include "Character/ItTakesXCharacter.h"
 #include "Components/ArrowComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
@@ -49,8 +50,18 @@ bool AVehicleControllerActor::IsVehicleStartup() const
 
 bool AVehicleControllerActor::StartupVehicle()
 {
+	auto RootActor = Cast<AActor>(GetVehicleRoot().GetInterface());
+	if (RootActor)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+		                                 FString::Printf(
+			                                 TEXT("root name %s, tree nodes num %d"), *RootActor->GetName(),
+			                                 Cast<IVehicleNode>(RootActor)->GetAllChildNodes().Num()));
+		CurrentVehicleNodes = Cast<IVehicleNode>(RootActor)->GetAllChildNodes();
+	}
+
 	bIsRunning = true;
-	for (auto ChildNodeInterface : ChildNodes)
+	for (auto ChildNodeInterface : CurrentVehicleNodes)
 	{
 		auto ChildNode = ChildNodeInterface.GetInterface();
 		if (ChildNode)
@@ -59,22 +70,13 @@ bool AVehicleControllerActor::StartupVehicle()
 		}
 	}
 
-	auto RootActor = Cast<AActor>(GetVehicleRoot().GetInterface());
-	if (RootActor)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-		                                 FString::Printf(
-			                                 TEXT("root name %s, tree nodes num %d"), *RootActor->GetName(),
-			                                 Cast<IVehicleNode>(RootActor)->GetAllChildNodes().Num()));
-	}
-
 	return true;
 }
 
 bool AVehicleControllerActor::ShutdownVehicle()
 {
 	bIsRunning = false;
-	for (auto ChildNodeInterface : ChildNodes)
+	for (auto ChildNodeInterface : CurrentVehicleNodes)
 	{
 		auto ChildNode = ChildNodeInterface.GetInterface();
 		if (ChildNode)
@@ -82,6 +84,9 @@ bool AVehicleControllerActor::ShutdownVehicle()
 			ChildNode->SetIsRunning(false);
 		}
 	}
+
+	CurrentVehicleNodes.Reset();
+
 	return true;
 }
 
@@ -117,5 +122,18 @@ void AVehicleControllerActor::DetachCurrentCharacter()
 	{
 		CurrenAttachCharacter->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 		CurrenAttachCharacter = nullptr;
+	}
+}
+
+void AVehicleControllerActor::Throttle(float Value)
+{
+	for (auto VehicleNodeInterface : CurrentVehicleNodes)
+	{
+		auto VehicleNode = VehicleNodeInterface.GetInterface();
+		auto VehicleSuspensionWheel = Cast<AVehicleComponentSuspensionWheel>(VehicleNode);
+		if (VehicleSuspensionWheel)
+		{
+			VehicleSuspensionWheel->Throttle(Value, GetActorForwardVector(), GetActorRightVector());
+		}
 	}
 }

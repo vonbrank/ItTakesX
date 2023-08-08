@@ -39,6 +39,8 @@ protected:
 	UPROPERTY()
 	class ACharacter* CurrenAttachCharacter;
 
+	UPROPERTY()
+	TArray<TScriptInterface<IVehicleNode>> CurrentVehicleNodes;
 
 public:
 	bool IsVehicleStartup() const;
@@ -47,4 +49,6 @@ public:
 
 	void AttachCharacter(ACharacter* Character);
 	void DetachCurrentCharacter();
+
+	void Throttle(float Value);
 };

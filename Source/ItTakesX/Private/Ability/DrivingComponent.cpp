@@ -170,6 +170,12 @@ bool UDrivingComponent::Throttle(float Value)
 	if (VehicleCoreFloatingPanel)
 	{
 		VehicleCoreFloatingPanel->Throttle(Value);
+		return true;
+	}
+
+	if (CurrentOverlappingVehicle)
+	{
+		CurrentOverlappingVehicle->Throttle(Value);
 	}
 
 	return false;
