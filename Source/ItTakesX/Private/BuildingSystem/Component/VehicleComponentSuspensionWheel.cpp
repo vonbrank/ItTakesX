@@ -38,7 +38,7 @@ void AVehicleComponentSuspensionWheel::Throttle(float Value, FVector VehicleForw
 			Value = -Value;
 		}
 
-		AxisConstraint->SetAngularVelocityTarget(FVector(Value * 2, 0, 0));	
+		AxisConstraint->SetAngularVelocityTarget(FVector(Value * 5, 0, 0));
 	}
 }
 
@@ -61,7 +61,7 @@ void AVehicleComponentSuspensionWheel::SetIsRunning(bool bNewIsRunning)
 	if (bNewIsRunning)
 	{
 		AxisConstraint->SetAngularVelocityDriveTwistAndSwing(true, true);
-		AxisConstraint->SetAngularDriveParams(50, 50000, 0);
+		AxisConstraint->SetAngularDriveParams(50, 1000000, 0);
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
 		                                 FString::Printf(TEXT("startup vehicle")));
 	}
@@ -77,7 +77,7 @@ void AVehicleComponentSuspensionWheel::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	ResetSuspensionDirection();
+	// ResetSuspensionDirection();
 }
 
 void AVehicleComponentSuspensionWheel::ResetSuspensionDirection()
