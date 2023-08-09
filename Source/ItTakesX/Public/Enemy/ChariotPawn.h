@@ -27,7 +27,6 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	TArray<class UStaticMeshComponent*> WeaponMeshList;
 
-	void MoveToForward();
 protected:
 	virtual void LookAtTarget(FVector TargetPosition) override;
 };

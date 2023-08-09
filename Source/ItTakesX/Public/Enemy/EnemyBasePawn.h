@@ -49,6 +49,7 @@ protected:
 
 	virtual void LookAtTarget(FVector TargetPosition);
 
+	UFUNCTION(BlueprintPure)
 	virtual bool IsTargetInRange() const;
 
 public:

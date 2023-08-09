@@ -19,11 +19,6 @@ AChariotPawn::AChariotPawn()
 void AChariotPawn::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-
-	if (IsTargetInRange())
-	{
-		MoveToForward();
-	}
 }
 
 void AChariotPawn::LookAtTarget(FVector TargetPosition)
@@ -55,16 +50,5 @@ void AChariotPawn::LookAtTarget(FVector TargetPosition)
 	else
 	{
 		BodyMesh->AddTorqueInRadians(FVector::UpVector * 50, NAME_None, true);
-	}
-}
-
-void AChariotPawn::MoveToForward()
-{
-	BodyMesh->AddForce(BodyMesh->GetForwardVector() * Accerleration, NAME_None, true);
-	if (BodyMesh->GetPhysicsLinearVelocity().Length() > MaxSpeed)
-	{
-		FVector Velocity = BodyMesh->GetPhysicsLinearVelocity();
-		Velocity.Normalize();
-		BodyMesh->SetPhysicsLinearVelocity(Velocity * MaxSpeed);
 	}
 }
