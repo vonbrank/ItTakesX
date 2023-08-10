@@ -151,31 +151,32 @@ bool UDrivingComponent::Throttle(float Value)
 	{
 		return false;
 	}
-
-	AVehicleCoreQuadcopter* VehicleCoreQuadcopter = Cast<AVehicleCoreQuadcopter>(CurrentOverlappingVehicle);
-	if (VehicleCoreQuadcopter)
-	{
-		VehicleCoreQuadcopter->Throttle(Value);
-		return true;
-	}
-
-	AVehicleCoreSimpleAirplane* VehicleCoreSimpleAirplane = Cast<AVehicleCoreSimpleAirplane>(CurrentOverlappingVehicle);
-	if (VehicleCoreSimpleAirplane)
-	{
-		VehicleCoreSimpleAirplane->Throttle(Value);
-		return true;
-	}
-
-	AVehicleCoreFloatingPanel* VehicleCoreFloatingPanel = Cast<AVehicleCoreFloatingPanel>(CurrentOverlappingVehicle);
-	if (VehicleCoreFloatingPanel)
-	{
-		VehicleCoreFloatingPanel->Throttle(Value);
-		return true;
-	}
+	//
+	// AVehicleCoreQuadcopter* VehicleCoreQuadcopter = Cast<AVehicleCoreQuadcopter>(CurrentOverlappingVehicle);
+	// if (VehicleCoreQuadcopter)
+	// {
+	// 	VehicleCoreQuadcopter->Throttle(Value);
+	// 	return true;
+	// }
+	//
+	// AVehicleCoreSimpleAirplane* VehicleCoreSimpleAirplane = Cast<AVehicleCoreSimpleAirplane>(CurrentOverlappingVehicle);
+	// if (VehicleCoreSimpleAirplane)
+	// {
+	// 	VehicleCoreSimpleAirplane->Throttle(Value);
+	// 	return true;
+	// }
+	//
+	// AVehicleCoreFloatingPanel* VehicleCoreFloatingPanel = Cast<AVehicleCoreFloatingPanel>(CurrentOverlappingVehicle);
+	// if (VehicleCoreFloatingPanel)
+	// {
+	// 	VehicleCoreFloatingPanel->Throttle(Value);
+	// 	return true;
+	// }
 
 	if (CurrentOverlappingVehicle)
 	{
 		CurrentOverlappingVehicle->Throttle(Value);
+		return true;
 	}
 
 	return false;
@@ -235,30 +236,62 @@ bool UDrivingComponent::Yaw(float Value)
 	{
 		return false;
 	}
-
-	AVehicleCoreQuadcopter* VehicleCoreQuadcopter = Cast<AVehicleCoreQuadcopter>(CurrentOverlappingVehicle);
-	if (VehicleCoreQuadcopter)
-	{
-		VehicleCoreQuadcopter->Yaw(Value);
-		return true;
-	}
-
-	AVehicleCoreSimpleAirplane* VehicleCoreSimpleAirplane = Cast<AVehicleCoreSimpleAirplane>(CurrentOverlappingVehicle);
-	if (VehicleCoreSimpleAirplane)
-	{
-		VehicleCoreSimpleAirplane->Yaw(Value);
-		return true;
-	}
-
-	AVehicleCoreFloatingPanel* VehicleCoreFloatingPanel = Cast<AVehicleCoreFloatingPanel>(CurrentOverlappingVehicle);
-	if (VehicleCoreFloatingPanel)
-	{
-		VehicleCoreFloatingPanel->Turn(Value);
-	}
+	//
+	// AVehicleCoreQuadcopter* VehicleCoreQuadcopter = Cast<AVehicleCoreQuadcopter>(CurrentOverlappingVehicle);
+	// if (VehicleCoreQuadcopter)
+	// {
+	// 	VehicleCoreQuadcopter->Yaw(Value);
+	// 	return true;
+	// }
+	//
+	// AVehicleCoreSimpleAirplane* VehicleCoreSimpleAirplane = Cast<AVehicleCoreSimpleAirplane>(CurrentOverlappingVehicle);
+	// if (VehicleCoreSimpleAirplane)
+	// {
+	// 	VehicleCoreSimpleAirplane->Yaw(Value);
+	// 	return true;
+	// }
+	//
+	// AVehicleCoreFloatingPanel* VehicleCoreFloatingPanel = Cast<AVehicleCoreFloatingPanel>(CurrentOverlappingVehicle);
+	// if (VehicleCoreFloatingPanel)
+	// {
+	// 	VehicleCoreFloatingPanel->Turn(Value);
+	// 	return true;
+	// }
 
 	if (CurrentOverlappingVehicle)
 	{
 		CurrentOverlappingVehicle->Turn(Value);
+		return true;
+	}
+
+	return false;
+}
+
+bool UDrivingComponent::AircraftThrottle(float Value)
+{
+	if (CurrentOverlappingVehicle == nullptr || !CurrentOverlappingVehicle->IsVehicleStartup())
+	{
+		return false;
+	}
+
+	if (CurrentOverlappingVehicle)
+	{
+		CurrentOverlappingVehicle->AircraftThrottle(Value * 10);
+	}
+
+	return false;
+}
+
+bool UDrivingComponent::AircraftTurn(float Value)
+{
+	if (CurrentOverlappingVehicle == nullptr || !CurrentOverlappingVehicle->IsVehicleStartup())
+	{
+		return false;
+	}
+
+	if (CurrentOverlappingVehicle)
+	{
+		CurrentOverlappingVehicle->AircraftTurn(Value);
 	}
 
 	return false;

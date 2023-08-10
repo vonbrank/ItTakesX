@@ -15,18 +15,31 @@ class ITTAKESX_API AVehicleComponentThruster : public AVehicleComponentActor
 	GENERATED_BODY()
 
 public:
+	AVehicleComponentThruster();
 	virtual void Tick(float DeltaTime) override;
 
 protected:
 	virtual void BeginPlay() override;
 
 private:
-	UPROPERTY()
-	class UArrowComponent* BP_ForwardArrowRef;
+	UPROPERTY(VisibleAnywhere)
+	class UArrowComponent* ForwardArrow;
+
+	UPROPERTY(VisibleAnywhere)
+	class UStaticMeshComponent* BladeMesh;
 
 	UPROPERTY(EditAnywhere)
-	float CurrenForceLength;
+	float MaxThrottle = 750;
+
+	float CurrentThrottle = 0;
+
+	UPROPERTY(EditAnywhere)
+	float MaxBladeRotatingRate = 2.f;
+
+	UPROPERTY(VisibleAnywhere)
+	class UNiagaraComponent* WindBarParticle;
 
 public:
 	void Throttle(float Value);
+	virtual void SetIsRunning(bool bNewIsRunning) override;
 };

@@ -44,4 +44,7 @@ public:
 	bool Pitch(float Value);
 	bool Roll(float Value);
 	bool Yaw(float Value);
+
+	bool AircraftThrottle(float Value);
+	bool AircraftTurn(float Value);
 };

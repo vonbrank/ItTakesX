@@ -97,6 +97,8 @@ void AItTakesXCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAxis(TEXT("Pitch"), this, &ThisClass::Pitch);
 	PlayerInputComponent->BindAxis(TEXT("Roll"), this, &ThisClass::Roll);
 	PlayerInputComponent->BindAxis(TEXT("Yaw"), this, &ThisClass::Yaw);
+	PlayerInputComponent->BindAxis(TEXT("AircraftThrottle"), this, &ThisClass::AircraftThrottle);
+	PlayerInputComponent->BindAxis(TEXT("AircraftTurn"), this, &ThisClass::AircraftTurn);
 }
 
 void AItTakesXCharacter::MoveForward(float Value)
@@ -385,6 +387,22 @@ void AItTakesXCharacter::Roll(float Value)
 void AItTakesXCharacter::Yaw(float Value)
 {
 	if (Driving->Yaw(Value))
+	{
+		return;
+	}
+}
+
+void AItTakesXCharacter::AircraftThrottle(float Value)
+{
+	if (Driving->AircraftThrottle(Value))
+	{
+		return;
+	}
+}
+
+void AItTakesXCharacter::AircraftTurn(float Value)
+{
+	if (Driving->AircraftTurn(Value))
 	{
 		return;
 	}

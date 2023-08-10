@@ -52,4 +52,7 @@ public:
 
 	void Throttle(float Value);
 	void Turn(float Value);
+
+	void AircraftThrottle(float Value);
+	void AircraftTurn(float Value);
 };

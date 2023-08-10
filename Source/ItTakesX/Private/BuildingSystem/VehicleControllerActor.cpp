@@ -4,6 +4,7 @@
 #include "BuildingSystem/VehicleControllerActor.h"
 
 #include "BuildingSystem/Component/VehicleComponentSuspensionWheel.h"
+#include "BuildingSystem/Component/VehicleComponentThruster.h"
 #include "Character/ItTakesXCharacter.h"
 #include "Components/ArrowComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
@@ -149,4 +150,21 @@ void AVehicleControllerActor::Turn(float Value)
 			VehicleSuspensionWheel->Turn(Value, GetActorTransform());
 		}
 	}
+}
+
+void AVehicleControllerActor::AircraftThrottle(float Value)
+{
+	for (auto VehicleNodeInterface : CurrentVehicleNodes)
+	{
+		auto VehicleNode = VehicleNodeInterface.GetInterface();
+		auto VehicleComponentThruster = Cast<AVehicleComponentThruster>(VehicleNode);
+		if (VehicleComponentThruster)
+		{
+			VehicleComponentThruster->Throttle(Value);
+		}
+	}
+}
+
+void AVehicleControllerActor::AircraftTurn(float Value)
+{
 }

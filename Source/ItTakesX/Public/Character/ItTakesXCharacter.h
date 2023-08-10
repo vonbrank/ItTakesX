@@ -31,6 +31,9 @@ protected:
 	void Roll(float Value);
 	void Yaw(float Value);
 
+	void AircraftThrottle(float Value);
+	void AircraftTurn(float Value);
+
 	void HandlePressingE();
 	void HandlePressingF();
 	void HandleRepeatingLShift();

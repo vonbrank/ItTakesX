@@ -3,21 +3,24 @@
 
 #include "BuildingSystem/Component/VehicleComponentThruster.h"
 
+#include "NiagaraComponent.h"
 #include "Components/ArrowComponent.h"
+
+AVehicleComponentThruster::AVehicleComponentThruster()
+{
+	ForwardArrow = CreateDefaultSubobject<UArrowComponent>(TEXT("ForwardArrow"));
+	ForwardArrow->SetupAttachment(RootComponent);
+
+	BladeMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BladeMesh"));
+	BladeMesh->SetupAttachment(RootComponent);
+
+	WindBarParticle = CreateDefaultSubobject<UNiagaraComponent>(TEXT("WindBarParticle"));
+	WindBarParticle->SetupAttachment(RootComponent);
+}
 
 void AVehicleComponentThruster::BeginPlay()
 {
 	Super::BeginPlay();
-
-	TArray<USceneComponent*> AllComponents;
-	RootComponent->GetChildrenComponents(true, AllComponents);
-	for (auto Comp : AllComponents)
-	{
-		if (Comp->ComponentTags.Contains(TEXT("ForwardArrow")))
-		{
-			BP_ForwardArrowRef = Cast<UArrowComponent>(Comp);
-		}
-	}
 }
 
 void AVehicleComponentThruster::Tick(float DeltaTime)
@@ -26,28 +29,45 @@ void AVehicleComponentThruster::Tick(float DeltaTime)
 
 	if (bIsRunning)
 	{
-		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("thruster is running")));
+		Mesh->AddForce(ForwardArrow->GetForwardVector() * CurrentThrottle, NAME_None, true);
 
-		// if (BP_ForwardArrowRef)
-		// {
-		// 	Mesh->AddForce(BP_ForwardArrowRef->GetForwardVector() * CurrenForceLength, NAME_None, true);
-		// }
-		// else
-		// {
-		// 	Mesh->AddForce(FVector::UpVector * CurrenForceLength, NAME_None, true);
-		// }
+
+		auto BladeDeltaRotation = FQuat(BladeMesh->GetForwardVector(),
+		                                MaxThrottle * DeltaTime * CurrentThrottle / MaxThrottle / 100);
+
+		BladeMesh->SetWorldRotation(BladeDeltaRotation * BladeMesh->GetComponentRotation().Quaternion());
 	}
 }
 
 void AVehicleComponentThruster::Throttle(float Value)
 {
-	if (BP_ForwardArrowRef)
+	CurrentThrottle += Value;
+	if (CurrentThrottle < 0)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("throttling: %f"), Value));
-		Mesh->AddForce(BP_ForwardArrowRef->GetForwardVector() * Value, NAME_None, true);
+		CurrentThrottle = 0;
+	}
+	else if (CurrentThrottle > MaxThrottle)
+	{
+		CurrentThrottle = MaxThrottle;
+	}
+	// CurrentThrottle = FMath::Clamp(0, MaxThrottle, CurrentThrottle);
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	                                 FString::Printf(
+		                                 TEXT("throttling percentage: %.f%%"),
+		                                 CurrentThrottle / MaxThrottle * 100));
+}
+
+void AVehicleComponentThruster::SetIsRunning(bool bNewIsRunning)
+{
+	Super::SetIsRunning(bNewIsRunning);
+
+	if (!bNewIsRunning)
+	{
+		CurrentThrottle = 0;
+		WindBarParticle->SetVisibility(false);
 	}
 	else
 	{
-		Mesh->AddForce(FVector::UpVector * Value, NAME_None, true);
+		WindBarParticle->SetVisibility(true);
 	}
 }
