@@ -8,32 +8,11 @@
 
 ATankPawn::ATankPawn()
 {
-	TurretMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TurretMesh"));
-	TurretMesh->SetupAttachment(RootComponent);
-	ProjectileSpawnPoint = CreateDefaultSubobject<UArrowComponent>(TEXT("ProjectileSpawnPoint"));
-	ProjectileSpawnPoint->SetupAttachment(TurretMesh);
 }
 
 void ATankPawn::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-
-	if (IsTargetInRange())
-	{
-		if (TimeToNextShoot > 0)
-		{
-			TimeToNextShoot -= DeltaSeconds;
-		}
-		else
-		{
-			Shoot();
-			TimeToNextShoot = ShootInterval;
-		}
-	}
-	else
-	{
-		TimeToNextShoot = 0;
-	}
 }
 
 void ATankPawn::LookAtTarget(FVector TargetPosition)
@@ -53,10 +32,4 @@ void ATankPawn::LookAtTarget(FVector TargetPosition)
 	{
 		TurretMesh->SetWorldRotation(PreviewRotation);
 	}
-}
-
-void ATankPawn::Shoot()
-{
-	GetWorld()->SpawnActor<AStraightProjectileActor>(ProjectileClass, ProjectileSpawnPoint->GetComponentLocation(),
-	                                                 ProjectileSpawnPoint->GetComponentRotation());
 }

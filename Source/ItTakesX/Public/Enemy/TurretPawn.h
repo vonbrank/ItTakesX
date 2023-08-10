@@ -5,19 +5,20 @@
 #include "CoreMinimal.h"
 #include "LauncherBasePawn.h"
 #include "Enemy/EnemyBasePawn.h"
-#include "Projectile/StraightProjectileActor.h"
-#include "TankPawn.generated.h"
+#include "TurretPawn.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ITTAKESX_API ATankPawn : public ALauncherBasePawn
+class ITTAKESX_API ATurretPawn : public ALauncherBasePawn
 {
 	GENERATED_BODY()
-public:
-	ATankPawn();
-	virtual void Tick(float DeltaSeconds) override;
+
+private:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = true))
+	float LookUpAngle = 0;
+
 protected:
 	virtual void LookAtTarget(FVector TargetPosition) override;
 };

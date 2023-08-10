@@ -3,11 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BaseProjectile.h"
 #include "GameFramework/Actor.h"
 #include "StraightProjectileActor.generated.h"
 
 UCLASS()
-class ITTAKESX_API AStraightProjectileActor : public AActor
+class ITTAKESX_API AStraightProjectileActor : public ABaseProjectile
 {
 	GENERATED_BODY()
 
@@ -20,16 +21,5 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-private:
-	UPROPERTY(VisibleAnywhere)
-	class UStaticMeshComponent* ProjectileMesh;
-
-	UPROPERTY(VisibleAnywhere)
-	class UProjectileMovementComponent* ProjectileMovement;
-
-	UFUNCTION()
-	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse,
-	           const FHitResult& HitResult);
 public:
 };
