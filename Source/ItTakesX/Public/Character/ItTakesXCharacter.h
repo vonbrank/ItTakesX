@@ -27,12 +27,13 @@ protected:
 	void Zoom(float Value);
 
 	void Throttle(float Value);
-	void Pitch(float Value);
-	void Roll(float Value);
-	void Yaw(float Value);
+	// void Pitch(float Value);
+	// void Roll(float Value);
+	void VehicleTurn(float Value);
 
 	void AircraftThrottle(float Value);
 	void AircraftTurn(float Value);
+	void AircraftPitch(float Value);
 
 	void HandlePressingE();
 	void HandlePressingF();

@@ -54,6 +54,13 @@ protected:
 	UPROPERTY(EditAnywhere)
 	float BalanceVelocityStrength = 1000;
 
+	UPROPERTY(EditAnywhere)
+	float AirplanePitchStrength = 100;
+	UPROPERTY(EditAnywhere)
+	float AirplaneYawStrength = 100;
+	UPROPERTY(EditAnywhere)
+	float AirplaneRollStrength = 100;
+
 public:
 	bool IsVehicleStartup() const;
 	virtual bool StartupVehicle();
@@ -67,6 +74,7 @@ public:
 
 	void AircraftThrottle(float Value);
 	void AircraftTurn(float Value);
+	void AircraftPitch(float Value);
 
 	virtual void SetIsRunning(bool bNewIsRunning) override;
 };

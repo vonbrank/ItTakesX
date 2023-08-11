@@ -94,11 +94,12 @@ void AItTakesXCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAxis(TEXT("LookUp"), this, &ThisClass::LookUp);
 	PlayerInputComponent->BindAxis(TEXT("Zoom"), this, &ThisClass::Zoom);
 	PlayerInputComponent->BindAxis(TEXT("Throttle"), this, &ThisClass::Throttle);
-	PlayerInputComponent->BindAxis(TEXT("Pitch"), this, &ThisClass::Pitch);
-	PlayerInputComponent->BindAxis(TEXT("Roll"), this, &ThisClass::Roll);
-	PlayerInputComponent->BindAxis(TEXT("Yaw"), this, &ThisClass::Yaw);
+	// PlayerInputComponent->BindAxis(TEXT("Pitch"), this, &ThisClass::Pitch);
+	// PlayerInputComponent->BindAxis(TEXT("Roll"), this, &ThisClass::Roll);
+	PlayerInputComponent->BindAxis(TEXT("Yaw"), this, &ThisClass::VehicleTurn);
 	PlayerInputComponent->BindAxis(TEXT("AircraftThrottle"), this, &ThisClass::AircraftThrottle);
 	PlayerInputComponent->BindAxis(TEXT("AircraftTurn"), this, &ThisClass::AircraftTurn);
+	PlayerInputComponent->BindAxis(TEXT("AircraftTurnPitch"), this, &ThisClass::AircraftPitch);
 }
 
 void AItTakesXCharacter::MoveForward(float Value)
@@ -368,25 +369,25 @@ void AItTakesXCharacter::Throttle(float Value)
 	}
 }
 
-void AItTakesXCharacter::Pitch(float Value)
-{
-	if (Driving->Pitch(Value))
-	{
-		return;
-	}
-}
+// void AItTakesXCharacter::Pitch(float Value)
+// {
+// 	if (Driving->Pitch(Value))
+// 	{
+// 		return;
+// 	}
+// }
+//
+// void AItTakesXCharacter::Roll(float Value)
+// {
+// 	if (Driving->Roll(Value))
+// 	{
+// 		return;
+// 	}
+// }
 
-void AItTakesXCharacter::Roll(float Value)
+void AItTakesXCharacter::VehicleTurn(float Value)
 {
-	if (Driving->Roll(Value))
-	{
-		return;
-	}
-}
-
-void AItTakesXCharacter::Yaw(float Value)
-{
-	if (Driving->Yaw(Value))
+	if (Driving->Turn(Value))
 	{
 		return;
 	}
@@ -403,6 +404,14 @@ void AItTakesXCharacter::AircraftThrottle(float Value)
 void AItTakesXCharacter::AircraftTurn(float Value)
 {
 	if (Driving->AircraftTurn(Value))
+	{
+		return;
+	}
+}
+
+void AItTakesXCharacter::AircraftPitch(float Value)
+{
+	if (Driving->AircraftPitch(Value))
 	{
 		return;
 	}

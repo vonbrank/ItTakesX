@@ -176,6 +176,17 @@ void AVehicleControllerActor::AircraftThrottle(float Value)
 
 void AVehicleControllerActor::AircraftTurn(float Value)
 {
+	Mesh->AddTorqueInRadians(Mesh->GetUpVector() * AirplaneYawStrength * -Value, NAME_None, true);
+	Mesh->AddTorqueInRadians(Mesh->GetForwardVector() * AirplaneRollStrength * Value, NAME_None, true);
+}
+
+void AVehicleControllerActor::AircraftPitch(float Value)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	                                 FString::Printf(
+		                                 TEXT("pitching: %s"),
+		                                 *(Mesh->GetRightVector() * AirplanePitchStrength * Value).ToString()));
+	Mesh->AddTorqueInRadians(Mesh->GetRightVector() * AirplanePitchStrength * Value, NAME_None, true);
 }
 
 void AVehicleControllerActor::SetIsRunning(bool bNewIsRunning)
@@ -184,10 +195,16 @@ void AVehicleControllerActor::SetIsRunning(bool bNewIsRunning)
 
 	if (bNewIsRunning)
 	{
+		AnchorConstraint->SetAngularSwing1Limit(EAngularConstraintMotion::ACM_Locked, 0.f);
+		AnchorConstraint->SetAngularSwing2Limit(EAngularConstraintMotion::ACM_Limited, 60.f);
+		AnchorConstraint->SetAngularTwistLimit(EAngularConstraintMotion::ACM_Limited, 60.f);
 		AnchorConstraint->SetAngularDriveParams(BalanceTargetStrength, BalanceVelocityStrength, 0);
 	}
 	else
 	{
+		AnchorConstraint->SetAngularSwing1Limit(EAngularConstraintMotion::ACM_Free, 60.f);
+		AnchorConstraint->SetAngularSwing2Limit(EAngularConstraintMotion::ACM_Free, 60.f);
+		AnchorConstraint->SetAngularTwistLimit(EAngularConstraintMotion::ACM_Free, 60.f);
 		AnchorConstraint->SetAngularDriveParams(0, 0, 0);
 	}
 }

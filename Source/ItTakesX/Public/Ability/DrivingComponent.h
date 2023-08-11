@@ -41,10 +41,11 @@ public:
 	bool InteractWithTurnRight(float Value);
 	bool InteractWithPitchUp(float Value);
 	bool Throttle(float Value);
-	bool Pitch(float Value);
-	bool Roll(float Value);
-	bool Yaw(float Value);
+	// bool Pitch(float Value);
+	// bool Roll(float Value);
+	bool Turn(float Value);
 
 	bool AircraftThrottle(float Value);
 	bool AircraftTurn(float Value);
+	bool AircraftPitch(float Value);
 };
