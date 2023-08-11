@@ -75,6 +75,7 @@ void AItTakesXCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAction(TEXT("Glide"), IE_Pressed, this, &ThisClass::SwitchGliding);
 	PlayerInputComponent->BindAction(TEXT("Operate"), IE_Pressed, this, &ThisClass::HandlePressingE);
 	PlayerInputComponent->BindAction(TEXT("FAction"), IE_Pressed, this, &ThisClass::HandlePressingF);
+	PlayerInputComponent->BindAction(TEXT("KAction"), IE_Pressed, this, &ThisClass::HandlePressingK);
 	PlayerInputComponent->BindAction(TEXT("ZAction"), IE_Repeat, this, &ThisClass::HandleRepeatingZ);
 	PlayerInputComponent->BindAction(TEXT("XAction"), IE_Repeat, this, &ThisClass::HandleRepeatingX);
 	PlayerInputComponent->BindAction(TEXT("LShiftAction"), IE_Repeat, this, &ThisClass::HandleRepeatingLShift);
@@ -356,6 +357,14 @@ void AItTakesXCharacter::HandlePressingThree()
 void AItTakesXCharacter::HandlePressingLMB()
 {
 	if (Combat->InteractWithShoot())
+	{
+		return;
+	}
+}
+
+void AItTakesXCharacter::HandlePressingK()
+{
+	if (Driving->ToggleOpenFire())
 	{
 		return;
 	}

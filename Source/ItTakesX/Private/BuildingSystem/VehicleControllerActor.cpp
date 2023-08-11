@@ -3,6 +3,7 @@
 
 #include "BuildingSystem/VehicleControllerActor.h"
 
+#include "BuildingSystem/Component/VehicleComponentFlameThrower.h"
 #include "BuildingSystem/Component/VehicleComponentSuspensionWheel.h"
 #include "BuildingSystem/Component/VehicleComponentThruster.h"
 #include "Character/ItTakesXCharacter.h"
@@ -187,6 +188,19 @@ void AVehicleControllerActor::AircraftPitch(float Value)
 		                                 TEXT("pitching: %s"),
 		                                 *(Mesh->GetRightVector() * AirplanePitchStrength * Value).ToString()));
 	Mesh->AddTorqueInRadians(Mesh->GetRightVector() * AirplanePitchStrength * Value, NAME_None, true);
+}
+
+void AVehicleControllerActor::ToggleOpenFire()
+{
+	for (auto VehicleNodeInterface : CurrentVehicleNodes)
+	{
+		auto VehicleNode = VehicleNodeInterface.GetInterface();
+		auto VehicleComponentFlameThrower = Cast<AVehicleComponentFlameThrower>(VehicleNode);
+		if (VehicleComponentFlameThrower)
+		{
+			VehicleComponentFlameThrower->ToggleOpenFire();
+		}
+	}
 }
 
 void AVehicleControllerActor::SetIsRunning(bool bNewIsRunning)

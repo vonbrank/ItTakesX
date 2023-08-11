@@ -76,5 +76,7 @@ public:
 	void AircraftTurn(float Value);
 	void AircraftPitch(float Value);
 
+	void ToggleOpenFire();
+
 	virtual void SetIsRunning(bool bNewIsRunning) override;
 };

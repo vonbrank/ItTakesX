@@ -314,3 +314,19 @@ bool UDrivingComponent::AircraftPitch(float Value)
 
 	return false;
 }
+
+bool UDrivingComponent::ToggleOpenFire()
+{
+	if (CurrentOverlappingVehicle == nullptr || !CurrentOverlappingVehicle->IsVehicleStartup())
+	{
+		return false;
+	}
+
+	if (CurrentOverlappingVehicle)
+	{
+		CurrentOverlappingVehicle->ToggleOpenFire();
+		return true;
+	}
+
+	return false;
+}

@@ -48,4 +48,6 @@ public:
 	bool AircraftThrottle(float Value);
 	bool AircraftTurn(float Value);
 	bool AircraftPitch(float Value);
+
+	bool ToggleOpenFire();
 };
