@@ -8,6 +8,7 @@
 #include "Character/ItTakesXCharacter.h"
 #include "Components/ArrowComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
+#include "PhysicsEngine/PhysicsConstraintComponent.h"
 
 AVehicleControllerActor::AVehicleControllerActor()
 {
@@ -15,6 +16,14 @@ AVehicleControllerActor::AVehicleControllerActor()
 	CharacterExistMark = CreateDefaultSubobject<UArrowComponent>("CharacterExistMark");
 	CharacterEnterMark->SetupAttachment(RootComponent);
 	CharacterExistMark->SetupAttachment(RootComponent);
+
+	AnchorMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("AnchorMesh"));
+	AnchorMesh->SetupAttachment(RootComponent);
+
+	AnchorConstraint = CreateDefaultSubobject<UPhysicsConstraintComponent>(TEXT("AnchorConstraint"));
+	AnchorConstraint->SetupAttachment(RootComponent);
+
+	AnchorConstraint->SetConstrainedComponents(Mesh, NAME_None, AnchorMesh, NAME_None);
 }
 
 void AVehicleControllerActor::OnSphereStartOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -167,4 +176,18 @@ void AVehicleControllerActor::AircraftThrottle(float Value)
 
 void AVehicleControllerActor::AircraftTurn(float Value)
 {
+}
+
+void AVehicleControllerActor::SetIsRunning(bool bNewIsRunning)
+{
+	Super::SetIsRunning(bNewIsRunning);
+
+	if (bNewIsRunning)
+	{
+		AnchorConstraint->SetAngularDriveParams(BalanceTargetStrength, BalanceVelocityStrength, 0);
+	}
+	else
+	{
+		AnchorConstraint->SetAngularDriveParams(0, 0, 0);
+	}
 }

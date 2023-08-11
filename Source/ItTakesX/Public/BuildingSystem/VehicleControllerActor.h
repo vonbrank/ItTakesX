@@ -39,8 +39,20 @@ protected:
 	UPROPERTY()
 	class ACharacter* CurrenAttachCharacter;
 
+	UPROPERTY(VisibleAnywhere)
+	class UStaticMeshComponent* AnchorMesh;
+
+	UPROPERTY(VisibleAnywhere)
+	class UPhysicsConstraintComponent* AnchorConstraint;
+
 	UPROPERTY()
 	TArray<TScriptInterface<IVehicleNode>> CurrentVehicleNodes;
+
+	UPROPERTY(EditAnywhere)
+	float BalanceTargetStrength = 5000;
+
+	UPROPERTY(EditAnywhere)
+	float BalanceVelocityStrength = 1000;
 
 public:
 	bool IsVehicleStartup() const;
@@ -55,4 +67,6 @@ public:
 
 	void AircraftThrottle(float Value);
 	void AircraftTurn(float Value);
+
+	virtual void SetIsRunning(bool bNewIsRunning) override;
 };

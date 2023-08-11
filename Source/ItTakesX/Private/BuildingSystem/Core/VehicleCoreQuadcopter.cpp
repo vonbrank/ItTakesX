@@ -12,17 +12,17 @@ void AVehicleCoreQuadcopter::Tick(float DeltaSeconds)
 
 	if (bIsRunning)
 	{
-		FVector ActorUpVector = FVector::CrossProduct(GetActorForwardVector(), GetActorRightVector());
-		// Mesh->AddForce(ActorUpVector * 980.f, NAME_None, true);
-
-		float AngleRadians = FMath::Acos(FVector::DotProduct(ActorUpVector, FVector::UpVector));
-		float AngleDegrees = FMath::RadiansToDegrees(AngleRadians);
-
-		float alpha = AngleDegrees / RollBackMaxDegrees;
-		FVector RollBackVector = FVector::CrossProduct(ActorUpVector, FVector::UpVector);
+		// FVector ActorUpVector = FVector::CrossProduct(GetActorForwardVector(), GetActorRightVector());
+		// // Mesh->AddForce(ActorUpVector * 980.f, NAME_None, true);
 		//
-		Mesh->AddTorqueInRadians(RollBackVector * RollBackTorqueLength * alpha, NAME_None, true);
-		Mesh->SetAngularDamping(10);
+		// float AngleRadians = FMath::Acos(FVector::DotProduct(ActorUpVector, FVector::UpVector));
+		// float AngleDegrees = FMath::RadiansToDegrees(AngleRadians);
+		//
+		// float alpha = AngleDegrees / RollBackMaxDegrees;
+		// FVector RollBackVector = FVector::CrossProduct(ActorUpVector, FVector::UpVector);
+		// //
+		// Mesh->AddTorqueInRadians(RollBackVector * RollBackTorqueLength * alpha, NAME_None, true);
+		// Mesh->SetAngularDamping(10);
 
 		// if (AngleDegrees > 5)
 		// {
