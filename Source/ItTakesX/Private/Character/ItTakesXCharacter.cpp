@@ -76,6 +76,7 @@ void AItTakesXCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	PlayerInputComponent->BindAction(TEXT("Operate"), IE_Pressed, this, &ThisClass::HandlePressingE);
 	PlayerInputComponent->BindAction(TEXT("FAction"), IE_Pressed, this, &ThisClass::HandlePressingF);
 	PlayerInputComponent->BindAction(TEXT("KAction"), IE_Pressed, this, &ThisClass::HandlePressingK);
+	PlayerInputComponent->BindAction(TEXT("LAction"), IE_Pressed, this, &ThisClass::HandlePressingL);
 	PlayerInputComponent->BindAction(TEXT("ZAction"), IE_Repeat, this, &ThisClass::HandleRepeatingZ);
 	PlayerInputComponent->BindAction(TEXT("XAction"), IE_Repeat, this, &ThisClass::HandleRepeatingX);
 	PlayerInputComponent->BindAction(TEXT("LShiftAction"), IE_Repeat, this, &ThisClass::HandleRepeatingLShift);
@@ -167,22 +168,51 @@ void AItTakesXCharacter::HandlePressingE()
 
 void AItTakesXCharacter::HandleRepeatingLShift()
 {
-	Grabber->InteractWithHoistingObjectRotation(ERotateDirection::Direction_Up, 10.f);
+	if (Grabber->InteractWithHoistingObjectRotation(ERotateDirection::Direction_Up, 10.f))
+	{
+		return;
+	}
+	if (Driving->VerticalRotateTurret(1))
+	{
+		return;
+	}
 }
 
 void AItTakesXCharacter::HandleRepeatingLCtrl()
 {
-	Grabber->InteractWithHoistingObjectRotation(ERotateDirection::Direction_Down, 10.f);
+	if (Grabber->InteractWithHoistingObjectRotation(ERotateDirection::Direction_Down, 10.f))
+	{
+		return;
+	}
+	if (Driving->VerticalRotateTurret(-1))
+	{
+		return;
+	}
 }
 
 void AItTakesXCharacter::HandleRepeatingZ()
 {
-	Grabber->InteractWithHoistingObjectRotation(ERotateDirection::Direction_Left, 10.f);
+	if (Grabber->InteractWithHoistingObjectRotation(ERotateDirection::Direction_Left, 10.f))
+	{
+		return;
+	}
+	if (Driving->HorizontalRotateTurret(1))
+	{
+		return;
+	}
 }
 
 void AItTakesXCharacter::HandleRepeatingX()
 {
-	Grabber->InteractWithHoistingObjectRotation(ERotateDirection::Direction_Right, 10.f);
+	if (Grabber->InteractWithHoistingObjectRotation(ERotateDirection::Direction_Right, 10.f))
+	{
+		return;
+	}
+
+	if (Driving->HorizontalRotateTurret(-1))
+	{
+		return;
+	}
 }
 
 FVector AItTakesXCharacter::GetFollowCameraLocation() const
@@ -365,6 +395,14 @@ void AItTakesXCharacter::HandlePressingLMB()
 void AItTakesXCharacter::HandlePressingK()
 {
 	if (Driving->ToggleOpenFire())
+	{
+		return;
+	}
+}
+
+void AItTakesXCharacter::HandlePressingL()
+{
+	if (Driving->LaunchProjectile())
 	{
 		return;
 	}

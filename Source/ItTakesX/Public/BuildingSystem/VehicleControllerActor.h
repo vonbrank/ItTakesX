@@ -77,6 +77,9 @@ public:
 	void AircraftPitch(float Value);
 
 	void ToggleOpenFire();
+	void LaunchProjectile();
+	void VerticalRotateTurret(float Value);
+	void HorizontalRotateTurret(float Value);
 
 	virtual void SetIsRunning(bool bNewIsRunning) override;
 };

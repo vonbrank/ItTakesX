@@ -6,6 +6,7 @@
 #include "BuildingSystem/Component/VehicleComponentFlameThrower.h"
 #include "BuildingSystem/Component/VehicleComponentSuspensionWheel.h"
 #include "BuildingSystem/Component/VehicleComponentThruster.h"
+#include "BuildingSystem/Component/VehicleComponentTurret.h"
 #include "Character/ItTakesXCharacter.h"
 #include "Components/ArrowComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
@@ -183,10 +184,10 @@ void AVehicleControllerActor::AircraftTurn(float Value)
 
 void AVehicleControllerActor::AircraftPitch(float Value)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-	                                 FString::Printf(
-		                                 TEXT("pitching: %s"),
-		                                 *(Mesh->GetRightVector() * AirplanePitchStrength * Value).ToString()));
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	//                                  FString::Printf(
+	// 	                                 TEXT("pitching: %s"),
+	// 	                                 *(Mesh->GetRightVector() * AirplanePitchStrength * Value).ToString()));
 	Mesh->AddTorqueInRadians(Mesh->GetRightVector() * AirplanePitchStrength * Value, NAME_None, true);
 }
 
@@ -199,6 +200,45 @@ void AVehicleControllerActor::ToggleOpenFire()
 		if (VehicleComponentFlameThrower)
 		{
 			VehicleComponentFlameThrower->ToggleOpenFire();
+		}
+	}
+}
+
+void AVehicleControllerActor::LaunchProjectile()
+{
+	for (auto VehicleNodeInterface : CurrentVehicleNodes)
+	{
+		auto VehicleNode = VehicleNodeInterface.GetInterface();
+		auto VehicleComponentTurret = Cast<AVehicleComponentTurret>(VehicleNode);
+		if (VehicleComponentTurret)
+		{
+			VehicleComponentTurret->LaunchProjectile();
+		}
+	}
+}
+
+void AVehicleControllerActor::VerticalRotateTurret(float Value)
+{
+	for (auto VehicleNodeInterface : CurrentVehicleNodes)
+	{
+		auto VehicleNode = VehicleNodeInterface.GetInterface();
+		auto VehicleComponentTurret = Cast<AVehicleComponentTurret>(VehicleNode);
+		if (VehicleComponentTurret)
+		{
+			VehicleComponentTurret->VerticalRotateTurret(Value);
+		}
+	}
+}
+
+void AVehicleControllerActor::HorizontalRotateTurret(float Value)
+{
+	for (auto VehicleNodeInterface : CurrentVehicleNodes)
+	{
+		auto VehicleNode = VehicleNodeInterface.GetInterface();
+		auto VehicleComponentTurret = Cast<AVehicleComponentTurret>(VehicleNode);
+		if (VehicleComponentTurret)
+		{
+			VehicleComponentTurret->HorizontalRotateTurret(Value);
 		}
 	}
 }

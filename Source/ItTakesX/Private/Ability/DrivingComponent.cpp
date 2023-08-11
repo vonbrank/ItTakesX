@@ -330,3 +330,51 @@ bool UDrivingComponent::ToggleOpenFire()
 
 	return false;
 }
+
+bool UDrivingComponent::LaunchProjectile()
+{
+	if (CurrentOverlappingVehicle == nullptr || !CurrentOverlappingVehicle->IsVehicleStartup())
+	{
+		return false;
+	}
+
+	if (CurrentOverlappingVehicle)
+	{
+		CurrentOverlappingVehicle->LaunchProjectile();
+		return true;
+	}
+
+	return false;
+}
+
+bool UDrivingComponent::VerticalRotateTurret(float Value)
+{
+	if (CurrentOverlappingVehicle == nullptr || !CurrentOverlappingVehicle->IsVehicleStartup())
+	{
+		return false;
+	}
+
+	if (CurrentOverlappingVehicle)
+	{
+		CurrentOverlappingVehicle->VerticalRotateTurret(Value);
+		return true;
+	}
+
+	return false;
+}
+
+bool UDrivingComponent::HorizontalRotateTurret(float Value)
+{
+	if (CurrentOverlappingVehicle == nullptr || !CurrentOverlappingVehicle->IsVehicleStartup())
+	{
+		return false;
+	}
+
+	if (CurrentOverlappingVehicle)
+	{
+		CurrentOverlappingVehicle->HorizontalRotateTurret(Value);
+		return true;
+	}
+
+	return false;
+}

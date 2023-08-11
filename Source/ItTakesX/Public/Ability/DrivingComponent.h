@@ -50,4 +50,7 @@ public:
 	bool AircraftPitch(float Value);
 
 	bool ToggleOpenFire();
+	bool LaunchProjectile();
+	bool VerticalRotateTurret(float Value);
+	bool HorizontalRotateTurret(float Value);
 };

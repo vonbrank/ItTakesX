@@ -46,6 +46,7 @@ protected:
 	void HandlePressingThree();
 	void HandlePressingLMB();
 	void HandlePressingK();
+	void HandlePressingL();
 
 
 private:
