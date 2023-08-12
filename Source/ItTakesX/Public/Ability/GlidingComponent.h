@@ -48,6 +48,12 @@ private:
 	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
 	float CharacterLaunchSpeed = 1;
 
+	UPROPERTY(EditAnywhere)
+	float CommonAirDrag = 0.5;
+
+	UPROPERTY(EditAnywhere)
+	float GlidingAirDrag = 5;
+
 protected:
 public:
 	bool ToggleGliding();

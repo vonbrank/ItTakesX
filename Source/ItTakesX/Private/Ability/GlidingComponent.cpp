@@ -44,11 +44,18 @@ void UGlidingComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 		}
 		else if (bIsGliding)
 		{
+			float CharacterMass = Character->GetCharacterMovement()->Mass;
+
+			Character->GetCharacterMovement()->AddForce(
+				FVector::UpVector * CharacterMass * GlidingAirDrag * -Character->GetCharacterMovement()->Velocity.Z);
 			if (Character->GetCharacterMovement()->Velocity.Z <= 0)
 			{
-				float CharacterMass = Character->GetCharacterMovement()->Mass;
-				Character->GetCharacterMovement()->AddForce(
-					FVector::UpVector * CharacterMass * ForceRatioToCharacterGravity * 980);
+				// FVector NewVelocity = Character->GetMovementComponent()->Velocity;
+				// if (NewVelocity.Z < -MaxGlidingFallingSpeed)
+				// {
+				// 	NewVelocity.Z = -MaxGlidingFallingSpeed;
+				// 	Character->GetMovementComponent()->Velocity = NewVelocity;
+				// }
 			}
 			// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
 			//                                  FString::Printf(
@@ -64,7 +71,7 @@ bool UGlidingComponent::StartGliding()
 
 	if (Character == nullptr)
 	{
-		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("Character is null")));
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("Character is null")));
 		return false;
 	}
 
@@ -81,9 +88,9 @@ bool UGlidingComponent::StartGliding()
 		// Character->GetCharacterMovement()->GravityScale = 0.15;
 		bIsGliding = true;
 		Character->GetCharacterMovement()->AirControl = 0.7;
-		auto NewVelocity = Character->GetCharacterMovement()->Velocity;
-		NewVelocity.Z = 0;
-		Character->GetCharacterMovement()->Velocity = NewVelocity;
+		// auto NewVelocity = Character->GetCharacterMovement()->Velocity;
+		// NewVelocity.Z = 0;
+		// Character->GetCharacterMovement()->Velocity = NewVelocity;
 
 		InventoryComponent->SwitchToEquippableByIndex(3);
 
@@ -153,7 +160,7 @@ bool UGlidingComponent::IsGliding() const
 
 bool UGlidingComponent::ToggleGliding()
 {
-	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("start toggle gliding")));
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("start toggle gliding")));
 
 	if (bIsGliding)
 	{

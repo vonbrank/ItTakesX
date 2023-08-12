@@ -23,7 +23,13 @@ protected:
 
 private:
 	UPROPERTY(VisibleAnywhere)
-	class UStaticMeshComponent* WindBody;
+	class UBoxComponent* WindArea;
+
+	UPROPERTY(VisibleAnywhere)
+	class UArrowComponent* ForceDirection;
+
+	UPROPERTY(VisibleAnywhere)
+	class UNiagaraComponent* ForceParticle;
 
 	UFUNCTION()
 	virtual void OnBodyStartOverlap(
@@ -42,8 +48,14 @@ private:
 		int32 OtherBodyIndex
 	);
 
-	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = true))
 	float ForceLength;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = true))
+	float MaxSpeed = 1000;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = true))
+	float AirDrag = 0.5;
 
 	UPROPERTY()
 	class AItTakesXCharacter* CurrenOverlappingCharacter;
