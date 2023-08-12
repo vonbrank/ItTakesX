@@ -37,7 +37,7 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	class UArrowComponent* TokenCubeSpawnPoint;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<AActor> TokenCubeClass;
 
 	UPROPERTY(VisibleAnywhere)
@@ -75,13 +75,15 @@ private:
 
 	bool bHasRoseFlag = false;
 
-	virtual bool CanSpawnTokenCube();
-
 	void SpawnTokenCube();
-	void RiseFlag();
+
 	void ResetButtonState();
 	void LightUpButton();
 	void LightDownButton();
+
+protected:
+	virtual bool CanSpawnTokenCube();
+	virtual void RiseFlag();
 
 public:
 };
