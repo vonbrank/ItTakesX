@@ -57,7 +57,7 @@ void AVehicleComponentHoveringWheel::Tick(float DeltaSeconds)
 			{
 				Mesh->AddForceAtLocation(HitResult.ImpactNormal * CurrenForce, GetActorLocation());
 				Mesh->SetLinearDamping(3);
-				Mesh->SetAngularDamping(5);
+				// Mesh->SetAngularDamping(5);
 			}
 			DrawDebugLine(
 				GetWorld(),
