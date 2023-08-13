@@ -59,4 +59,6 @@ public:
 	virtual void SetIsRunning(bool bNewIsRunning) = 0;
 	virtual TScriptInterface<IVehicleNode> GetVehicleRoot() = 0;
 	virtual TArray<TScriptInterface<IVehicleNode>> GetAllChildNodes() = 0;
+	virtual bool DetachFromParentVehicleNode() = 0;
+	virtual  class UStaticMeshComponent* GetRootMesh() = 0;
 };

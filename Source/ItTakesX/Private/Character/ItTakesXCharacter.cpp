@@ -164,6 +164,10 @@ void AItTakesXCharacter::HandlePressingE()
 
 		return;
 	}
+	if (Combat->InteractWithDisconnectVehicleComponent())
+	{
+		return;
+	}
 }
 
 void AItTakesXCharacter::HandleRepeatingLShift()

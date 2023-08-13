@@ -250,6 +250,10 @@ bool AVehicleComponentActor::AttachToCurrentOverlappingVehicleNode()
 	// 	GetComponentLocation() - CurrentNearestConnectionComponent->GetComponentLocation()) / 2;
 
 	// 生成物理约束
+	if (CurrentConnectionConstraintActor)
+	{
+		CurrentConnectionConstraintActor->Destroy();
+	}
 	APhysicsConstraintActor* PhysicsConstraintActor = GetWorld()->SpawnActor<APhysicsConstraintActor>();
 	PhysicsConstraintActor->SetActorLocation(GetActorLocation());
 	UPhysicsConstraintComponent* PhysicsConstraintComponent = PhysicsConstraintActor->GetConstraintComp();
@@ -258,6 +262,7 @@ bool AVehicleComponentActor::AttachToCurrentOverlappingVehicleNode()
 	PhysicsConstraintComponent->SetAngularSwing1Limit(EAngularConstraintMotion::ACM_Locked, 0.f);
 	PhysicsConstraintComponent->SetAngularSwing2Limit(EAngularConstraintMotion::ACM_Locked, 0.f);
 	PhysicsConstraintComponent->SetAngularTwistLimit(EAngularConstraintMotion::ACM_Locked, 0.f);
+	CurrentConnectionConstraintActor = PhysicsConstraintActor;
 
 	Mesh->SetPhysicsLinearVelocity(FVector::Zero());
 	Mesh->SetPhysicsAngularVelocityInRadians(FVector::Zero());
@@ -328,8 +333,8 @@ bool AVehicleComponentActor::InteractWithOverlappingVehicleNode()
 			SpawnNewAdsorbEffect();
 		}
 
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-		                                 FString::Printf(TEXT("Same Connection, effect: %p"), CurrentAdsorbEffect));
+		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+		//                                  FString::Printf(TEXT("Same Connection, effect: %p"), CurrentAdsorbEffect));
 	}
 	else
 	{
@@ -404,6 +409,41 @@ ADottedLazer* AVehicleComponentActor::SpawnNewAdsorbEffect()
 	}
 
 	return CurrentAdsorbEffect;
+}
+
+UStaticMeshComponent* AVehicleComponentActor::GetRootMesh()
+{
+	return Mesh;
+}
+
+bool AVehicleComponentActor::DetachFromParentVehicleNode()
+{
+	if (ParentNode.GetInterface() == nullptr)
+	{
+		return false;
+	}
+
+	if (CurrentConnectionConstraintActor == nullptr)
+	{
+		return false;
+	}
+
+	UPhysicsConstraintComponent* PhysicsConstraintComponent = CurrentConnectionConstraintActor->GetConstraintComp();
+	PhysicsConstraintComponent->BreakConstraint();
+	CurrentConnectionConstraintActor->Destroy();
+	CurrentConnectionConstraintActor = nullptr;
+
+	Mesh->AddForce(FVector::UpVector);
+
+	if (ParentNode.GetInterface() && ParentNode.GetInterface()->GetRootMesh())
+	{
+		ParentNode.GetInterface()->GetRootMesh()->AddForce(FVector::UpVector);
+	}
+
+	ParentNode.SetInterface(nullptr);
+	ParentNode.SetObject(nullptr);
+
+	return true;
 }
 
 // bool AVehicleComponentActor::PropagateCommand(FVehicleCoreCommand Command)

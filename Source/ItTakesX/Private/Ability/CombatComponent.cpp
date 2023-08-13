@@ -6,6 +6,7 @@
 #include "Ability/AimingComponent.h"
 #include "Ability/InventoryComponent.h"
 #include "Environment/BombActor.h"
+#include "Interface/VehicleNode.h"
 
 // Sets default values for this component's properties
 UCombatComponent::UCombatComponent()
@@ -58,4 +59,34 @@ bool UCombatComponent::InteractWithShoot()
 	}
 
 	return true;
+}
+
+bool UCombatComponent::InteractWithDisconnectVehicleComponent()
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	                                 FString::Printf(TEXT("InteractWithDisconnectVehicleComponent")));
+
+	if (AimingComponent == nullptr)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+		                                 FString::Printf(TEXT("AimingComponent is null")));
+		return false;
+	}
+
+	if (InventoryComponent == nullptr || !InventoryComponent->HasWeaponEquipped())
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+		                                 FString::Printf(TEXT("InventoryComponent is null or not equip weapon")));
+		return false;
+	}
+
+	IAimable* Aimable = AimingComponent->GetCurrentAimingAimable();
+	IVehicleNode* VehicleNode = Cast<IVehicleNode>(Aimable);
+	if (VehicleNode)
+	{
+		VehicleNode->DetachFromParentVehicleNode();
+
+		return true;
+	}
+	return false;
 }

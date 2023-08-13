@@ -70,6 +70,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Vehicle Properties")
 	class USphereComponent* AreaSphere;
 
+	UPROPERTY()
+	class APhysicsConstraintActor* CurrentConnectionConstraintActor;
+
 	UFUNCTION()
 	virtual void OnSphereStartOverlap(
 		UPrimitiveComponent* OverlappedComponent,
@@ -111,4 +114,7 @@ public:
 	virtual TArray<TScriptInterface<IVehicleNode>> GetAllChildNodes() override;
 
 	ADottedLazer* SpawnNewAdsorbEffect();
+
+	virtual UStaticMeshComponent* GetRootMesh() override;
+	virtual bool DetachFromParentVehicleNode() override;
 };

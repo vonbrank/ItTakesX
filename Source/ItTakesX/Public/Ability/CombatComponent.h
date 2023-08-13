@@ -33,4 +33,5 @@ private:
 
 public:
 	bool InteractWithShoot();
+	bool InteractWithDisconnectVehicleComponent();
 };
