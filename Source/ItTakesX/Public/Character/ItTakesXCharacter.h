@@ -70,8 +70,8 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Ability")
 	class UGrabberComponent* Grabber;
 
-	UPROPERTY(VisibleDefaultsOnly, Category = "Ability")
-	class UInventoryComponent* Inventory;
+	UPROPERTY(VisibleAnywhere, Category = "Ability")
+	class UInventoryComponent* InventoryComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Ability")
 	class UDrivingComponent* Driving;

@@ -34,7 +34,7 @@ AItTakesXCharacter::AItTakesXCharacter()
 
 	Grabber = CreateDefaultSubobject<UGrabberComponent>("GrabberComp");
 
-	Inventory = CreateDefaultSubobject<UInventoryComponent>("InventoryComp");
+	InventoryComponent = CreateDefaultSubobject<UInventoryComponent>("InventoryComponent");
 
 	Driving = CreateDefaultSubobject<UDrivingComponent>("DrivingComp");
 
@@ -51,7 +51,7 @@ void AItTakesXCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Inventory->OnCurrentEquippableUpdate.AddDynamic(this, &ThisClass::OnCurrentEquippableUpdate);
+	InventoryComponent->OnCurrentEquippableUpdate.AddDynamic(this, &ThisClass::OnCurrentEquippableUpdate);
 }
 
 // Called every frame
@@ -246,18 +246,18 @@ void AItTakesXCharacter::HandlePressingF()
 
 bool AItTakesXCharacter::HasMagnetEquipped() const
 {
-	return Inventory != nullptr && Inventory->HasMagnetEquipped();
+	return InventoryComponent != nullptr && InventoryComponent->HasMagnetEquipped();
 }
 
 bool AItTakesXCharacter::HasWeaponEquipped() const
 {
-	return Inventory != nullptr && Inventory->HasWeaponEquipped();
+	return InventoryComponent != nullptr && InventoryComponent->HasWeaponEquipped();
 }
 
 
 void AItTakesXCharacter::PickUpAndEquip(TScriptInterface<IEquippable> Equippable)
 {
-	Inventory->AddAndEquip(Equippable);
+	InventoryComponent->AddAndEquip(Equippable);
 }
 
 void AItTakesXCharacter::OnCurrentEquippableUpdate(TScriptInterface<IEquippable> NewEquippableInterface)
@@ -371,17 +371,17 @@ bool AItTakesXCharacter::IsGliding() const
 
 void AItTakesXCharacter::HandlePressingOne()
 {
-	Inventory->SwitchToEquippableByIndex(1);
+	InventoryComponent->SwitchToEquippableByIndex(1);
 }
 
 void AItTakesXCharacter::HandlePressingTwo()
 {
-	Inventory->SwitchToEquippableByIndex(2);
+	InventoryComponent->SwitchToEquippableByIndex(2);
 }
 
 void AItTakesXCharacter::HandlePressingThree()
 {
-	// Inventory->SwitchToEquippableByIndex(3);
+	InventoryComponent->SwitchToEquippableByIndex(3);
 }
 
 void AItTakesXCharacter::HandlePressingLMB()

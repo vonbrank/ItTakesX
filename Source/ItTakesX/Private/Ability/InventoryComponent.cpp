@@ -17,6 +17,7 @@ UInventoryComponent::UInventoryComponent()
 	bHaveUnArm = true;
 	bHaveGlider = true;
 	bHaveMagnet = false;
+	bHaveWeapon = false;
 	// ...
 }
 
@@ -49,6 +50,11 @@ void UInventoryComponent::AddAndEquip(TScriptInterface<IEquippable> NewEquippabl
 	if (Cast<AMagnet>(NewEquippableInterface.GetInterface()))
 	{
 		bHaveMagnet = true;
+	}
+
+	if (Cast<AWeapon>(NewEquippableInterface.GetInterface()))
+	{
+		bHaveWeapon = true;
 	}
 
 	UnEquipCurrenEquippable();
@@ -96,10 +102,23 @@ bool UInventoryComponent::SwitchToEquippableByIndex(int Index)
 		}
 		break;
 	case 3:
-		if (bHaveGlider)
+		if (bHaveWeapon)
 		{
 			// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("new glider")));
 
+			AWeapon* NewWeapon = GetWorld()->SpawnActor<AWeapon>(WeaponClass);
+			NewEquippableInterface.SetObject(NewWeapon);
+			NewEquippableInterface.SetInterface(NewWeapon);
+		}
+		else
+		{
+			return false;
+		}
+		break;
+	case 4:
+		if (bHaveGlider)
+		{
+			// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("new glider")));
 			AGlider* NewGlider = GetWorld()->SpawnActor<AGlider>(GliderClass);
 			NewEquippableInterface.SetObject(NewGlider);
 			NewEquippableInterface.SetInterface(NewGlider);

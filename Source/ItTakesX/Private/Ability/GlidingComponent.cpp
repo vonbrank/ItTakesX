@@ -92,7 +92,7 @@ bool UGlidingComponent::StartGliding()
 		// NewVelocity.Z = 0;
 		// Character->GetCharacterMovement()->Velocity = NewVelocity;
 
-		InventoryComponent->SwitchToEquippableByIndex(3);
+		InventoryComponent->SwitchToEquippableByIndex(4);
 
 		// if (CurrenGlider)
 		// {

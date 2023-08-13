@@ -7,6 +7,7 @@
 #include "Magnet.h"
 #include "Components/ActorComponent.h"
 #include "Interface/Equippable.h"
+#include "Weapon/Weapon.h"
 #include "InventoryComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
@@ -38,6 +39,8 @@ private:
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AMagnet> MagnetClass;
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<AWeapon> WeaponClass;
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<AGlider> GliderClass;
 
 	void UnEquipCurrenEquippable();
@@ -45,6 +48,7 @@ private:
 	bool bHaveUnArm;
 	bool bHaveMagnet;
 	bool bHaveGlider;
+	bool bHaveWeapon;
 
 public:
 	FORCEINLINE IEquippable* GetCurrentEquippable() const { return CurrentEquippableInterface.GetInterface(); }
