@@ -27,9 +27,12 @@ void AVehicleComponentHoveringWheel::Tick(float DeltaSeconds)
 		float MinDistance = TraceLength + 10;
 		for (auto Result : HitResults)
 		{
-			auto VehicleNode = Cast<IVehicleNode>(Result.GetActor());
+			if (Cast<IVehicleNode>(Result.GetActor()) != nullptr)
+			{
+				continue;
+			}
 
-			if (VehicleNode)
+			if (Result.Component->GetName().Equals(TEXT("AreaSphere")))
 			{
 				continue;
 			}

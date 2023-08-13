@@ -24,13 +24,13 @@ void AVehicleCoreActor::OnSphereStartOverlap(UPrimitiveComponent* OverlappedComp
 {
 	Super::OnSphereStartOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 
-	AItTakesXCharacter* Character = Cast<AItTakesXCharacter>(OtherActor);
-	if (Character && CurrentOverlappingCharacter == nullptr)
-	{
-		Character->SetCurrentOverlappingVehicleCore(nullptr);
-		CurrentOverlappingCharacter = Character;
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("Start overlapping character")));
-	}
+	// AItTakesXCharacter* Character = Cast<AItTakesXCharacter>(OtherActor);
+	// if (Character && CurrentOverlappingCharacter == nullptr)
+	// {
+	// 	Character->SetCurrentOverlappingVehicleCore(nullptr);
+	// 	CurrentOverlappingCharacter = Character;
+	// 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("Start overlapping character")));
+	// }
 }
 
 void AVehicleCoreActor::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -38,12 +38,12 @@ void AVehicleCoreActor::OnSphereEndOverlap(UPrimitiveComponent* OverlappedCompon
 {
 	Super::OnSphereEndOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex);
 
-	if (OtherActor == CurrentOverlappingCharacter)
-	{
-		CurrentOverlappingCharacter->SetCurrentOverlappingVehicleCore(nullptr);
-		CurrentOverlappingCharacter = nullptr;
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("End overlapping character")));
-	}
+	// if (OtherActor == CurrentOverlappingCharacter)
+	// {
+	// 	CurrentOverlappingCharacter->SetCurrentOverlappingVehicleCore(nullptr);
+	// 	CurrentOverlappingCharacter = nullptr;
+	// 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("End overlapping character")));
+	// }
 }
 
 bool AVehicleCoreActor::IsVehicleStartup() const
