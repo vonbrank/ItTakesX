@@ -29,6 +29,11 @@ void UGrabberComponent::BeginPlay()
 
 	AimingComponent = GetOwner()->FindComponentByClass<UAimingComponent>();
 	InventoryComponent = GetOwner()->FindComponentByClass<UInventoryComponent>();
+
+	if (InventoryComponent)
+	{
+		InventoryComponent->BeforeCurrentEquippableUpdate.AddDynamic(this, &ThisClass::BeforeCurrentEquippableUpdate);
+	}
 }
 
 
@@ -48,26 +53,13 @@ bool UGrabberComponent::ToggleHoistingActor()
 		return false;
 	}
 
-	AActor* HoistingActor = nullptr;
 	auto Magnet = Cast<AMagnet>(InventoryComponent->GetCurrentEquippable());
 
 	auto CurrentHoistingHoistable = CurrentHoistingHoistableInterface.GetInterface();
 
 	if (CurrentHoistingHoistable)
 	{
-		CurrentHoistingHoistable->OnEndHoisting_Implementation(GetOwner());
-
-		CurrentHoistingHoistableInterface.SetObject(nullptr);
-		CurrentHoistingHoistableInterface.SetInterface(nullptr);
-
-		if (Magnet)
-		{
-			Magnet->DestroyCurrentMagnetEffect();
-		}
-
-		// TODO other action for dropdown;
-
-		// OnHoistableUpdate.Broadcast();
+		DropDownCurrentHoistable();
 
 		return true;
 	}
@@ -86,7 +78,7 @@ bool UGrabberComponent::ToggleHoistingActor()
 	CurrentHoistingHoistableInterface.SetObject(AimableActor);
 	CurrentHoistingHoistableInterface.SetInterface(Hoistable);
 
-	HoistingActor = Cast<AActor>(CurrentHoistingHoistableInterface.GetInterface());
+	AActor* HoistingActor = Cast<AActor>(CurrentHoistingHoistableInterface.GetInterface());
 	if (HoistingActor)
 	{
 		auto Character = Cast<AItTakesXCharacter>(GetOwner());
@@ -107,6 +99,32 @@ bool UGrabberComponent::ToggleHoistingActor()
 	}
 
 	return true;
+}
+
+void UGrabberComponent::DropDownCurrentHoistable()
+{
+	auto CurrentHoistingHoistable = CurrentHoistingHoistableInterface.GetInterface();
+	if (CurrentHoistingHoistable == nullptr)
+	{
+		return;
+	}
+	CurrentHoistingHoistable->OnEndHoisting_Implementation(GetOwner());
+
+	CurrentHoistingHoistableInterface.SetObject(nullptr);
+	CurrentHoistingHoistableInterface.SetInterface(nullptr);
+
+	if (InventoryComponent == nullptr)
+	{
+		return;
+	}
+	auto Magnet = Cast<AMagnet>(InventoryComponent->GetCurrentEquippable());
+
+	if (Magnet)
+	{
+		Magnet->DestroyCurrentMagnetEffect();
+	}
+
+	// TODO other action for dropdown;
 }
 
 bool UGrabberComponent::InteractWithHoisting()
@@ -235,4 +253,13 @@ FVector UGrabberComponent::GetHoistingActorHorizontalRotatingAxisRight()
 bool UGrabberComponent::IsHoisting() const
 {
 	return CurrentHoistingHoistableInterface.GetInterface() != nullptr;
+}
+
+void UGrabberComponent::BeforeCurrentEquippableUpdate(TScriptInterface<IEquippable> CurrentEquippable)
+{
+	auto CurrentHoistingHoistable = CurrentHoistingHoistableInterface.GetInterface();
+	if (CurrentHoistingHoistable)
+	{
+		DropDownCurrentHoistable();
+	}
 }

@@ -87,5 +87,8 @@ ADottedLazer* AMagnet::SpawnNewMagnetEffect()
 
 void AMagnet::DestroyCurrentMagnetEffect()
 {
-	CurrentMagnetEffect->Destroy();
+	if (CurrentMagnetEffect)
+	{
+		CurrentMagnetEffect->Destroy();
+	}
 }

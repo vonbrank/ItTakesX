@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Interface/Equippable.h"
 #include "Interface/Hoistable.h"
 #include "GrabberComponent.generated.h"
 
@@ -53,6 +54,11 @@ private:
 	class ADottedLazer* CurrentMagnetEffect;
 
 	FVector GetHoistingActorHorizontalRotatingAxisRight();
+
+	UFUNCTION()
+	void BeforeCurrentEquippableUpdate(TScriptInterface<IEquippable> CurrentEquippable);
+
+	void DropDownCurrentHoistable();
 
 
 public:

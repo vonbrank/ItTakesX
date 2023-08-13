@@ -135,6 +135,8 @@ bool UInventoryComponent::SwitchToEquippableByIndex(int Index)
 		break;
 	}
 
+	BeforeCurrentEquippableUpdate.Broadcast(CurrentEquippableInterface);
+
 	UnEquipCurrenEquippable();
 	CurrentEquippableInterface = NewEquippableInterface;
 

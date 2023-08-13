@@ -11,7 +11,10 @@
 #include "InventoryComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
-	FCurrentHoistableUpdateDelegate, TScriptInterface<IEquippable>, NewEquippable);
+	FBeforeCurrentEquippableUpdateDelegate, TScriptInterface<IEquippable>, CurrentEquippable);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(
+	FCurrentEquippableUpdateDelegate, TScriptInterface<IEquippable>, NewEquippable);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class ITTAKESX_API UInventoryComponent : public UActorComponent
@@ -44,7 +47,7 @@ private:
 	TSubclassOf<AGlider> GliderClass;
 
 	void UnEquipCurrenEquippable();
-	
+
 	bool bHaveUnArm;
 	bool bHaveMagnet;
 	bool bHaveGlider;
@@ -60,7 +63,9 @@ public:
 
 	void AddAndEquip(TScriptInterface<IEquippable> NewEquippableInterface);
 
-	FCurrentHoistableUpdateDelegate OnCurrentEquippableUpdate;
+
+	FBeforeCurrentEquippableUpdateDelegate BeforeCurrentEquippableUpdate;
+	FCurrentEquippableUpdateDelegate OnCurrentEquippableUpdate;
 
 	/**
 	 * 
