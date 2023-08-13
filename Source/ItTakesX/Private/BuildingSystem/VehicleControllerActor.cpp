@@ -178,7 +178,13 @@ void AVehicleControllerActor::AircraftThrottle(float Value)
 
 void AVehicleControllerActor::AircraftTurn(float Value)
 {
-	Mesh->AddTorqueInRadians(Mesh->GetUpVector() * AirplaneYawStrength * -Value, NAME_None, true);
+	FVector CurrentVelocity = Mesh->GetPhysicsLinearVelocity();
+	FVector HorizontalVelocity = CurrentVelocity + Mesh->GetUpVector() * (FVector::DotProduct(
+		CurrentVelocity, Mesh->GetUpVector()) * -1);
+	Mesh->AddTorqueInRadians(
+		Mesh->GetUpVector() * AirplaneYawStrength / FMath::Max(MinYawTurnDampingSpeed, HorizontalVelocity.Length()) * -
+		Value,
+		NAME_None, true);
 	Mesh->AddTorqueInRadians(Mesh->GetForwardVector() * AirplaneRollStrength * Value, NAME_None, true);
 }
 

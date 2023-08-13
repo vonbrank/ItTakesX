@@ -60,6 +60,8 @@ protected:
 	float AirplaneYawStrength = 100;
 	UPROPERTY(EditAnywhere)
 	float AirplaneRollStrength = 100;
+	UPROPERTY(EditAnywhere)
+	float MinYawTurnDampingSpeed = 200;
 
 public:
 	bool IsVehicleStartup() const;
