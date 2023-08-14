@@ -8,6 +8,7 @@
 #include "Ability/DrivingComponent.h"
 #include "Ability/GlidingComponent.h"
 #include "Ability/GrabberComponent.h"
+#include "Ability/HealthComponent.h"
 #include "Ability/InventoryComponent.h"
 #include "Ability/Magnet.h"
 #include "Ability/Weapon/Weapon.h"
@@ -41,6 +42,8 @@ AItTakesXCharacter::AItTakesXCharacter()
 	Gliding = CreateDefaultSubobject<UGlidingComponent>("GlidingComp");
 
 	Combat = CreateDefaultSubobject<UCombatComponent>("CombatComp");
+
+	Health = CreateDefaultSubobject<UHealthComponent>("HealthComp");
 
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;

@@ -82,6 +82,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Ability")
 	class UCombatComponent* Combat;
 
+	UPROPERTY(VisibleAnywhere, Category = "Ability")
+	class UHealthComponent* Health;
+
 	EItTakesXViewType ItTakesXView = EItTakesXViewType_Normal;
 
 	UFUNCTION()
@@ -93,6 +96,7 @@ private:
 	UPROPERTY(BlueprintReadWrite, meta=(AllowPrivateAccess = "true"))
 	bool bIsSwitching;
 
+	friend class UInGameWidget;
 
 public:
 	FORCEINLINE class UCameraComponent* GetFollowCamera() { return FollowCamera; }

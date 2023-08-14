@@ -3,6 +3,7 @@
 
 #include "Enemy/ChariotPawn.h"
 
+#include "Character/ItTakesXCharacter.h"
 #include "Kismet/GameplayStatics.h"
 
 AChariotPawn::AChariotPawn()
@@ -16,14 +17,43 @@ AChariotPawn::AChariotPawn()
 	}
 }
 
+void AChariotPawn::BeginPlay()
+{
+	Super::BeginPlay();
+
+	for (int i = 0; i < 6; i++)
+	{
+		WeaponMeshList[i]->OnComponentHit.AddDynamic(this, &ThisClass::AChariotPawn::OnWeaponHit);
+	}
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("fuck")));
+	// BodyMesh->OnComponentHit.AddDynamic(this, &ThisClass::AChariotPawn::OnWeaponHit);
+}
+
 void AChariotPawn::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 }
 
+void AChariotPawn::OnWeaponHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+                               FVector NormalImpulse, const FHitResult& Hit)
+{
+	auto CurrentOwner = GetOwner();
+	if (CurrentOwner == nullptr) return;
+
+	auto OwnerInstigator = CurrentOwner->GetInstigatorController();
+	auto DamageTypeClass = UDamageType::StaticClass();
+
+	if (Cast<AItTakesXCharacter>(OtherActor))
+	{
+		UGameplayStatics::ApplyDamage(OtherActor, WeaponDamage, OwnerInstigator, this, DamageTypeClass);
+	}
+}
+
 void AChariotPawn::LookAtTarget(FVector TargetPosition)
 {
 	Super::LookAtTarget(TargetPosition);
+
+	// return;
 
 
 	FVector VectorToTarget = TargetPosition - BodyMesh->GetComponentLocation();

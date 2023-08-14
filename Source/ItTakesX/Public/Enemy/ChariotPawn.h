@@ -17,6 +17,9 @@ public:
 	AChariotPawn();
 	virtual void Tick(float DeltaSeconds) override;
 
+protected:
+	virtual void BeginPlay() override;
+
 private:
 	UPROPERTY(EditAnywhere)
 	float MaxSpeed = 200.f;
@@ -26,6 +29,13 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	TArray<class UStaticMeshComponent*> WeaponMeshList;
+
+	UFUNCTION()
+	void OnWeaponHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	                 FVector NormalImpulse, const FHitResult& Hit);
+
+	UPROPERTY(EditAnywhere)
+	float WeaponDamage = 10;
 
 protected:
 	virtual void LookAtTarget(FVector TargetPosition) override;
