@@ -41,15 +41,15 @@ void AVehicleComponentThruster::Tick(float DeltaTime)
 
 void AVehicleComponentThruster::Throttle(float Value)
 {
-	CurrentThrottle += Value;
-	if (CurrentThrottle < 0)
-	{
-		CurrentThrottle = 0;
-	}
-	else if (CurrentThrottle > MaxThrottle)
-	{
-		CurrentThrottle = MaxThrottle;
-	}
+	CurrentThrottle = Value;
+	// if (CurrentThrottle < 0)
+	// {
+	// 	CurrentThrottle = 0;
+	// }
+	// else if (CurrentThrottle > MaxThrottle)
+	// {
+	// 	CurrentThrottle = MaxThrottle;
+	// }
 	// CurrentThrottle = FMath::Clamp(0, MaxThrottle, CurrentThrottle);
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
 	                                 FString::Printf(

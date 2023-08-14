@@ -165,13 +165,23 @@ void AVehicleControllerActor::Turn(float Value)
 
 void AVehicleControllerActor::AircraftThrottle(float Value)
 {
+	CurrentAirplaneThrottle += Value * AirplaneThrottleAcceleration * GetWorld()->DeltaTimeSeconds;
+	if (CurrentAirplaneThrottle < 0)
+	{
+		CurrentAirplaneThrottle = 0;
+	}
+	else if (CurrentAirplaneThrottle > MaxAirplaneThrottle)
+	{
+		CurrentAirplaneThrottle = MaxAirplaneThrottle;
+	}
+
 	for (auto VehicleNodeInterface : CurrentVehicleNodes)
 	{
 		auto VehicleNode = VehicleNodeInterface.GetInterface();
 		auto VehicleComponentThruster = Cast<AVehicleComponentThruster>(VehicleNode);
 		if (VehicleComponentThruster)
 		{
-			VehicleComponentThruster->Throttle(Value);
+			VehicleComponentThruster->Throttle(CurrentAirplaneThrottle);
 		}
 	}
 }
@@ -259,6 +269,7 @@ void AVehicleControllerActor::SetIsRunning(bool bNewIsRunning)
 		AnchorConstraint->SetAngularSwing2Limit(EAngularConstraintMotion::ACM_Limited, 60.f);
 		AnchorConstraint->SetAngularTwistLimit(EAngularConstraintMotion::ACM_Limited, 60.f);
 		AnchorConstraint->SetAngularDriveParams(BalanceTargetStrength, BalanceVelocityStrength, 0);
+		CurrentAirplaneThrottle = 0;
 	}
 	else
 	{
@@ -266,5 +277,6 @@ void AVehicleControllerActor::SetIsRunning(bool bNewIsRunning)
 		AnchorConstraint->SetAngularSwing2Limit(EAngularConstraintMotion::ACM_Free, 60.f);
 		AnchorConstraint->SetAngularTwistLimit(EAngularConstraintMotion::ACM_Free, 60.f);
 		AnchorConstraint->SetAngularDriveParams(0, 0, 0);
+		AircraftThrottle(0);
 	}
 }

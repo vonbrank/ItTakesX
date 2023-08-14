@@ -108,6 +108,7 @@ public:
 	                                      OutNearestVehicleNode) override;
 	// virtual bool PropagateCommand(FVehicleCoreCommand Command) override;
 	virtual bool AddChildNode(TScriptInterface<IVehicleNode> VehicleNode) override;
+	virtual bool RemoveChildNode(TScriptInterface<IVehicleNode> VehicleNode) override;
 	virtual void SetIsRunning(bool bNewIsRunning) override;
 
 	virtual TScriptInterface<IVehicleNode> GetVehicleRoot() override;

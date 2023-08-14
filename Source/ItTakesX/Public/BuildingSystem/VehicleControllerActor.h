@@ -63,6 +63,13 @@ protected:
 	UPROPERTY(EditAnywhere)
 	float MinYawTurnDampingSpeed = 200;
 
+	UPROPERTY(EditAnywhere)
+	float MaxAirplaneThrottle = 8000;
+	UPROPERTY(EditAnywhere)
+	float AirplaneThrottleAcceleration = 2000.f;
+
+	float CurrentAirplaneThrottle;
+
 public:
 	bool IsVehicleStartup() const;
 	virtual bool StartupVehicle();

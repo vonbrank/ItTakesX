@@ -435,9 +435,16 @@ bool AVehicleComponentActor::DetachFromParentVehicleNode()
 
 	Mesh->AddForce(FVector::UpVector);
 
-	if (ParentNode.GetInterface() && ParentNode.GetInterface()->GetRootMesh())
+	if (ParentNode.GetInterface())
 	{
-		ParentNode.GetInterface()->GetRootMesh()->AddForce(FVector::UpVector);
+		if (ParentNode.GetInterface()->GetRootMesh())
+		{
+			ParentNode.GetInterface()->GetRootMesh()->AddForce(FVector::UpVector);
+		}
+		TScriptInterface<IVehicleNode> VehicleNodeInterface;
+		VehicleNodeInterface.SetInterface(this);
+		VehicleNodeInterface.SetObject(this);
+		ParentNode.GetInterface()->RemoveChildNode(VehicleNodeInterface);
 	}
 
 	ParentNode.SetInterface(nullptr);
@@ -460,6 +467,25 @@ bool AVehicleComponentActor::AddChildNode(TScriptInterface<IVehicleNode> Vehicle
 	ChildNodes.Add(VehicleNode);
 
 	return true;
+}
+
+bool AVehicleComponentActor::RemoveChildNode(TScriptInterface<IVehicleNode> VehicleNode)
+{
+	int RemoveIndex = -1;
+	for (int i = 0; i < ChildNodes.Num(); i++)
+	{
+		if (ChildNodes[i].GetInterface() == VehicleNode.GetInterface())
+		{
+			RemoveIndex = i;
+			break;
+		}
+	}
+	if (RemoveIndex != -1)
+	{
+		ChildNodes.RemoveAt(RemoveIndex);
+		return true;
+	}
+	return false;
 }
 
 void AVehicleComponentActor::OnBeginHoisting_Implementation(AActor* OtherActor)

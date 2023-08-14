@@ -56,6 +56,7 @@ public:
 	0;
 	// virtual bool PropagateCommand(FVehicleCoreCommand Command) = 0;
 	virtual bool AddChildNode(TScriptInterface<IVehicleNode> VehicleNode) = 0;
+	virtual bool RemoveChildNode(TScriptInterface<IVehicleNode> VehicleNode) = 0;
 	virtual void SetIsRunning(bool bNewIsRunning) = 0;
 	virtual TScriptInterface<IVehicleNode> GetVehicleRoot() = 0;
 	virtual TArray<TScriptInterface<IVehicleNode>> GetAllChildNodes() = 0;
