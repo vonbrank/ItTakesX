@@ -3,6 +3,8 @@
 
 #include "Enemy/EnemyBasePawn.h"
 
+#include "BuildingSystem/Component/VehicleComponentBlade.h"
+#include "BuildingSystem/Component/VehicleComponentFlameThrower.h"
 #include "Character/ItTakesXCharacter.h"
 #include "Components/SphereComponent.h"
 
@@ -28,6 +30,8 @@ void AEnemyBasePawn::BeginPlay()
 	AreaSphere->OnComponentEndOverlap.AddDynamic(this, &ThisClass::OnSphereEndOverlap);
 
 	OnTakeAnyDamage.AddDynamic(this, &ThisClass::AEnemyBasePawn::DamageTaken);
+
+	Health = MaxHealth;
 }
 
 // Called every frame
@@ -45,6 +49,15 @@ void AEnemyBasePawn::Tick(float DeltaTime)
 void AEnemyBasePawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+}
+
+void AEnemyBasePawn::FallDownBurningIfLiving()
+{
+	if (CurrentBurningEmitter && Health > 0.f)
+	{
+		CurrentBurningEmitter->Destroy();
+		CurrentBurningEmitter = nullptr;
+	}
 }
 
 void AEnemyBasePawn::OnSphereStartOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -81,4 +94,32 @@ bool AEnemyBasePawn::IsTargetInRange() const
 void AEnemyBasePawn::DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
                                  AController* DamageInstigator, AActor* DamageCauser)
 {
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	//                                  FString::Printf(TEXT("AVehicleComponentFlameThrower is damaging enemy")));
+
+	if (Cast<AVehicleComponentBlade>(DamageCauser))
+	{
+		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+		//                                  FString::Printf(TEXT("%s is damaging by AVehicleComponentBlade"), *GetName()));
+		return;
+	}
+
+	auto VehicleComponentFlameThrower = Cast<AVehicleComponentFlameThrower>(DamageCauser);
+
+	if (VehicleComponentFlameThrower)
+	{
+		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+		//                                  FString::Printf(
+		// 	                                 TEXT("%s is damaging by AVehicleComponentFlameThrower"), *GetName()));
+		if (CurrentBurningEmitter == nullptr)
+		{
+			CurrentBurningEmitter = GetWorld()->SpawnActor<AEmitter>(VehicleComponentFlameThrower->GetFireClass(),
+			                                                         GetActorLocation(), GetActorRotation());
+			if (CurrentBurningEmitter)
+			{
+				CurrentBurningEmitter->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
+			}
+		}
+		Health -= Damage;
+	}
 }

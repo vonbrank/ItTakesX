@@ -192,8 +192,8 @@ void AVehicleControllerActor::AircraftTurn(float Value)
 	// FVector HorizontalVelocity = CurrentVelocity + Mesh->GetUpVector() * (FVector::DotProduct(
 	// 	CurrentVelocity, Mesh->GetUpVector()) * -1);
 	FVector ForwardVelocity = FVector::DotProduct(Mesh->GetForwardVector(), CurrentVelocity) * Mesh->GetForwardVector();
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-	                                 FString::Printf(TEXT("ForwardVelocity = %f"), ForwardVelocity.Length()));
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	//                                  FString::Printf(TEXT("ForwardVelocity = %f"), ForwardVelocity.Length()));
 	Mesh->AddTorqueInRadians(
 		Mesh->GetUpVector() * AirplaneYawStrength / FMath::Max(MinYawTurnDampingSpeed, ForwardVelocity.Length()) * -
 		Value,

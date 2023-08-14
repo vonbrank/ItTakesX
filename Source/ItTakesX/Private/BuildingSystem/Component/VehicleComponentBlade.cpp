@@ -18,11 +18,10 @@ void AVehicleComponentBlade::BeginPlay()
 void AVehicleComponentBlade::OnWeaponHit(UPrimitiveComponent* HitComp, AActor* OtherActor,
                                          UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	auto DamageType = UDamageType::StaticClass();
-
 	if (Cast<AEnemyBasePawn>(OtherActor))
 	{
 		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("blade on hit")));
+		auto DamageType = UDamageType::StaticClass();
 		UGameplayStatics::ApplyDamage(OtherActor, Damage, nullptr, this, DamageType);
 
 		auto Explosion = GetWorld()->SpawnActor<ARadialForceActor>();

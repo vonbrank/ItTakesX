@@ -5,6 +5,8 @@
 
 #include "Components/ArrowComponent.h"
 #include "Components/BoxComponent.h"
+#include "Enemy/EnemyBasePawn.h"
+#include "Kismet/GameplayStatics.h"
 
 AVehicleComponentFlameThrower::AVehicleComponentFlameThrower()
 {
@@ -19,13 +21,32 @@ void AVehicleComponentFlameThrower::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ToggleOpenFire();
+	FireArea->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnFireAreaStartOverlap);
+	FireArea->OnComponentEndOverlap.AddDynamic(this, &ThisClass::OnFireAreaEndOverlap);
 }
+
+void AVehicleComponentFlameThrower::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	if (CurrentFireParticle)
+	{
+		for (auto Enemy : CurrentOverlappingEnemy)
+		{
+			auto DamageType = UDamageType::StaticClass();
+			UGameplayStatics::ApplyDamage(Enemy, DamagePerSecond * DeltaSeconds, nullptr, this, DamageType);
+		}
+	}
+}
+
 
 void AVehicleComponentFlameThrower::ToggleOpenFire()
 {
 	if (CurrentFireParticle)
 	{
+		for (auto Enemy : CurrentOverlappingEnemy)
+		{
+			Enemy->FallDownBurningIfLiving();
+		}
 		CurrentFireParticle->Destroy();
 		CurrentFireParticle = nullptr;
 	}
@@ -49,5 +70,59 @@ void AVehicleComponentFlameThrower::SetIsRunning(bool bNewIsRunning)
 			CurrentFireParticle->Destroy();
 			CurrentFireParticle = nullptr;
 		}
+	}
+}
+
+void AVehicleComponentFlameThrower::OnFireAreaStartOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+                                                           UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
+                                                           bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherComp != OtherActor->GetRootComponent())
+	{
+		return;
+	}
+
+	auto NewEnemy = Cast<AEnemyBasePawn>(OtherActor);
+
+	if (NewEnemy)
+	{
+		bool bIsInList = false;
+		for (auto Enemy : CurrentOverlappingEnemy)
+		{
+			if (Enemy == NewEnemy)
+			{
+				bIsInList = true;
+				break;
+			}
+		}
+
+		if (!bIsInList)
+		{
+			CurrentOverlappingEnemy.Add(NewEnemy);
+		}
+	}
+}
+
+
+void AVehicleComponentFlameThrower::OnFireAreaEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+                                                         UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (OtherComp != OtherActor->GetRootComponent())
+	{
+		return;
+	}
+
+	int Index = -1;
+	for (int i = 0; i < CurrentOverlappingEnemy.Num(); i++)
+	{
+		if (CurrentOverlappingEnemy[i] == OtherActor)
+		{
+			Index = i;
+			break;
+		}
+	}
+	if (Index != -1)
+	{
+		CurrentOverlappingEnemy.RemoveAt(Index);
 	}
 }

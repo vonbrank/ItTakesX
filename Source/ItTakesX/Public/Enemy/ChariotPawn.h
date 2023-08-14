@@ -42,7 +42,8 @@ private:
 protected:
 	virtual void LookAtTarget(FVector TargetPosition) override;
 
-	virtual void DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* DamageInstigator,
+	virtual void DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
+	                         AController* DamageInstigator,
 	                         AActor* DamageCauser) override;
 
 public:

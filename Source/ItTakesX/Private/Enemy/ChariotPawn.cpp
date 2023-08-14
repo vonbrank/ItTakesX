@@ -4,6 +4,7 @@
 #include "Enemy/ChariotPawn.h"
 
 #include "BuildingSystem/Component/VehicleComponentBlade.h"
+#include "BuildingSystem/Component/VehicleComponentFlameThrower.h"
 #include "Character/ItTakesXCharacter.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -100,5 +101,19 @@ void AChariotPawn::DamageTaken(AActor* DamagedActor, float Damage, const UDamage
 	{
 		BreakPhysicsConstraintEvent();
 		bHasDestroy = true;
+		return;
+	}
+
+	if (Cast<AVehicleComponentFlameThrower>(DamageCauser))
+	{
+		if (Health < 0.f)
+		{
+			if (!bHasDestroy)
+			{
+				BodyMesh->AddImpulse(FVector::UpVector * 500, NAME_None, true);
+				bHasDestroy = true;
+				BreakPhysicsConstraintEvent();
+			}
+		}
 	}
 }
