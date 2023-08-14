@@ -13,5 +13,18 @@ UCLASS()
 class ITTAKESX_API AVehicleComponentBlade : public AVehicleComponentActor
 {
 	GENERATED_BODY()
-	
+
+protected:
+	virtual void BeginPlay() override;
+
+private:
+	UFUNCTION()
+	void OnWeaponHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	                 FVector NormalImpulse, const FHitResult& Hit);
+
+	UPROPERTY()
+	float Damage = 10.f;
+
+	UPROPERTY()
+	TSubclassOf<AActor> ExplosionClass;
 };

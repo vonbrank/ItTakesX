@@ -51,10 +51,10 @@ void AVehicleComponentActor::BeginPlay()
 			VehicleConnectionComponentList.Add(VehicleConnectionComponent);
 		}
 	}
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-	                                 FString::Printf(
-		                                 TEXT("name: %s, connection num: %d"), *GetName(),
-		                                 VehicleConnectionComponentList.Num()));
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	//                                  FString::Printf(
+	// 	                                 TEXT("name: %s, connection num: %d"), *GetName(),
+	// 	                                 VehicleConnectionComponentList.Num()));
 }
 
 void AVehicleComponentActor::SetIsRunning(bool bNewIsRunning)

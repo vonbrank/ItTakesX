@@ -26,6 +26,8 @@ void AEnemyBasePawn::BeginPlay()
 
 	AreaSphere->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnSphereStartOverlap);
 	AreaSphere->OnComponentEndOverlap.AddDynamic(this, &ThisClass::OnSphereEndOverlap);
+
+	OnTakeAnyDamage.AddDynamic(this, &ThisClass::AEnemyBasePawn::DamageTaken);
 }
 
 // Called every frame
@@ -74,4 +76,9 @@ void AEnemyBasePawn::LookAtTarget(FVector TargetPosition)
 bool AEnemyBasePawn::IsTargetInRange() const
 {
 	return CurrentTargetCharacter != nullptr;
+}
+
+void AEnemyBasePawn::DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
+                                 AController* DamageInstigator, AActor* DamageCauser)
+{
 }

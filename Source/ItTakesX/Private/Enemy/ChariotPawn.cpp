@@ -3,6 +3,7 @@
 
 #include "Enemy/ChariotPawn.h"
 
+#include "BuildingSystem/Component/VehicleComponentBlade.h"
 #include "Character/ItTakesXCharacter.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -15,6 +16,8 @@ AChariotPawn::AChariotPawn()
 		WeaponMesh->SetupAttachment(RootComponent);
 		WeaponMeshList.Add(WeaponMesh);
 	}
+
+	bHasDestroy = false;
 }
 
 void AChariotPawn::BeginPlay()
@@ -53,6 +56,11 @@ void AChariotPawn::LookAtTarget(FVector TargetPosition)
 {
 	Super::LookAtTarget(TargetPosition);
 
+	if (bHasDestroy)
+	{
+		return;
+	}
+
 	// return;
 
 
@@ -80,5 +88,17 @@ void AChariotPawn::LookAtTarget(FVector TargetPosition)
 	else
 	{
 		BodyMesh->AddTorqueInRadians(FVector::UpVector * 50, NAME_None, true);
+	}
+}
+
+void AChariotPawn::DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
+                               AController* DamageInstigator, AActor* DamageCauser)
+{
+	Super::DamageTaken(DamagedActor, Damage, DamageType, DamageInstigator, DamageCauser);
+
+	if (Cast<AVehicleComponentBlade>(DamageCauser))
+	{
+		BreakPhysicsConstraintEvent();
+		bHasDestroy = true;
 	}
 }

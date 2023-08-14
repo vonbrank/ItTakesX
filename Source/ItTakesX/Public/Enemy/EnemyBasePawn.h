@@ -52,6 +52,10 @@ protected:
 	UFUNCTION(BlueprintPure)
 	virtual bool IsTargetInRange() const;
 
+	UFUNCTION()
+	virtual void DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
+	                         AController* DamageInstigator, AActor* DamageCauser);
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
