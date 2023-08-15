@@ -3,8 +3,11 @@
 
 #include "Enemy/LauncherBasePawn.h"
 
+#include "Character/ItTakesXCharacter.h"
 #include "Components/ArrowComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 #include "GeometryCollection/GeometryCollectionComponent.h"
+#include "Projectile/AoeProjectileActor.h"
 
 ALauncherBasePawn::ALauncherBasePawn()
 {
@@ -56,6 +59,14 @@ void ALauncherBasePawn::Shoot()
 	if (Projectile)
 	{
 		Projectile->SetOwner(this);
+
+		if (Cast<AAoeProjectileActor>(Projectile))
+		{
+			Projectile->GetProjectileMovement()->HomingTargetComponent = TWeakObjectPtr<USceneComponent>(
+				CurrentTargetCharacter->GetRootComponent());
+			Projectile->GetProjectileMovement()->bIsHomingProjectile = true;
+			Projectile->GetProjectileMovement()->HomingAccelerationMagnitude = 3000;
+		}
 	}
 }
 
