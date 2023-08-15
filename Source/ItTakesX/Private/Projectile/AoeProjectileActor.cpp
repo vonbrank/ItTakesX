@@ -22,7 +22,7 @@ void AAoeProjectileActor::DamageTarget(UPrimitiveComponent* HitComp, AActor* Oth
 	}
 	else
 	{
-		ThisInstigator = UGameplayStatics::GetPlayerController(this, 0);
+		ThisInstigator = GetWorld()->GetFirstPlayerController();
 	}
 
 	auto DamageType = UDamageType::StaticClass();

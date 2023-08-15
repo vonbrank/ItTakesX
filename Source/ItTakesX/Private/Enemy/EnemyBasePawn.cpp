@@ -104,6 +104,10 @@ void AEnemyBasePawn::DamageTaken(AActor* DamagedActor, float Damage, const UDama
 
 	if (VehicleComponentFlameThrower)
 	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue,
+		                                 FString::Printf(
+			                                 TEXT("%s is damaging by VehicleComponentFlameThrower, Health = %f"), *GetName(), Health));
+
 		if (CurrentBurningEmitter == nullptr)
 		{
 			CurrentBurningEmitter = GetWorld()->SpawnActor<AEmitter>(VehicleComponentFlameThrower->GetFireClass(),
@@ -140,7 +144,8 @@ void AEnemyBasePawn::RadialDamageTaken(AActor* DamagedActor, float Damage, const
 	auto Projectile = Cast<ABaseProjectile>(DamageCauser);
 	if (Projectile)
 	{
-		if (CurrentBurningEmitter == nullptr)
+		auto EnemyBasePawn = Cast<AEnemyBasePawn>(Projectile->GetOwner());
+		if (CurrentBurningEmitter == nullptr && EnemyBasePawn != nullptr)
 		{
 			CurrentBurningEmitter = GetWorld()->SpawnActor<AEmitter>(Projectile->GetFireClass(),
 			                                                         GetActorLocation(), GetActorRotation());

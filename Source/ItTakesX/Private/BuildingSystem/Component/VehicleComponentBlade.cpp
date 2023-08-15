@@ -22,7 +22,7 @@ void AVehicleComponentBlade::OnWeaponHit(UPrimitiveComponent* HitComp, AActor* O
 	{
 		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("blade on hit")));
 		auto DamageType = UDamageType::StaticClass();
-		UGameplayStatics::ApplyDamage(OtherActor, Damage, nullptr, this, DamageType);
+		UGameplayStatics::ApplyDamage(OtherActor, Damage, GetWorld()->GetFirstPlayerController(), this, DamageType);
 
 		auto Explosion = GetWorld()->SpawnActor<ARadialForceActor>();
 		if (Explosion)

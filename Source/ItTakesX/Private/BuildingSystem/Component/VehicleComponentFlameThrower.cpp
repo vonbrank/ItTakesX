@@ -33,7 +33,8 @@ void AVehicleComponentFlameThrower::Tick(float DeltaSeconds)
 		for (auto Enemy : CurrentOverlappingEnemy)
 		{
 			auto DamageType = UDamageType::StaticClass();
-			UGameplayStatics::ApplyDamage(Enemy, DamagePerSecond * DeltaSeconds, nullptr, this, DamageType);
+			UGameplayStatics::ApplyDamage(Enemy, DamagePerSecond * DeltaSeconds, GetWorld()->GetFirstPlayerController(),
+			                              this, DamageType);
 		}
 	}
 }
