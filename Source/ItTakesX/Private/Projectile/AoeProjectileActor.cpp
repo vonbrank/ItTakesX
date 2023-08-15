@@ -3,6 +3,7 @@
 
 #include "Projectile/AoeProjectileActor.h"
 
+#include "Enemy/EnemyBasePawn.h"
 #include "Kismet/GameplayStatics.h"
 #include "PhysicsEngine/RadialForceActor.h"
 #include "PhysicsEngine/RadialForceComponent.h"
@@ -11,7 +12,17 @@ void AAoeProjectileActor::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor
                                 FVector NormalImpulse, const FHitResult& HitResult)
 {
 	auto ThisOwner = GetOwner();
-	auto ThisInstigator = ThisOwner != nullptr ? ThisOwner->GetInstigatorController() : nullptr;
+	AController* ThisInstigator = nullptr;
+
+	auto EnemyPawn = Cast<AEnemyBasePawn>(ThisOwner);
+	if (EnemyPawn)
+	{
+		ThisInstigator = EnemyPawn->GetController();
+	}
+	else
+	{
+		ThisInstigator = UGameplayStatics::GetPlayerController(this, 0);
+	}
 
 	auto DamageType = UDamageType::StaticClass();
 	TArray<AActor*> IgnoreActors;

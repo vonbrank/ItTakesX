@@ -38,8 +38,13 @@ void ALauncherBasePawn::Tick(float DeltaSeconds)
 
 void ALauncherBasePawn::Shoot()
 {
-	GetWorld()->SpawnActor<ABaseProjectile>(ProjectileClass, ProjectileSpawnPoint->GetComponentLocation(),
-	                                        ProjectileSpawnPoint->GetComponentRotation());
+	auto Projectile = GetWorld()->SpawnActor<ABaseProjectile>(ProjectileClass,
+	                                                          ProjectileSpawnPoint->GetComponentLocation(),
+	                                                          ProjectileSpawnPoint->GetComponentRotation());
+	if (Projectile)
+	{
+		Projectile->SetOwner(this);
+	}
 }
 
 void ALauncherBasePawn::LookAtTarget(FVector TargetPosition)
