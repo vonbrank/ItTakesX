@@ -35,5 +35,11 @@ void ABaseProjectile::Tick(float DeltaTime)
 void ABaseProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
                             FVector NormalImpulse, const FHitResult& HitResult)
 {
+	DamageTarget(HitComp, OtherActor, OtherComp, NormalImpulse, HitResult);
 	Destroy();
+}
+
+void ABaseProjectile::DamageTarget(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+                                   FVector NormalImpulse, const FHitResult& HitResult)
+{
 }

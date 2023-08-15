@@ -8,8 +8,9 @@
 #include "PhysicsEngine/RadialForceActor.h"
 #include "PhysicsEngine/RadialForceComponent.h"
 
-void AAoeProjectileActor::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-                                FVector NormalImpulse, const FHitResult& HitResult)
+
+void AAoeProjectileActor::DamageTarget(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+                                       FVector NormalImpulse, const FHitResult& HitResult)
 {
 	auto ThisOwner = GetOwner();
 	AController* ThisInstigator = nullptr;
@@ -39,5 +40,4 @@ void AAoeProjectileActor::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor
 	{
 		Explosion->SetLifeSpan(1);
 	}
-	Destroy();
 }

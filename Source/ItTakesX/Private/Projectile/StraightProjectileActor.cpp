@@ -3,7 +3,11 @@
 
 #include "Projectile/StraightProjectileActor.h"
 
+#include "Enemy/EnemyBasePawn.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AStraightProjectileActor::AStraightProjectileActor()
@@ -16,6 +20,35 @@ AStraightProjectileActor::AStraightProjectileActor()
 void AStraightProjectileActor::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void AStraightProjectileActor::DamageTarget(UPrimitiveComponent* HitComp, AActor* OtherActor,
+                                            UPrimitiveComponent* OtherComp, FVector NormalImpulse,
+                                            const FHitResult& HitResult)
+{
+	auto ThisOwner = GetOwner();
+	AController* ThisInstigator = nullptr;
+
+	auto EnemyPawn = Cast<AEnemyBasePawn>(ThisOwner);
+	if (EnemyPawn)
+	{
+		ThisInstigator = EnemyPawn->GetController();
+	}
+	else
+	{
+		ThisInstigator = UGameplayStatics::GetPlayerController(this, 0);
+	}
+
+	auto DamageType = UDamageType::StaticClass();
+	UGameplayStatics::ApplyDamage(OtherActor, 20, ThisInstigator, this, DamageType);
+
+	auto Character = Cast<ACharacter>(OtherActor);
+	if (Character)
+	{
+		// auto UnitNormal = NormalImpulse;
+		// UnitNormal.Normalize();
+		Character->GetCharacterMovement()->AddImpulse(-HitResult.Normal * 3000, true);
+	}
 }
 
 // Called every frame

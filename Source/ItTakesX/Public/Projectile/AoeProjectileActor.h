@@ -14,7 +14,7 @@ class ITTAKESX_API AAoeProjectileActor : public ABaseProjectile
 {
 	GENERATED_BODY()
 
-private:
-	virtual void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	                   FVector NormalImpulse, const FHitResult& HitResult) override;
+protected:
+	virtual void DamageTarget(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	                          FVector NormalImpulse, const FHitResult& HitResult) override;
 };

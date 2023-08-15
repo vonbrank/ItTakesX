@@ -35,6 +35,9 @@ private:
 	virtual void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 	                   FVector NormalImpulse,
 	                   const FHitResult& HitResult);
+protected:
+	virtual void DamageTarget(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	                          FVector NormalImpulse, const FHitResult& HitResult);
 
 protected:
 	UPROPERTY(EditDefaultsOnly)
