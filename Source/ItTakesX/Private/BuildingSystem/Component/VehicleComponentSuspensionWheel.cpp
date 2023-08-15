@@ -51,7 +51,9 @@ void AVehicleComponentSuspensionWheel::Turn(float Value, FTransform VehicleCente
 		Value = -Value;
 	}
 
-	TurnConnection->AddTorqueInRadians(TurnConnection->GetUpVector() * Value * 4000, NAME_None, true);
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("turn value %f"), Value));
+
+	TurnConstraint->SetAngularOrientationTarget(FRotator(0, -Value * 20, 0));
 }
 
 void AVehicleComponentSuspensionWheel::SetIsRunning(bool bNewIsRunning)
