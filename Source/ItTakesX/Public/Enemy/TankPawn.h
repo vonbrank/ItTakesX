@@ -20,4 +20,8 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 protected:
 	virtual void LookAtTarget(FVector TargetPosition) override;
+	UPROPERTY(VisibleAnywhere)
+	class UStaticMeshComponent* FakeBodyMesh;
+
+	virtual void Destruct() override;
 };

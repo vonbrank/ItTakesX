@@ -16,8 +16,6 @@ ALauncherBasePawn::ALauncherBasePawn()
 	TurretGeometryCollection = CreateDefaultSubobject<UGeometryCollectionComponent>(TEXT("BodyGeometryCollection"));
 	TurretGeometryCollection->SetupAttachment(RootComponent);
 
-	FakeBodyMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("FakeBodyMesh"));
-	FakeBodyMesh->SetupAttachment(RootComponent);
 
 	FieldSystemSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("FieldSystemSpawnPoint"));
 	FieldSystemSpawnPoint->SetupAttachment(RootComponent);
@@ -25,10 +23,6 @@ ALauncherBasePawn::ALauncherBasePawn()
 	TurretGeometryCollection->SetSimulatePhysics(false);
 	TurretGeometryCollection->SetHiddenInGame(true);
 	TurretGeometryCollection->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
-	FakeBodyMesh->SetSimulatePhysics(false);
-	FakeBodyMesh->SetHiddenInGame(true);
-	FakeBodyMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void ALauncherBasePawn::Tick(float DeltaSeconds)
@@ -104,20 +98,13 @@ void ALauncherBasePawn::RadialDamageTaken(AActor* DamagedActor, float Damage, co
 
 void ALauncherBasePawn::Destruct()
 {
-	BodyMesh->SetSimulatePhysics(false);
-	BodyMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	BodyMesh->SetHiddenInGame(true);
-	BodyMesh->SetSimulatePhysics(false);
+	TurretMesh->SetSimulatePhysics(false);
 	TurretMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	TurretMesh->SetHiddenInGame(true);
 
 	TurretGeometryCollection->SetHiddenInGame(false);
 	TurretGeometryCollection->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	TurretGeometryCollection->SetSimulatePhysics(true);
-
-	FakeBodyMesh->SetHiddenInGame(false);
-	FakeBodyMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	FakeBodyMesh->SetSimulatePhysics(true);
 
 	GetWorld()->SpawnActor<AFieldSystemActor>(FieldSystemClass, FieldSystemSpawnPoint->GetComponentLocation(),
 	                                          FieldSystemSpawnPoint->GetComponentRotation());

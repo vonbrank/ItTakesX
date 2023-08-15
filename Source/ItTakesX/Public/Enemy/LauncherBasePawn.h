@@ -38,9 +38,6 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	class USceneComponent* FieldSystemSpawnPoint;
 
-	UPROPERTY(VisibleAnywhere)
-	class UStaticMeshComponent* FakeBodyMesh;
-
 	UPROPERTY(EditAnywhere)
 	float ShootInterval = 3.f;
 
@@ -56,5 +53,5 @@ protected:
 
 	bool bHasDestruct = false;
 
-	void Destruct();
+	virtual void Destruct();
 };

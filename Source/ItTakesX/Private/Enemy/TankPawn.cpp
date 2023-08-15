@@ -8,6 +8,11 @@
 
 ATankPawn::ATankPawn()
 {
+	FakeBodyMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("FakeBodyMesh"));
+	FakeBodyMesh->SetupAttachment(RootComponent);
+	FakeBodyMesh->SetSimulatePhysics(false);
+	FakeBodyMesh->SetHiddenInGame(true);
+	FakeBodyMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void ATankPawn::Tick(float DeltaSeconds)
@@ -32,4 +37,17 @@ void ATankPawn::LookAtTarget(FVector TargetPosition)
 	{
 		TurretMesh->SetWorldRotation(PreviewRotation);
 	}
+}
+
+void ATankPawn::Destruct()
+{
+	Super::Destruct();
+
+	BodyMesh->SetSimulatePhysics(false);
+	BodyMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	BodyMesh->SetHiddenInGame(true);
+
+	FakeBodyMesh->SetHiddenInGame(false);
+	FakeBodyMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	FakeBodyMesh->SetSimulatePhysics(true);
 }
