@@ -26,8 +26,13 @@ void AAoeProjectileActor::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor
 
 	auto DamageType = UDamageType::StaticClass();
 	TArray<AActor*> IgnoreActors;
-	UGameplayStatics::ApplyRadialDamage(this, 1000, HitResult.Location, 500, DamageType, IgnoreActors, this,
+	UGameplayStatics::ApplyDamage(OtherActor, 100, ThisInstigator, this, DamageType);
+	UGameplayStatics::ApplyRadialDamage(this, 50, HitResult.Location, 500, DamageType, IgnoreActors, this,
 	                                    ThisInstigator);
+
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	//                                  FString::Printf(
+	// 	                                 TEXT("Projectile on hit, OtherActor: %s"), *OtherActor->GetName()));
 
 	auto Explosion = GetWorld()->SpawnActor<ABaseExplosion>(ExplosionClass, HitResult.Location, FRotator::ZeroRotator);
 	if (Explosion)

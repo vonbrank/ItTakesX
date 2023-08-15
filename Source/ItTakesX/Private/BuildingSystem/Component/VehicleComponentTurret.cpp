@@ -21,7 +21,7 @@ void AVehicleComponentTurret::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// LaunchProjectile();
+	LaunchProjectile();
 }
 
 void AVehicleComponentTurret::LaunchProjectile()

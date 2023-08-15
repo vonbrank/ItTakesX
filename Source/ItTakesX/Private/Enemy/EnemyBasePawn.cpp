@@ -97,7 +97,7 @@ void AEnemyBasePawn::DamageTaken(AActor* DamagedActor, float Damage, const UDama
                                  AController* DamageInstigator, AActor* DamageCauser)
 {
 	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-	//                                  FString::Printf(TEXT("AVehicleComponentFlameThrower is damaging enemy")));
+	//                                  FString::Printf(TEXT(" is damaging enemy")));
 
 	if (Cast<AVehicleComponentBlade>(DamageCauser))
 	{
@@ -122,8 +122,8 @@ void AEnemyBasePawn::DamageTaken(AActor* DamagedActor, float Damage, const UDama
 				CurrentBurningEmitter->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
 			}
 		}
-		Health -= Damage;
 	}
+	Health -= Damage;
 }
 
 void AEnemyBasePawn::RadialDamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
@@ -132,11 +132,12 @@ void AEnemyBasePawn::RadialDamageTaken(AActor* DamagedActor, float Damage, const
 {
 	auto Projectile = Cast<ABaseProjectile>(DamageCauser);
 
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	                                 FString::Printf(
+		                                 TEXT("%s is damaging by AVehicleComponentFlameThrower"), *GetName()));
+
 	if (Projectile)
 	{
-		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-		//                                  FString::Printf(
-		// 	                                 TEXT("%s is damaging by AVehicleComponentFlameThrower"), *GetName()));
 		if (CurrentBurningEmitter == nullptr)
 		{
 			CurrentBurningEmitter = GetWorld()->SpawnActor<AEmitter>(Projectile->GetFireClass(),
