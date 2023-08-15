@@ -4,6 +4,7 @@
 #include "Projectile/BaseProjectile.h"
 
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "PhysicsEngine/RadialForceActor.h"
 
 // Sets default values
 ABaseProjectile::ABaseProjectile()
@@ -34,6 +35,5 @@ void ABaseProjectile::Tick(float DeltaTime)
 void ABaseProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
                             FVector NormalImpulse, const FHitResult& HitResult)
 {
-	// UE_LOG(LogTemp, Warning, TEXT("OnHit"));
 	Destroy();
 }

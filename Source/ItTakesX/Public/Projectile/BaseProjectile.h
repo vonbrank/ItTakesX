@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Environment/BaseExplosion.h"
 #include "GameFramework/Actor.h"
 #include "BaseProjectile.generated.h"
 
@@ -21,7 +22,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-protected:
+
 private:
 	UPROPERTY(VisibleAnywhere)
 	class UStaticMeshComponent* ProjectileMesh;
@@ -30,8 +31,13 @@ private:
 	class UProjectileMovementComponent* ProjectileMovement;
 
 	UFUNCTION()
-	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse,
-	           const FHitResult& HitResult);
+	virtual void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	                   FVector NormalImpulse,
+	                   const FHitResult& HitResult);
+
+protected:
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<ABaseExplosion> ExplosionClass;
 
 public:
 	FORCEINLINE UProjectileMovementComponent* GetProjectileMovement() { return ProjectileMovement; }

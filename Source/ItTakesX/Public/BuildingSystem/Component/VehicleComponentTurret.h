@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BuildingSystem/VehicleComponentActor.h"
+#include "Environment/BaseExplosion.h"
 #include "Projectile/BaseProjectile.h"
 #include "VehicleComponentTurret.generated.h"
 

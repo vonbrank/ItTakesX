@@ -36,6 +36,7 @@ void AVehicleComponentTurret::LaunchProjectile()
 			CurrentSpeed, ProjectileSpawnPoint->GetForwardVector());
 		ProjectileActor->GetProjectileMovement()->MaxSpeed = ProjectileSpeed + FVector::DotProduct(
 			CurrentSpeed, ProjectileSpawnPoint->GetForwardVector());
+		ProjectileActor->SetOwner(this);
 	}
 	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("Ref = %s"), *Ref->GetName()));
 }
@@ -46,16 +47,16 @@ void AVehicleComponentTurret::VerticalRotateTurret(float Value)
 	NewRotation.Add(GetWorld()->DeltaTimeSeconds * TurretRotatingSpeedDegree * Value, 0, 0);
 
 
-	if (NewRotation.Pitch < 0)
+	if (NewRotation.Pitch < -MaxVerticalRotatingDegree)
 	{
-		NewRotation.Pitch = 0;
+		NewRotation.Pitch = -MaxVerticalRotatingDegree;
 	}
 	else if (NewRotation.Pitch > MaxVerticalRotatingDegree)
 	{
 		NewRotation.Pitch = MaxVerticalRotatingDegree;
 	}
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("NewPitch = %f"), NewRotation.Pitch));
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("NewPitch = %f"), NewRotation.Pitch));
 	TurretMesh->SetRelativeRotation(NewRotation);
 }
 
