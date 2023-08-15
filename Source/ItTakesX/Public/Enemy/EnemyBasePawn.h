@@ -56,6 +56,11 @@ protected:
 	virtual void DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
 	                         AController* DamageInstigator, AActor* DamageCauser);
 
+	UFUNCTION()
+	virtual void RadialDamageTaken(
+		AActor* DamagedActor, float Damage, const class UDamageType* DamageType, FVector Origin,
+		const FHitResult& HitInfo, class AController* InstigatedBy, AActor* DamageCauser);
+
 	UPROPERTY()
 	class AEmitter* CurrentBurningEmitter;
 

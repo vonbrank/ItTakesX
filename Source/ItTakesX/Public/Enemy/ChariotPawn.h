@@ -46,6 +46,8 @@ protected:
 	                         AController* DamageInstigator,
 	                         AActor* DamageCauser) override;
 
+	virtual void RadialDamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType, FVector Origin, const FHitResult& HitInfo, AController* InstigatedBy, AActor* DamageCauser) override;
+
 public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void BreakPhysicsConstraintEvent();

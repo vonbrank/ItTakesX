@@ -5,6 +5,7 @@
 
 #include "BuildingSystem/Component/VehicleComponentBlade.h"
 #include "BuildingSystem/Component/VehicleComponentFlameThrower.h"
+#include "BuildingSystem/Component/VehicleComponentTurret.h"
 #include "Character/ItTakesXCharacter.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -114,6 +115,22 @@ void AChariotPawn::DamageTaken(AActor* DamagedActor, float Damage, const UDamage
 				bHasDestroy = true;
 				BreakPhysicsConstraintEvent();
 			}
+		}
+	}
+}
+
+void AChariotPawn::RadialDamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType, FVector Origin,
+                                     const FHitResult& HitInfo, AController* InstigatedBy, AActor* DamageCauser)
+{
+	Super::RadialDamageTaken(DamagedActor, Damage, DamageType, Origin, HitInfo, InstigatedBy, DamageCauser);
+
+	if (Cast<APlayerController>(InstigatedBy))
+	{
+		if (!bHasDestroy)
+		{
+			BodyMesh->AddImpulse(FVector::UpVector * 800, NAME_None, true);
+			bHasDestroy = true;
+			BreakPhysicsConstraintEvent();
 		}
 	}
 }

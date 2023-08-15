@@ -4,7 +4,9 @@
 #include "BuildingSystem/Component/VehicleComponentTurret.h"
 
 #include "Components/ArrowComponent.h"
+#include "GameFramework/Character.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 AVehicleComponentTurret::AVehicleComponentTurret()
 {
@@ -19,7 +21,7 @@ void AVehicleComponentTurret::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// LaunchProjectile();
+	LaunchProjectile();
 }
 
 void AVehicleComponentTurret::LaunchProjectile()
@@ -36,7 +38,7 @@ void AVehicleComponentTurret::LaunchProjectile()
 			CurrentSpeed, ProjectileSpawnPoint->GetForwardVector());
 		ProjectileActor->GetProjectileMovement()->MaxSpeed = ProjectileSpeed + FVector::DotProduct(
 			CurrentSpeed, ProjectileSpawnPoint->GetForwardVector());
-		ProjectileActor->SetOwner(this);
+		ProjectileActor->SetOwner(UGameplayStatics::GetPlayerCharacter(this, 0));
 	}
 	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("Ref = %s"), *Ref->GetName()));
 }

@@ -7,6 +7,7 @@
 #include "BuildingSystem/Component/VehicleComponentFlameThrower.h"
 #include "Character/ItTakesXCharacter.h"
 #include "Components/SphereComponent.h"
+#include "Projectile/BaseProjectile.h"
 
 // Sets default values
 AEnemyBasePawn::AEnemyBasePawn()
@@ -29,7 +30,8 @@ void AEnemyBasePawn::BeginPlay()
 	AreaSphere->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnSphereStartOverlap);
 	AreaSphere->OnComponentEndOverlap.AddDynamic(this, &ThisClass::OnSphereEndOverlap);
 
-	OnTakeAnyDamage.AddDynamic(this, &ThisClass::AEnemyBasePawn::DamageTaken);
+	OnTakeAnyDamage.AddDynamic(this, &ThisClass::DamageTaken);
+	OnTakeRadialDamage.AddDynamic(this, &ThisClass::RadialDamageTaken);
 
 	Health = MaxHealth;
 }
@@ -114,6 +116,30 @@ void AEnemyBasePawn::DamageTaken(AActor* DamagedActor, float Damage, const UDama
 		if (CurrentBurningEmitter == nullptr)
 		{
 			CurrentBurningEmitter = GetWorld()->SpawnActor<AEmitter>(VehicleComponentFlameThrower->GetFireClass(),
+			                                                         GetActorLocation(), GetActorRotation());
+			if (CurrentBurningEmitter)
+			{
+				CurrentBurningEmitter->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
+			}
+		}
+		Health -= Damage;
+	}
+}
+
+void AEnemyBasePawn::RadialDamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
+                                       FVector Origin, const FHitResult& HitInfo, AController* InstigatedBy,
+                                       AActor* DamageCauser)
+{
+	auto Projectile = Cast<ABaseProjectile>(DamageCauser);
+
+	if (Projectile)
+	{
+		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+		//                                  FString::Printf(
+		// 	                                 TEXT("%s is damaging by AVehicleComponentFlameThrower"), *GetName()));
+		if (CurrentBurningEmitter == nullptr)
+		{
+			CurrentBurningEmitter = GetWorld()->SpawnActor<AEmitter>(Projectile->GetFireClass(),
 			                                                         GetActorLocation(), GetActorRotation());
 			if (CurrentBurningEmitter)
 			{

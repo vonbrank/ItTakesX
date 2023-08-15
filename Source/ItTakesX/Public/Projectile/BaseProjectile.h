@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Environment/BaseExplosion.h"
 #include "GameFramework/Actor.h"
+#include "Particles/Emitter.h"
 #include "BaseProjectile.generated.h"
 
 UCLASS()
@@ -38,7 +39,11 @@ private:
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<ABaseExplosion> ExplosionClass;
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AEmitter> FireClass;
+
 
 public:
 	FORCEINLINE UProjectileMovementComponent* GetProjectileMovement() { return ProjectileMovement; }
+	FORCEINLINE TSubclassOf<AEmitter> GetFireClass() { return FireClass; }
 };
