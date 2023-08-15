@@ -103,7 +103,7 @@ void ALightningPawn::Shoot()
 	}
 }
 
-void ALightningPawn::Destruct()
+void ALightningPawn::Destruct(AActor* DestructCauser, AController* DestructInstigator)
 {
 	BodyMesh->SetSimulatePhysics(false);
 	BodyMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -115,38 +115,4 @@ void ALightningPawn::Destruct()
 
 	GetWorld()->SpawnActor<AFieldSystemActor>(FieldSystemClass, FieldSystemSpawnPoint->GetComponentLocation(),
 	                                          FieldSystemSpawnPoint->GetComponentRotation());
-}
-
-void ALightningPawn::DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
-                                 AController* DamageInstigator, AActor* DamageCauser)
-{
-	Super::DamageTaken(DamagedActor, Damage, DamageType, DamageInstigator, DamageCauser);
-
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-	                                 FString::Printf(TEXT("fuck fuck fuck, Health = %f"), Health));
-
-	if (Health < 0.f)
-	{
-		if (!bHasDestruct)
-		{
-			bHasDestruct = true;
-			Destruct();
-		}
-	}
-}
-
-void ALightningPawn::RadialDamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
-                                       FVector Origin, const FHitResult& HitInfo, AController* InstigatedBy,
-                                       AActor* DamageCauser)
-{
-	Super::RadialDamageTaken(DamagedActor, Damage, DamageType, Origin, HitInfo, InstigatedBy, DamageCauser);
-
-	if (Health < 0.f)
-	{
-		if (!bHasDestruct)
-		{
-			bHasDestruct = true;
-			Destruct();
-		}
-	}
 }

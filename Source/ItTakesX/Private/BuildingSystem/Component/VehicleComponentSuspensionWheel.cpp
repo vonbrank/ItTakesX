@@ -51,7 +51,7 @@ void AVehicleComponentSuspensionWheel::Turn(float Value, FTransform VehicleCente
 		Value = -Value;
 	}
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("turn value %f"), Value));
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("turn value %f"), Value));
 
 	TurnConstraint->SetAngularOrientationTarget(FRotator(0, -Value * 20, 0));
 }

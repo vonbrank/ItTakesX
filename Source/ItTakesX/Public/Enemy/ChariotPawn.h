@@ -36,17 +36,13 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float WeaponDamage = 10;
-
-	bool bHasDestroy;
+	//
+	// bool bHasDestroy;
 
 protected:
 	virtual void LookAtTarget(FVector TargetPosition) override;
 
-	virtual void DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
-	                         AController* DamageInstigator,
-	                         AActor* DamageCauser) override;
-
-	virtual void RadialDamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType, FVector Origin, const FHitResult& HitInfo, AController* InstigatedBy, AActor* DamageCauser) override;
+	virtual void Destruct(AActor* DestructCauser, AController* DestructInstigator) override;
 
 public:
 	UFUNCTION(BlueprintImplementableEvent)

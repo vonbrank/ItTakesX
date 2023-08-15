@@ -39,9 +39,9 @@ void ATankPawn::LookAtTarget(FVector TargetPosition)
 	}
 }
 
-void ATankPawn::Destruct()
+void ATankPawn::Destruct(AActor* DestructCauser, AController* DestructInstigator)
 {
-	Super::Destruct();
+	Super::Destruct(DestructCauser, DestructInstigator);
 
 	BodyMesh->SetSimulatePhysics(false);
 	BodyMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);

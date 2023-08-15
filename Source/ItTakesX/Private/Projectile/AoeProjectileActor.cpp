@@ -27,7 +27,7 @@ void AAoeProjectileActor::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor
 	auto DamageType = UDamageType::StaticClass();
 	TArray<AActor*> IgnoreActors;
 	UGameplayStatics::ApplyDamage(OtherActor, 100, ThisInstigator, this, DamageType);
-	UGameplayStatics::ApplyRadialDamage(this, 50, HitResult.Location, 500, DamageType, IgnoreActors, this,
+	UGameplayStatics::ApplyRadialDamage(this, 100, HitResult.Location, 500, DamageType, IgnoreActors, this,
 	                                    ThisInstigator);
 
 	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,

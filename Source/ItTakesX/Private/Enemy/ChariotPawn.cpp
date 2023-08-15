@@ -18,8 +18,6 @@ AChariotPawn::AChariotPawn()
 		WeaponMesh->SetupAttachment(RootComponent);
 		WeaponMeshList.Add(WeaponMesh);
 	}
-
-	bHasDestroy = false;
 }
 
 void AChariotPawn::BeginPlay()
@@ -58,7 +56,7 @@ void AChariotPawn::LookAtTarget(FVector TargetPosition)
 {
 	Super::LookAtTarget(TargetPosition);
 
-	if (bHasDestroy)
+	if (bHasDestruct)
 	{
 		return;
 	}
@@ -93,44 +91,26 @@ void AChariotPawn::LookAtTarget(FVector TargetPosition)
 	}
 }
 
-void AChariotPawn::DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
-                               AController* DamageInstigator, AActor* DamageCauser)
+void AChariotPawn::Destruct(AActor* DestructCauser, AController* DestructInstigator)
 {
-	Super::DamageTaken(DamagedActor, Damage, DamageType, DamageInstigator, DamageCauser);
+	Super::Destruct(DestructCauser, DestructInstigator);
 
-	if (Cast<AVehicleComponentBlade>(DamageCauser))
+	if (Cast<AVehicleComponentBlade>(DestructCauser))
 	{
 		BreakPhysicsConstraintEvent();
-		bHasDestroy = true;
 		return;
 	}
 
-	if (Cast<AVehicleComponentFlameThrower>(DamageCauser))
+	if (Cast<AVehicleComponentFlameThrower>(DestructCauser))
 	{
-		if (Health < 0.f)
-		{
-			if (!bHasDestroy)
-			{
-				BodyMesh->AddImpulse(FVector::UpVector * 500, NAME_None, true);
-				bHasDestroy = true;
-				BreakPhysicsConstraintEvent();
-			}
-		}
+		BodyMesh->AddImpulse(FVector::UpVector * 500, NAME_None, true);
+		BreakPhysicsConstraintEvent();
+		return;
 	}
-}
 
-void AChariotPawn::RadialDamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType, FVector Origin,
-                                     const FHitResult& HitInfo, AController* InstigatedBy, AActor* DamageCauser)
-{
-	Super::RadialDamageTaken(DamagedActor, Damage, DamageType, Origin, HitInfo, InstigatedBy, DamageCauser);
-
-	if (Cast<APlayerController>(InstigatedBy))
+	if (Cast<APlayerController>(DestructInstigator))
 	{
-		if (!bHasDestroy)
-		{
-			BodyMesh->AddImpulse(FVector::UpVector * 800, NAME_None, true);
-			bHasDestroy = true;
-			BreakPhysicsConstraintEvent();
-		}
+		BodyMesh->AddImpulse(FVector::UpVector * 800, NAME_None, true);
+		BreakPhysicsConstraintEvent();
 	}
 }

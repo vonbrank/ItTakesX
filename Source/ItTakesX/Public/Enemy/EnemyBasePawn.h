@@ -69,6 +69,10 @@ protected:
 
 	float Health;
 
+	bool bHasDestruct = false;
+
+	virtual void Destruct(AActor* DestructCauser, AController* DestructInstigator);
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

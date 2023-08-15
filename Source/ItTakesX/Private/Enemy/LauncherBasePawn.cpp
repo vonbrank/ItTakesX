@@ -64,40 +64,10 @@ void ALauncherBasePawn::LookAtTarget(FVector TargetPosition)
 	Super::LookAtTarget(TargetPosition);
 }
 
-void ALauncherBasePawn::DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
-                                    AController* DamageInstigator, AActor* DamageCauser)
+void ALauncherBasePawn::Destruct(AActor* DestructCauser, AController* DestructInstigator)
 {
-	Super::DamageTaken(DamagedActor, Damage, DamageType, DamageInstigator, DamageCauser);
+	Super::Destruct(DestructCauser, DestructInstigator);
 
-	if (Health < 0.f)
-	{
-		if (!bHasDestruct)
-		{
-			bHasDestruct = true;
-			Destruct();
-		}
-	}
-}
-
-
-void ALauncherBasePawn::RadialDamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
-                                          FVector Origin, const FHitResult& HitInfo, AController* InstigatedBy,
-                                          AActor* DamageCauser)
-{
-	Super::RadialDamageTaken(DamagedActor, Damage, DamageType, Origin, HitInfo, InstigatedBy, DamageCauser);
-	if (Health < 0.f)
-	{
-		if (!bHasDestruct)
-		{
-			bHasDestruct = true;
-			Destruct();
-		}
-	}
-}
-
-
-void ALauncherBasePawn::Destruct()
-{
 	TurretMesh->SetSimulatePhysics(false);
 	TurretMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	TurretMesh->SetHiddenInGame(true);

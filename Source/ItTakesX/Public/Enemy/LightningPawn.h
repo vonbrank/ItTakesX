@@ -59,13 +59,8 @@ private:
 
 	void Shoot();
 
-	void Destruct();
+	virtual void Destruct(AActor* DestructCauser, AController* DestructInstigator) override;
 
 protected:
-	virtual void DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
-	                         AController* DamageInstigator, AActor* DamageCauser) override;
-	virtual void RadialDamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType, FVector Origin,
-	                               const FHitResult& HitInfo, AController* InstigatedBy, AActor* DamageCauser) override;
-
 public:
 };
