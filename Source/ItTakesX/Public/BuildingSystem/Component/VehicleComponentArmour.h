@@ -17,6 +17,7 @@ class ITTAKESX_API AVehicleComponentArmour : public AVehicleComponentActor
 	GENERATED_BODY()
 public:
 	AVehicleComponentArmour();
+	virtual void BeginPlay() override;
 private:
 	UPROPERTY(VisibleAnywhere)
 	class UStaticMeshComponent* BodyMesh75Health;
@@ -37,6 +38,22 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	TSubclassOf<AArmourGeometryCollection> Destruct00GeometryClass;
+
+	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = true))
+	float MaxHealth = 3000;
+
+	float Health;
+
+	UFUNCTION()
+	void DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
+	                 AController* DamageInstigator, AActor* DamageCauser);
+
+	UPROPERTY()
+	class AArmourGeometryCollection* CurrentArmourGeometryCollection;
+
+	UPROPERTY(EditAnywhere)
+	float ArmourGeometryCollectionLifeSpan = 2.f;
+
 public:
 	UFUNCTION(BlueprintCallable)
 	void Destruct75();
