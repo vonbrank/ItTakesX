@@ -3,6 +3,7 @@
 
 #include "HUD/InGameWidget.h"
 
+#include "Ability/DrivingComponent.h"
 #include "Ability/HealthComponent.h"
 #include "Character/ItTakesXCharacter.h"
 #include "Components/ProgressBar.h"
@@ -25,6 +26,15 @@ bool UInGameWidget::Initialize()
 		HealthContainText->TextDelegate.BindDynamic(this, &ThisClass::GetHealthContainText);
 	}
 
+	if (CarHealthBar)
+	{
+		CarHealthBar->PercentDelegate.BindDynamic(this, &ThisClass::GetCarHealth);
+	}
+	if (CarHealthContainText)
+	{
+		CarHealthContainText->TextDelegate.BindDynamic(this, &ThisClass::GetCarContainText);
+	}
+
 	return true;
 }
 
@@ -45,5 +55,25 @@ FText UInGameWidget::GetHealthContainText()
 		return FText::FromString(
 			FString::Printf(TEXT("%.f/%.f"), Character->Health->GetHealth(), Character->Health->GetMaxHealth()));
 	}
-	return FText::FromString(FString::Printf(TEXT("")));
+	return FText::FromString(FString::Printf(TEXT("N/A")));
+}
+
+float UInGameWidget::GetCarHealth()
+{
+	if (Character)
+	{
+		return Character->Driving->GetDrivingVehicleHealthPercentage();
+	}
+	return 0.5;
+}
+
+FText UInGameWidget::GetCarContainText()
+{
+	if (Character)
+	{
+		return FText::FromString(
+			FString::Printf(TEXT("%.f/%.f"), Character->Driving->GetDrivingVehicleHealth(),
+			                Character->Driving->GetDrivingVehicleHealth()));
+	}
+	return FText::FromString(FString::Printf(TEXT("N/A")));
 }

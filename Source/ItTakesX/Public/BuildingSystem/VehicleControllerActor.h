@@ -99,4 +99,7 @@ public:
 	virtual void SetIsRunning(bool bNewIsRunning) override;
 	virtual void DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
 	                         AController* DamageInstigator, AActor* DamageCauser) override;
+
+	FORCEINLINE float GetHealth() { return Health; }
+	FORCEINLINE float GetMaxHealth() { return MaxHealth; }
 };

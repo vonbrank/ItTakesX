@@ -386,3 +386,30 @@ bool UDrivingComponent::HorizontalRotateTurret(float Value)
 
 	return false;
 }
+
+float UDrivingComponent::GetDrivingVehicleHealth()
+{
+	if (CurrentDrivingVehicle)
+	{
+		return CurrentDrivingVehicle->GetHealth();
+	}
+	return 0;
+}
+
+float UDrivingComponent::GetDrivingVehicleMaxHealth()
+{
+	if (CurrentDrivingVehicle)
+	{
+		return CurrentDrivingVehicle->GetMaxHealth();
+	}
+	return 0;
+}
+
+float UDrivingComponent::GetDrivingVehicleHealthPercentage()
+{
+	if (CurrentDrivingVehicle)
+	{
+		return FMath::Max(0, CurrentDrivingVehicle->GetHealth()) / CurrentDrivingVehicle->GetMaxHealth();
+	}
+	return 0.5;
+}

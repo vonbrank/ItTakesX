@@ -61,4 +61,8 @@ public:
 	{
 		return CurrentDrivingVehicle;
 	}
+
+	float GetDrivingVehicleHealth();
+	float GetDrivingVehicleMaxHealth();
+	float GetDrivingVehicleHealthPercentage();
 };

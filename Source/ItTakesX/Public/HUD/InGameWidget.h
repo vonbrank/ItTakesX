@@ -18,17 +18,29 @@ public:
 private:
 	UPROPERTY(meta = (BindWidget))
 	class UProgressBar* HealthBar;
+	UFUNCTION()
+	float GetHealth();
+
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* HealthContainText;
+	UFUNCTION()
+	FText GetHealthContainText();
+
+	UPROPERTY(meta = (BindWidget))
+	class UProgressBar* CarHealthBar;
+	UFUNCTION()
+	float GetCarHealth();
+	// UFUNCTION()
+
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* CarHealthContainText;
+	UFUNCTION()
+	FText GetCarContainText();
 
 	UPROPERTY()
 	class AItTakesXCharacter* Character;
 
-	UFUNCTION()
-	float GetHealth();
-
-	UFUNCTION()
-	FText GetHealthContainText();
 
 protected:
 	virtual bool Initialize() override;
