@@ -50,6 +50,9 @@ private:
 	UPROPERTY(EditAnywhere)
 	float ArmourGeometryCollectionLifeSpan = 2.f;
 
+	virtual void DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
+	                         AController* DamageInstigator, AActor* DamageCauser) override;
+
 public:
 	UFUNCTION(BlueprintCallable)
 	void Destruct75();

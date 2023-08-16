@@ -66,6 +66,38 @@ void AVehicleComponentArmour::BeginPlay()
 // 		                                 PreviousHealth / MaxHealth, Health / MaxHealth, Health));
 // }
 
+void AVehicleComponentArmour::DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
+                                          AController* DamageInstigator, AActor* DamageCauser)
+{
+	// 装甲不需要将伤害转发到整个载具
+	// Super::DamageTaken(DamagedActor, Damage, DamageType, DamageInstigator, DamageCauser);
+
+	float PreviousHealth = Health;
+	Health -= Damage;
+
+	if (PreviousHealth / MaxHealth >= 0.75 && Health / MaxHealth < 0.75)
+	{
+		Destruct75();
+	}
+	if (PreviousHealth / MaxHealth >= 0.50 && Health / MaxHealth < 0.50)
+	{
+		Destruct50();
+	}
+	if (PreviousHealth / MaxHealth >= 0.25 && Health / MaxHealth < 0.25)
+	{
+		Destruct25();
+	}
+	if (PreviousHealth / MaxHealth >= 0 && Health / MaxHealth < 0)
+	{
+		Destruct00();
+	}
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	                                 FString::Printf(
+		                                 TEXT("AVehicleComponentArmour before = %f, after = %f, current Health = %f"),
+		                                 PreviousHealth / MaxHealth, Health / MaxHealth, Health));
+}
+
 void AVehicleComponentArmour::Destruct75()
 {
 	Mesh->SetHiddenInGame(true);
