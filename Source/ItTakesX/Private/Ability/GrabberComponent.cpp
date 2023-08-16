@@ -152,9 +152,9 @@ bool UGrabberComponent::InteractWithHoisting()
 
 		FVector Start = Character->GetFollowCameraLocation();
 		FVector End = Start + FollowCamera->GetForwardVector() * CurrentSelectDistance;
-		HoistingActor->SetActorLocation(HoistingActor->GetActorLocation() + FVector::UpVector);
+		// HoistingActor->SetActorLocation(HoistingActor->GetActorLocation() + FVector::UpVector);
 		HoistingActor->SetActorLocation(FMath::VInterpTo(HoistingActor->GetActorLocation(), End,
-		                                                 UGameplayStatics::GetWorldDeltaSeconds(this), 5.f), true);
+		                                                 UGameplayStatics::GetWorldDeltaSeconds(this), 5.f));
 
 		if (CurrentMagnetEffect)
 		{

@@ -118,4 +118,7 @@ public:
 
 	virtual UStaticMeshComponent* GetRootMesh() override;
 	virtual bool DetachFromParentVehicleNode() override;
+
+	virtual void TurnOnVehicleComponentCollisionChannel() override;
+	virtual bool TryTurnOffVehicleComponentCollisionChannel() override;
 };

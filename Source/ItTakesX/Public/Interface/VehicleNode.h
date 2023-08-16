@@ -61,5 +61,8 @@ public:
 	virtual TScriptInterface<IVehicleNode> GetVehicleRoot() = 0;
 	virtual TArray<TScriptInterface<IVehicleNode>> GetAllChildNodes() = 0;
 	virtual bool DetachFromParentVehicleNode() = 0;
-	virtual  class UStaticMeshComponent* GetRootMesh() = 0;
+	virtual class UStaticMeshComponent* GetRootMesh() = 0;
+
+	virtual void TurnOnVehicleComponentCollisionChannel() = 0;
+	virtual bool TryTurnOffVehicleComponentCollisionChannel() = 0;
 };

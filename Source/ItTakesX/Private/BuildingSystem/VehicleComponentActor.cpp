@@ -211,6 +211,10 @@ bool AVehicleComponentActor::AttachToCurrentOverlappingVehicleNode()
 		return false;
 	}
 
+	// 关闭零件之间的碰撞
+	TurnOnVehicleComponentCollisionChannel();
+	CurrenNearestVehicleNode->TurnOnVehicleComponentCollisionChannel();
+
 
 	ParentRootComponent->SetSimulatePhysics(false);
 	Mesh->SetSimulatePhysics(false);
@@ -445,11 +449,34 @@ bool AVehicleComponentActor::DetachFromParentVehicleNode()
 		VehicleNodeInterface.SetInterface(this);
 		VehicleNodeInterface.SetObject(this);
 		ParentNode.GetInterface()->RemoveChildNode(VehicleNodeInterface);
+		// 尝试重新启用父节点与零件间的碰撞
+		ParentNode.GetInterface()->TryTurnOffVehicleComponentCollisionChannel();
 	}
 
 	ParentNode.SetInterface(nullptr);
 	ParentNode.SetObject(nullptr);
 
+	// 重新启用与零件间的碰撞
+	TryTurnOffVehicleComponentCollisionChannel();
+
+	return true;
+}
+
+void AVehicleComponentActor::TurnOnVehicleComponentCollisionChannel()
+{
+	Mesh->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel1);
+	Mesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel1, ECollisionResponse::ECR_Ignore);
+}
+
+bool AVehicleComponentActor::TryTurnOffVehicleComponentCollisionChannel()
+{
+	if (ParentNode.GetInterface() || ChildNodes.Num() > 0)
+	{
+		return false;
+	}
+
+	Mesh->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
+	Mesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel1, ECollisionResponse::ECR_Block);
 	return true;
 }
 
