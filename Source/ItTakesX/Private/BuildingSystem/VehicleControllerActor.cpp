@@ -110,10 +110,10 @@ void AVehicleControllerActor::UpdateArmourHealth()
 			CurrentArmourHealth += VehicleComponentArmour->GetHealth();
 		}
 	}
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-	                                 FString::Printf(
-		                                 TEXT("current armourhealth / armourmaxhealth = %.f/%.f"), CurrentArmourHealth,
-		                                 CurrentMaxArmourHealth));
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	//                                  FString::Printf(
+	// 	                                 TEXT("current armourhealth / armourmaxhealth = %.f/%.f"), CurrentArmourHealth,
+	// 	                                 CurrentMaxArmourHealth));
 }
 
 void AVehicleControllerActor::RebootVehicle()
@@ -200,6 +200,11 @@ bool AVehicleControllerActor::StartupVehicle()
 			}
 		}
 		CurrentArmourHealth = CurrentMaxArmourHealth;
+
+		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+		//                                  FString::Printf(
+		// 	                                 TEXT("root name %s, tree nodes num %d"), *RootActor->GetName(),
+		// 	                                 Cast<IVehicleNode>(RootActor)->GetAllChildNodes().Num()));
 	}
 
 	return true;
@@ -229,6 +234,7 @@ bool AVehicleControllerActor::ShutdownVehicle()
 	CurrentVehicleComponentThrusters.Reset();
 	CurrentVehicleComponentFlameThrowers.Reset();
 	CurrentVehicleComponentTurrets.Reset();
+	CurrentVehicleComponentArmours.Reset();
 
 	return true;
 }

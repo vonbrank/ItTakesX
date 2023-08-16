@@ -82,7 +82,7 @@ FText UInGameWidget::GetCarContainText()
 	{
 		return FText::FromString(
 			FString::Printf(TEXT("%.f/%.f"), Character->Driving->GetDrivingVehicleHealth(),
-			                Character->Driving->GetDrivingVehicleHealth()));
+			                Character->Driving->GetDrivingVehicleMaxHealth()));
 	}
 	return FText::FromString(FString::Printf(TEXT("N/A")));
 }
