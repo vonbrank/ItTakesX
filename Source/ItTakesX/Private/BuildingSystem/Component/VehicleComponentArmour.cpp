@@ -166,7 +166,7 @@ void AVehicleComponentArmour::Destruct00()
 	{
 		CurrentArmourGeometryCollection->SetLifeSpan(ArmourGeometryCollectionLifeSpan);
 	}
-	DetachFromParentVehicleNode();
+	DetachFromAllAdjacentVehicleNode();
 
 	// Destroy();
 }
