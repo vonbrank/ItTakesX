@@ -481,6 +481,30 @@ bool AVehicleComponentActor::DetachFromParentVehicleNode()
 	return true;
 }
 
+bool AVehicleComponentActor::DetachFromAdjacentChildVehicleNode()
+{
+	auto CurrenChildNodes = ChildNodes;
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	                                 FString::Printf(TEXT("CurrenChildNodes num = %d"), CurrenChildNodes.Num()));
+	for (auto ChildNodeInterface : CurrenChildNodes)
+	{
+		auto ChildNode = ChildNodeInterface.GetInterface();
+		if (ChildNode)
+		{
+			ChildNode->DetachFromParentVehicleNode();
+		}
+	}
+
+	return true;
+}
+
+bool AVehicleComponentActor::DetachFromAllAdjacentVehicleNode()
+{
+	bool bParentResult = DetachFromParentVehicleNode();
+	bool bChildResult = DetachFromAdjacentChildVehicleNode();
+	return bParentResult && bChildResult;
+}
+
 void AVehicleComponentActor::TurnOnVehicleComponentCollisionChannel()
 {
 	Mesh->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel1);

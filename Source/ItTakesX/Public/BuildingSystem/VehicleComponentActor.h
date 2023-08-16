@@ -134,6 +134,8 @@ public:
 
 	virtual UStaticMeshComponent* GetRootMesh() override;
 	virtual bool DetachFromParentVehicleNode() override;
+	virtual bool DetachFromAdjacentChildVehicleNode() override;
+	virtual bool DetachFromAllAdjacentVehicleNode() override;
 
 	virtual void TurnOnVehicleComponentCollisionChannel() override;
 	virtual bool TryTurnOffVehicleComponentCollisionChannel() override;

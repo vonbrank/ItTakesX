@@ -84,7 +84,7 @@ bool UCombatComponent::InteractWithDisconnectVehicleComponent()
 	IVehicleNode* VehicleNode = Cast<IVehicleNode>(Aimable);
 	if (VehicleNode)
 	{
-		VehicleNode->DetachFromParentVehicleNode();
+		VehicleNode->DetachFromAllAdjacentVehicleNode();
 
 		return true;
 	}
