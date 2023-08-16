@@ -116,6 +116,14 @@ void AVehicleControllerActor::UpdateArmourHealth()
 		                                 CurrentMaxArmourHealth));
 }
 
+void AVehicleControllerActor::RebootVehicle()
+{
+	auto PreviousAirplaneThrottle = CurrentAirplaneThrottle;
+	ShutdownVehicle();
+	StartupVehicle();
+	CurrentAirplaneThrottle = PreviousAirplaneThrottle;
+}
+
 bool AVehicleControllerActor::IsVehicleStartup() const
 {
 	return bIsRunning;
@@ -130,10 +138,10 @@ bool AVehicleControllerActor::StartupVehicle()
 		return false;
 	}
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-	                                 FString::Printf(
-		                                 TEXT("root name %s, tree nodes num %d"), *RootActor->GetName(),
-		                                 Cast<IVehicleNode>(RootActor)->GetAllChildNodes().Num()));
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	//                                  FString::Printf(
+	// 	                                 TEXT("root name %s, tree nodes num %d"), *RootActor->GetName(),
+	// 	                                 Cast<IVehicleNode>(RootActor)->GetAllChildNodes().Num()));
 	CurrentVehicleNodes = Cast<IVehicleNode>(RootActor)->GetAllChildNodes();
 
 	bIsRunning = true;

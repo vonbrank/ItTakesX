@@ -175,5 +175,11 @@ void AVehicleComponentArmour::Destruct00()
 	}
 	DetachFromAllAdjacentVehicleNode();
 
+	auto VehicleController = Cast<AVehicleControllerActor>(CurrentRunningVehicleController.GetInterface());
+	if (VehicleController)
+	{
+		VehicleController->RebootVehicle();
+	}
+
 	// Destroy();
 }

@@ -121,4 +121,5 @@ public:
 	FORCEINLINE float GetArmourHealth() { return CurrentArmourHealth; }
 	FORCEINLINE float GetArmourMaxHealth() { return CurrentMaxArmourHealth; }
 	void UpdateArmourHealth();
+	void RebootVehicle();
 };
