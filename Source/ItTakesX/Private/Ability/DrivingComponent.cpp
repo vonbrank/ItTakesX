@@ -413,3 +413,30 @@ float UDrivingComponent::GetDrivingVehicleHealthPercentage()
 	}
 	return 0.5;
 }
+
+float UDrivingComponent::GetDrivingVehicleArmourHealth()
+{
+	if (CurrentDrivingVehicle)
+	{
+		return CurrentDrivingVehicle->GetArmourHealth();
+	}
+	return 0;
+}
+
+float UDrivingComponent::GetDrivingVehicleArmourMaxHealth()
+{
+	if (CurrentDrivingVehicle)
+	{
+		return CurrentDrivingVehicle->GetArmourMaxHealth();
+	}
+	return 0;
+}
+
+float UDrivingComponent::GetDrivingVehicleArmourHealthPercentage()
+{
+	if (CurrentDrivingVehicle)
+	{
+		return FMath::Max(0, CurrentDrivingVehicle->GetArmourHealth()) / CurrentDrivingVehicle->GetArmourMaxHealth();
+	}
+	return 0.5;
+}

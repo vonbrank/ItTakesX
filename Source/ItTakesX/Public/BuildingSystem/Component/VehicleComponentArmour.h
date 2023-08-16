@@ -50,6 +50,9 @@ private:
 	UPROPERTY(EditAnywhere)
 	float ArmourGeometryCollectionLifeSpan = 2.f;
 
+	friend class AVehicleControllerActor;
+
+protected:
 	virtual void DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
 	                         AController* DamageInstigator, AActor* DamageCauser) override;
 
@@ -65,4 +68,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void Destruct00();
+
+	FORCEINLINE float GetHealth() { return Health; }
+	FORCEINLINE float GetMaxHealth() { return MaxHealth; }
 };

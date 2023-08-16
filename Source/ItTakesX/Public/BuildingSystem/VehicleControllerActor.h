@@ -48,6 +48,16 @@ protected:
 
 	UPROPERTY()
 	TArray<TScriptInterface<IVehicleNode>> CurrentVehicleNodes;
+	UPROPERTY()
+	TArray<class AVehicleComponentSuspensionWheel*> CurrentVehicleComponentSuspensionWheels;
+	UPROPERTY()
+	TArray<class AVehicleComponentThruster*> CurrentVehicleComponentThrusters;
+	UPROPERTY()
+	TArray<class AVehicleComponentFlameThrower*> CurrentVehicleComponentFlameThrowers;
+	UPROPERTY()
+	TArray<class AVehicleComponentTurret*> CurrentVehicleComponentTurrets;
+	UPROPERTY()
+	TArray<class AVehicleComponentArmour*> CurrentVehicleComponentArmours;
 
 	UPROPERTY(EditAnywhere)
 	float BalanceTargetStrength = 5000;
@@ -76,6 +86,12 @@ protected:
 
 	float Health;
 
+	float CurrentMaxArmourHealth;
+	float CurrentArmourHealth;
+
+	UPROPERTY(EditAnywhere)
+	float DamageRatioTransferToArmour = 0.8;
+
 public:
 	bool IsVehicleStartup() const;
 	virtual bool StartupVehicle();
@@ -102,4 +118,7 @@ public:
 
 	FORCEINLINE float GetHealth() { return Health; }
 	FORCEINLINE float GetMaxHealth() { return MaxHealth; }
+	FORCEINLINE float GetArmourHealth() { return CurrentArmourHealth; }
+	FORCEINLINE float GetArmourMaxHealth() { return CurrentMaxArmourHealth; }
+	void UpdateArmourHealth();
 };

@@ -65,4 +65,7 @@ public:
 	float GetDrivingVehicleHealth();
 	float GetDrivingVehicleMaxHealth();
 	float GetDrivingVehicleHealthPercentage();
+	float GetDrivingVehicleArmourHealth();
+	float GetDrivingVehicleArmourMaxHealth();
+	float GetDrivingVehicleArmourHealthPercentage();
 };

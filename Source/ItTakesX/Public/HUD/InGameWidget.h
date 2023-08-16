@@ -30,13 +30,21 @@ private:
 	class UProgressBar* CarHealthBar;
 	UFUNCTION()
 	float GetCarHealth();
-	// UFUNCTION()
-
 
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* CarHealthContainText;
 	UFUNCTION()
 	FText GetCarContainText();
+
+	UPROPERTY(meta = (BindWidget))
+	class UProgressBar* CarArmourBar;
+	UFUNCTION()
+	float GetCarArmourBar();
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* CarArmourContainText;
+	UFUNCTION()
+	FText GetCarArmourContainText();
 
 	UPROPERTY()
 	class AItTakesXCharacter* Character;

@@ -3,6 +3,7 @@
 
 #include "BuildingSystem/VehicleControllerActor.h"
 
+#include "BuildingSystem/Component/VehicleComponentArmour.h"
 #include "BuildingSystem/Component/VehicleComponentFlameThrower.h"
 #include "BuildingSystem/Component/VehicleComponentSuspensionWheel.h"
 #include "BuildingSystem/Component/VehicleComponentThruster.h"
@@ -33,6 +34,15 @@ void AVehicleControllerActor::BeginPlay()
 	Super::BeginPlay();
 
 	Health = MaxHealth;
+
+	if (DamageRatioTransferToArmour < 0)
+	{
+		DamageRatioTransferToArmour = 0;
+	}
+	else if (DamageRatioTransferToArmour > 1)
+	{
+		DamageRatioTransferToArmour = 1;
+	}
 }
 
 void AVehicleControllerActor::OnSphereStartOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -67,9 +77,43 @@ void AVehicleControllerActor::DamageTaken(AActor* DamagedActor, float Damage, co
 {
 	// 调用父类同名函数将导致递归调用
 	// Super::DamageTaken(DamagedActor, Damage, DamageType, DamageInstigator, DamageCauser);
-	Health -= Damage;
+
+
+	if (CurrentVehicleComponentArmours.Num() > 0)
+	{
+		float DamageToArmours = Damage * DamageRatioTransferToArmour;
+		float DamageToSelf = Damage * (1 - DamageRatioTransferToArmour);
+
+		for (auto VehicleComponentArmour : CurrentVehicleComponentArmours)
+		{
+			VehicleComponentArmour->DamageTaken(DamagedActor, DamageToArmours, DamageType, DamageInstigator,
+			                                    DamageCauser);
+		}
+		Health -= DamageToSelf;
+	}
+	else
+	{
+		Health -= Damage;
+	}
+}
+
+void AVehicleControllerActor::UpdateArmourHealth()
+{
+	CurrentArmourHealth = 0;
+	for (auto VehicleComponentArmour
+	     :
+	     CurrentVehicleComponentArmours
+	)
+	{
+		if (VehicleComponentArmour)
+		{
+			CurrentArmourHealth += VehicleComponentArmour->GetHealth();
+		}
+	}
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-	                                 FString::Printf(TEXT("controller get damage, health = %f"), Health));
+	                                 FString::Printf(
+		                                 TEXT("current armourhealth / armourmaxhealth = %.f/%.f"), CurrentArmourHealth,
+		                                 CurrentMaxArmourHealth));
 }
 
 bool AVehicleControllerActor::IsVehicleStartup() const
@@ -107,6 +151,47 @@ bool AVehicleControllerActor::StartupVehicle()
 			ChildNode->SetCurrentRunningRoot(RootNode);
 			ChildNode->SetCurrentRunningVehicleController(VehicleController);
 		}
+
+		auto VehicleComponentSuspension = Cast<AVehicleComponentSuspensionWheel>(ChildNode);
+		auto VehicleComponentThruster = Cast<AVehicleComponentThruster>(ChildNode);
+		auto VehicleComponentFlameThrower = Cast<AVehicleComponentFlameThrower>(ChildNode);
+		auto VehicleComponentTurret = Cast<AVehicleComponentTurret>(ChildNode);
+		auto VehicleComponentArmour = Cast<AVehicleComponentArmour>(ChildNode);
+
+		if (VehicleComponentSuspension)
+		{
+			CurrentVehicleComponentSuspensionWheels.Add(VehicleComponentSuspension);
+		}
+		else if (VehicleComponentThruster)
+		{
+			CurrentVehicleComponentThrusters.Add(VehicleComponentThruster);
+		}
+		else if (VehicleComponentFlameThrower)
+		{
+			CurrentVehicleComponentFlameThrowers.Add(VehicleComponentFlameThrower);
+		}
+		else if (VehicleComponentTurret)
+		{
+			CurrentVehicleComponentTurrets.Add(VehicleComponentTurret);
+		}
+		else if (VehicleComponentArmour)
+		{
+			CurrentVehicleComponentArmours.Add(VehicleComponentArmour);
+		}
+	}
+	{
+		CurrentMaxArmourHealth = 0;
+		for (auto VehicleComponentArmour
+		     :
+		     CurrentVehicleComponentArmours
+		)
+		{
+			if (VehicleComponentArmour)
+			{
+				CurrentMaxArmourHealth += VehicleComponentArmour->GetHealth();
+			}
+		}
+		CurrentArmourHealth = CurrentMaxArmourHealth;
 	}
 
 	return true;
@@ -132,6 +217,10 @@ bool AVehicleControllerActor::ShutdownVehicle()
 	}
 
 	CurrentVehicleNodes.Reset();
+	CurrentVehicleComponentSuspensionWheels.Reset();
+	CurrentVehicleComponentThrusters.Reset();
+	CurrentVehicleComponentFlameThrowers.Reset();
+	CurrentVehicleComponentTurrets.Reset();
 
 	return true;
 }
@@ -173,10 +262,8 @@ void AVehicleControllerActor::DetachCurrentCharacter()
 
 void AVehicleControllerActor::Throttle(float Value)
 {
-	for (auto VehicleNodeInterface : CurrentVehicleNodes)
+	for (auto VehicleSuspensionWheel : CurrentVehicleComponentSuspensionWheels)
 	{
-		auto VehicleNode = VehicleNodeInterface.GetInterface();
-		auto VehicleSuspensionWheel = Cast<AVehicleComponentSuspensionWheel>(VehicleNode);
 		if (VehicleSuspensionWheel)
 		{
 			VehicleSuspensionWheel->Throttle(Value, GetActorForwardVector(), GetActorRightVector());
@@ -186,10 +273,8 @@ void AVehicleControllerActor::Throttle(float Value)
 
 void AVehicleControllerActor::Turn(float Value)
 {
-	for (auto VehicleNodeInterface : CurrentVehicleNodes)
+	for (auto VehicleSuspensionWheel : CurrentVehicleComponentSuspensionWheels)
 	{
-		auto VehicleNode = VehicleNodeInterface.GetInterface();
-		auto VehicleSuspensionWheel = Cast<AVehicleComponentSuspensionWheel>(VehicleNode);
 		if (VehicleSuspensionWheel)
 		{
 			VehicleSuspensionWheel->Turn(Value, GetActorTransform());
@@ -209,10 +294,8 @@ void AVehicleControllerActor::AircraftThrottle(float Value)
 		CurrentAirplaneThrottle = MaxAirplaneThrottle;
 	}
 
-	for (auto VehicleNodeInterface : CurrentVehicleNodes)
+	for (auto VehicleComponentThruster : CurrentVehicleComponentThrusters)
 	{
-		auto VehicleNode = VehicleNodeInterface.GetInterface();
-		auto VehicleComponentThruster = Cast<AVehicleComponentThruster>(VehicleNode);
 		if (VehicleComponentThruster)
 		{
 			VehicleComponentThruster->Throttle(CurrentAirplaneThrottle);
@@ -246,10 +329,8 @@ void AVehicleControllerActor::AircraftPitch(float Value)
 
 void AVehicleControllerActor::ToggleOpenFire()
 {
-	for (auto VehicleNodeInterface : CurrentVehicleNodes)
+	for (auto VehicleComponentFlameThrower : CurrentVehicleComponentFlameThrowers)
 	{
-		auto VehicleNode = VehicleNodeInterface.GetInterface();
-		auto VehicleComponentFlameThrower = Cast<AVehicleComponentFlameThrower>(VehicleNode);
 		if (VehicleComponentFlameThrower)
 		{
 			VehicleComponentFlameThrower->ToggleOpenFire();
@@ -259,10 +340,8 @@ void AVehicleControllerActor::ToggleOpenFire()
 
 void AVehicleControllerActor::LaunchProjectile()
 {
-	for (auto VehicleNodeInterface : CurrentVehicleNodes)
+	for (auto VehicleComponentTurret : CurrentVehicleComponentTurrets)
 	{
-		auto VehicleNode = VehicleNodeInterface.GetInterface();
-		auto VehicleComponentTurret = Cast<AVehicleComponentTurret>(VehicleNode);
 		if (VehicleComponentTurret)
 		{
 			VehicleComponentTurret->LaunchProjectile();
@@ -272,10 +351,8 @@ void AVehicleControllerActor::LaunchProjectile()
 
 void AVehicleControllerActor::VerticalRotateTurret(float Value)
 {
-	for (auto VehicleNodeInterface : CurrentVehicleNodes)
+	for (auto VehicleComponentTurret : CurrentVehicleComponentTurrets)
 	{
-		auto VehicleNode = VehicleNodeInterface.GetInterface();
-		auto VehicleComponentTurret = Cast<AVehicleComponentTurret>(VehicleNode);
 		if (VehicleComponentTurret)
 		{
 			VehicleComponentTurret->VerticalRotateTurret(Value);
@@ -285,10 +362,8 @@ void AVehicleControllerActor::VerticalRotateTurret(float Value)
 
 void AVehicleControllerActor::HorizontalRotateTurret(float Value)
 {
-	for (auto VehicleNodeInterface : CurrentVehicleNodes)
+	for (auto VehicleComponentTurret : CurrentVehicleComponentTurrets)
 	{
-		auto VehicleNode = VehicleNodeInterface.GetInterface();
-		auto VehicleComponentTurret = Cast<AVehicleComponentTurret>(VehicleNode);
 		if (VehicleComponentTurret)
 		{
 			VehicleComponentTurret->HorizontalRotateTurret(Value);

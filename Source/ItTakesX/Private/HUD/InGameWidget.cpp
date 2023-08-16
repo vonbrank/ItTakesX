@@ -35,6 +35,15 @@ bool UInGameWidget::Initialize()
 		CarHealthContainText->TextDelegate.BindDynamic(this, &ThisClass::GetCarContainText);
 	}
 
+	if (CarArmourBar)
+	{
+		CarArmourBar->PercentDelegate.BindDynamic(this, &ThisClass::GetCarArmourBar);
+	}
+	if (CarArmourContainText)
+	{
+		CarArmourContainText->TextDelegate.BindDynamic(this, &ThisClass::GetCarArmourContainText);
+	}
+
 	return true;
 }
 
@@ -74,6 +83,26 @@ FText UInGameWidget::GetCarContainText()
 		return FText::FromString(
 			FString::Printf(TEXT("%.f/%.f"), Character->Driving->GetDrivingVehicleHealth(),
 			                Character->Driving->GetDrivingVehicleHealth()));
+	}
+	return FText::FromString(FString::Printf(TEXT("N/A")));
+}
+
+float UInGameWidget::GetCarArmourBar()
+{
+	if (Character)
+	{
+		return Character->Driving->GetDrivingVehicleArmourHealthPercentage();
+	}
+	return 0.5;
+}
+
+FText UInGameWidget::GetCarArmourContainText()
+{
+	if (Character)
+	{
+		return FText::FromString(
+			FString::Printf(TEXT("%.f/%.f"), Character->Driving->GetDrivingVehicleArmourHealth(),
+			                Character->Driving->GetDrivingVehicleArmourMaxHealth()));
 	}
 	return FText::FromString(FString::Printf(TEXT("N/A")));
 }

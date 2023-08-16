@@ -3,6 +3,7 @@
 
 #include "BuildingSystem/Component/VehicleComponentArmour.h"
 
+#include "BuildingSystem/VehicleControllerActor.h"
 #include "Components/StaticMeshComponent.h"
 #include "GeometryCollection/GeometryCollectionComponent.h"
 
@@ -96,6 +97,12 @@ void AVehicleComponentArmour::DamageTaken(AActor* DamagedActor, float Damage, co
 	                                 FString::Printf(
 		                                 TEXT("AVehicleComponentArmour before = %f, after = %f, current Health = %f"),
 		                                 PreviousHealth / MaxHealth, Health / MaxHealth, Health));
+
+	auto VehicleController = Cast<AVehicleControllerActor>(CurrentRunningVehicleController.GetInterface());
+	if (VehicleController)
+	{
+		VehicleController->UpdateArmourHealth();
+	}
 }
 
 void AVehicleComponentArmour::Destruct75()
