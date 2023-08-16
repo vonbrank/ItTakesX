@@ -67,6 +67,12 @@ protected:
 	UPROPERTY()
 	TArray<TScriptInterface<IVehicleNode>> ChildNodes;
 
+	UPROPERTY()
+	class UVehicleConnectionComponent* CurrentSelfConnection;
+
+	UPROPERTY()
+	class UVehicleConnectionComponent* CurrentOtherConnection;
+
 	UPROPERTY(VisibleAnywhere, Category = "Vehicle Properties")
 	class USphereComponent* AreaSphere;
 

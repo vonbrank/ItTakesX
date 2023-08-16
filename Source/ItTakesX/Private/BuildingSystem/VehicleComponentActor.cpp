@@ -284,7 +284,14 @@ bool AVehicleComponentActor::AttachToCurrentOverlappingVehicleNode()
 		SonNode.SetObject(this);
 		SonNode.SetInterface(this);
 		ParentNode->AddChildNode(SonNode);
+
+		// 将连接点设置为连接状态
+		CurrentSelfConnection = CurrentNearestConnectionComponent;
+		CurrentOtherConnection = CurrentNearestOtherConnectionComponent;
+		CurrentSelfConnection->SetConnectingState(true);
+		CurrentOtherConnection->SetConnectingState(true);
 	}
+
 
 	return true;
 }
@@ -368,8 +375,16 @@ bool AVehicleComponentActor::GetNearestConnectionInfo(UVehicleConnectionComponen
 	{
 		for (auto OtherVehicleConnectionComponent : VehicleNode->GetConnectionInfoList())
 		{
+			if (OtherVehicleConnectionComponent->IsConnecting())
+			{
+				continue;
+			}
 			for (auto VehicleConnectionComponent : VehicleConnectionComponentList)
 			{
+				if (VehicleConnectionComponent->IsConnecting())
+				{
+					continue;
+				}
 				auto CurrentDistance = (OtherVehicleConnectionComponent->GetComponentLocation() -
 					VehicleConnectionComponent->GetComponentLocation()).Length();
 
@@ -451,6 +466,12 @@ bool AVehicleComponentActor::DetachFromParentVehicleNode()
 		ParentNode.GetInterface()->RemoveChildNode(VehicleNodeInterface);
 		// 尝试重新启用父节点与零件间的碰撞
 		ParentNode.GetInterface()->TryTurnOffVehicleComponentCollisionChannel();
+
+		// 将连接点的连接状态取消
+		CurrentSelfConnection->SetConnectingState(false);
+		CurrentOtherConnection->SetConnectingState(false);
+		CurrentSelfConnection = nullptr;
+		CurrentOtherConnection = nullptr;
 	}
 
 	ParentNode.SetInterface(nullptr);

@@ -30,8 +30,12 @@ private:
 	UPROPERTY()
 	TArray<class UArrowComponent*> ConnectionAlignments;
 
+	bool bIsConnecting = false;
+
 public:
 	FVector GetDirectionArrowLocation();
 	FQuat GetDirectionRotation(UVehicleConnectionComponent* OtherConnectionComponent);
 	FQuat GetAlignmentRotation(UVehicleConnectionComponent* OtherConnectionComponent);
+	FORCEINLINE bool IsConnecting() { return bIsConnecting; }
+	FORCEINLINE void SetConnectingState(bool bNewValue) { bIsConnecting = bNewValue; }
 };
