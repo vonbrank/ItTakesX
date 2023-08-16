@@ -16,7 +16,8 @@ class ITTAKESX_API AVehicleControllerActor : public AVehicleComponentActor
 
 public:
 	AVehicleControllerActor();
-
+protected:
+	virtual void BeginPlay() override;
 private:
 protected:
 	UPROPERTY()
@@ -70,6 +71,11 @@ protected:
 
 	float CurrentAirplaneThrottle;
 
+	UPROPERTY(EditAnywhere)
+	float MaxHealth = 1000;
+
+	float Health;
+
 public:
 	bool IsVehicleStartup() const;
 	virtual bool StartupVehicle();
@@ -91,4 +97,6 @@ public:
 	void HorizontalRotateTurret(float Value);
 
 	virtual void SetIsRunning(bool bNewIsRunning) override;
+	virtual void DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
+	                         AController* DamageInstigator, AActor* DamageCauser) override;
 };

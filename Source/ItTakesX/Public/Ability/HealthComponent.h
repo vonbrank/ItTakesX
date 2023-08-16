@@ -32,6 +32,9 @@ private:
 	void DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
 	                 AController* Instigator, AActor* DamageCauser);
 
+	UPROPERTY()
+	class UDrivingComponent* DrivingComponent;
+
 public:
 	float GetHealthPercentage();
 

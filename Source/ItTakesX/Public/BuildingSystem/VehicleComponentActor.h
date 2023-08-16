@@ -96,6 +96,16 @@ protected:
 		int32 OtherBodyIndex
 	);
 
+	UPROPERTY()
+	TScriptInterface<IVehicleNode> CurrentRunningRoot;
+
+	UPROPERTY()
+	TScriptInterface<IVehicleNode> CurrentRunningVehicleController;
+
+	UFUNCTION()
+	virtual void DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
+	                         AController* DamageInstigator, AActor* DamageCauser);
+
 public:
 	// UFUNCTION(BlueprintCallable)
 	// void AddConnectionComponent(class USceneComponent* Component);
@@ -127,4 +137,10 @@ public:
 
 	virtual void TurnOnVehicleComponentCollisionChannel() override;
 	virtual bool TryTurnOffVehicleComponentCollisionChannel() override;
+
+	virtual void SetCurrentRunningRoot(TScriptInterface<IVehicleNode> VehicleRootNode) override;
+	virtual TScriptInterface<IVehicleNode> GetCurrentRunningRoot() override;
+	virtual void
+	SetCurrentRunningVehicleController(TScriptInterface<IVehicleNode> CurrentRunningVehicleControllerNode) override;
+	virtual TScriptInterface<IVehicleNode> GetCurrentRunningVehicleController() override;
 };

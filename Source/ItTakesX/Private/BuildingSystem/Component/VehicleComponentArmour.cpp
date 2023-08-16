@@ -37,34 +37,34 @@ void AVehicleComponentArmour::BeginPlay()
 	OnTakeAnyDamage.AddDynamic(this, &ThisClass::DamageTaken);
 }
 
-void AVehicleComponentArmour::DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
-                                          AController* DamageInstigator, AActor* DamageCauser)
-{
-	float PreviousHealth = Health;
-	Health -= Damage;
-
-	if (PreviousHealth / MaxHealth >= 0.75 && Health / MaxHealth < 0.75)
-	{
-		Destruct75();
-	}
-	if (PreviousHealth / MaxHealth >= 0.50 && Health / MaxHealth < 0.50)
-	{
-		Destruct50();
-	}
-	if (PreviousHealth / MaxHealth >= 0.25 && Health / MaxHealth < 0.25)
-	{
-		Destruct25();
-	}
-	if (PreviousHealth / MaxHealth >= 0 && Health / MaxHealth < 0)
-	{
-		Destruct00();
-	}
-
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-	                                 FString::Printf(
-		                                 TEXT("AVehicleComponentArmour before = %f, after = %f, current Health = %f"),
-		                                 PreviousHealth / MaxHealth, Health / MaxHealth, Health));
-}
+// void AVehicleComponentArmour::DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
+//                                           AController* DamageInstigator, AActor* DamageCauser)
+// {
+// 	float PreviousHealth = Health;
+// 	Health -= Damage;
+//
+// 	if (PreviousHealth / MaxHealth >= 0.75 && Health / MaxHealth < 0.75)
+// 	{
+// 		Destruct75();
+// 	}
+// 	if (PreviousHealth / MaxHealth >= 0.50 && Health / MaxHealth < 0.50)
+// 	{
+// 		Destruct50();
+// 	}
+// 	if (PreviousHealth / MaxHealth >= 0.25 && Health / MaxHealth < 0.25)
+// 	{
+// 		Destruct25();
+// 	}
+// 	if (PreviousHealth / MaxHealth >= 0 && Health / MaxHealth < 0)
+// 	{
+// 		Destruct00();
+// 	}
+//
+// 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+// 	                                 FString::Printf(
+// 		                                 TEXT("AVehicleComponentArmour before = %f, after = %f, current Health = %f"),
+// 		                                 PreviousHealth / MaxHealth, Health / MaxHealth, Health));
+// }
 
 void AVehicleComponentArmour::Destruct75()
 {
@@ -135,6 +135,6 @@ void AVehicleComponentArmour::Destruct00()
 		CurrentArmourGeometryCollection->SetLifeSpan(ArmourGeometryCollectionLifeSpan);
 	}
 	DetachFromParentVehicleNode();
-	
+
 	// Destroy();
 }

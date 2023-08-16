@@ -40,10 +40,10 @@ void UDrivingComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (CurrentOverlappingVehicle && CurrentOverlappingVehicle->IsVehicleStartup())
+	if (CurrentDrivingVehicle && CurrentDrivingVehicle->IsVehicleStartup())
 	{
 		FRotator NewRotation = Character->Controller->GetControlRotation();
-		NewRotation.Yaw = CurrentOverlappingVehicle->GetActorRotation().Yaw;
+		NewRotation.Yaw = CurrentDrivingVehicle->GetActorRotation().Yaw;
 		Character->Controller->SetControlRotation(NewRotation);
 	}
 }
@@ -55,17 +55,17 @@ void UDrivingComponent::SetCurrenOverlappingVehicle(AVehicleControllerActor* New
 
 bool UDrivingComponent::InteractWithMoveForward(float Value)
 {
-	if (CurrentOverlappingVehicle == nullptr)
+	if (CurrentDrivingVehicle == nullptr)
 	{
 		return false;
 	}
 
-	if (!CurrentOverlappingVehicle->IsVehicleStartup())
+	if (!CurrentDrivingVehicle->IsVehicleStartup())
 	{
 		return false;
 	}
 
-	AVehicleCoreHoveringCar* VehicleCoreHoveringCar = Cast<AVehicleCoreHoveringCar>(CurrentOverlappingVehicle);
+	AVehicleCoreHoveringCar* VehicleCoreHoveringCar = Cast<AVehicleCoreHoveringCar>(CurrentDrivingVehicle);
 	if (VehicleCoreHoveringCar)
 	{
 		VehicleCoreHoveringCar->HandleControl(EHoveringCarControl_MoveForward, Value);
@@ -77,16 +77,16 @@ bool UDrivingComponent::InteractWithMoveForward(float Value)
 
 bool UDrivingComponent::InteractWithTurnRight(float Value)
 {
-	if (CurrentOverlappingVehicle == nullptr)
+	if (CurrentDrivingVehicle == nullptr)
 	{
 		return false;
 	}
-	if (!CurrentOverlappingVehicle->IsVehicleStartup())
+	if (!CurrentDrivingVehicle->IsVehicleStartup())
 	{
 		return false;
 	}
 
-	AVehicleCoreHoveringCar* VehicleCoreHoveringCar = Cast<AVehicleCoreHoveringCar>(CurrentOverlappingVehicle);
+	AVehicleCoreHoveringCar* VehicleCoreHoveringCar = Cast<AVehicleCoreHoveringCar>(CurrentDrivingVehicle);
 	if (VehicleCoreHoveringCar)
 	{
 		VehicleCoreHoveringCar->HandleControl(EHoveringCarControl_TurnRight, Value);
@@ -97,7 +97,7 @@ bool UDrivingComponent::InteractWithTurnRight(float Value)
 
 bool UDrivingComponent::InteractWithPitchUp(float Value)
 {
-	if (CurrentOverlappingVehicle == nullptr)
+	if (CurrentDrivingVehicle == nullptr)
 	{
 		return false;
 	}
@@ -108,14 +108,14 @@ bool UDrivingComponent::ToggleVehicle(bool& bOutShouldActiveMovement)
 {
 	bOutShouldActiveMovement = false;
 
-	if (CurrentOverlappingVehicle == nullptr)
-	{
-		return false;
-	}
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	                                 FString::Printf(
+		                                 TEXT("start ToggleVehicle")
+	                                 ));
 
-	if (CurrentOverlappingVehicle->IsVehicleStartup())
+	if (CurrentDrivingVehicle)
 	{
-		bool bShutdownResult = CurrentOverlappingVehicle->ShutdownVehicle();
+		bool bShutdownResult = CurrentDrivingVehicle->ShutdownVehicle();
 		if (Character)
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
@@ -123,12 +123,13 @@ bool UDrivingComponent::ToggleVehicle(bool& bOutShouldActiveMovement)
 				                                 TEXT("location of character %s"),
 				                                 *Character->GetActorLocation().ToString()));
 
-			CurrentOverlappingVehicle->DetachCurrentCharacter();
+			CurrentDrivingVehicle->DetachCurrentCharacter();
 			bOutShouldActiveMovement = true;
 
 			// Character->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 			// Character->SetActorLocation(CurrentOverlappingVehicle->GetActorLocation() + FVector::UpVector * 100);
 			// Character->GetMovementComponent()->Velocity = FVector::Zero();
+			CurrentDrivingVehicle = nullptr;
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
 			                                 FString::Printf(
 				                                 TEXT("location of character %s"),
@@ -137,17 +138,24 @@ bool UDrivingComponent::ToggleVehicle(bool& bOutShouldActiveMovement)
 		}
 		return bShutdownResult;
 	}
-	else
+	if (CurrentOverlappingVehicle == nullptr)
 	{
-		CurrentOverlappingVehicle->AttachCharacter(Character);
-
-		return CurrentOverlappingVehicle->StartupVehicle();
+		return false;
 	}
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	                                 FString::Printf(
+		                                 TEXT("start ToggleVehicle 2")
+	                                 ));
+	CurrentDrivingVehicle = CurrentOverlappingVehicle;
+	CurrentDrivingVehicle->AttachCharacter(Character);
+
+	return CurrentDrivingVehicle->StartupVehicle();
 }
 
 bool UDrivingComponent::Throttle(float Value)
 {
-	if (CurrentOverlappingVehicle == nullptr || !CurrentOverlappingVehicle->IsVehicleStartup())
+	if (CurrentDrivingVehicle == nullptr || !CurrentDrivingVehicle->IsVehicleStartup())
 	{
 		return false;
 	}
@@ -173,9 +181,9 @@ bool UDrivingComponent::Throttle(float Value)
 	// 	return true;
 	// }
 
-	if (CurrentOverlappingVehicle)
+	if (CurrentDrivingVehicle)
 	{
-		CurrentOverlappingVehicle->Throttle(Value);
+		CurrentDrivingVehicle->Throttle(Value);
 		return true;
 	}
 
@@ -232,7 +240,7 @@ bool UDrivingComponent::Throttle(float Value)
 
 bool UDrivingComponent::Turn(float Value)
 {
-	if (CurrentOverlappingVehicle == nullptr || !CurrentOverlappingVehicle->IsVehicleStartup())
+	if (CurrentDrivingVehicle == nullptr || !CurrentDrivingVehicle->IsVehicleStartup())
 	{
 		return false;
 	}
@@ -258,9 +266,9 @@ bool UDrivingComponent::Turn(float Value)
 	// 	return true;
 	// }
 
-	if (CurrentOverlappingVehicle)
+	if (CurrentDrivingVehicle)
 	{
-		CurrentOverlappingVehicle->Turn(Value);
+		CurrentDrivingVehicle->Turn(Value);
 		return true;
 	}
 
@@ -269,14 +277,14 @@ bool UDrivingComponent::Turn(float Value)
 
 bool UDrivingComponent::AircraftThrottle(float Value)
 {
-	if (CurrentOverlappingVehicle == nullptr || !CurrentOverlappingVehicle->IsVehicleStartup())
+	if (CurrentDrivingVehicle == nullptr || !CurrentDrivingVehicle->IsVehicleStartup())
 	{
 		return false;
 	}
 
-	if (CurrentOverlappingVehicle)
+	if (CurrentDrivingVehicle)
 	{
-		CurrentOverlappingVehicle->AircraftThrottle(Value * 10);
+		CurrentDrivingVehicle->AircraftThrottle(Value * 10);
 		return true;
 	}
 
@@ -285,14 +293,14 @@ bool UDrivingComponent::AircraftThrottle(float Value)
 
 bool UDrivingComponent::AircraftTurn(float Value)
 {
-	if (CurrentOverlappingVehicle == nullptr || !CurrentOverlappingVehicle->IsVehicleStartup())
+	if (CurrentDrivingVehicle == nullptr || !CurrentDrivingVehicle->IsVehicleStartup())
 	{
 		return false;
 	}
 
-	if (CurrentOverlappingVehicle)
+	if (CurrentDrivingVehicle)
 	{
-		CurrentOverlappingVehicle->AircraftTurn(Value);
+		CurrentDrivingVehicle->AircraftTurn(Value);
 		return true;
 	}
 
@@ -301,14 +309,14 @@ bool UDrivingComponent::AircraftTurn(float Value)
 
 bool UDrivingComponent::AircraftPitch(float Value)
 {
-	if (CurrentOverlappingVehicle == nullptr || !CurrentOverlappingVehicle->IsVehicleStartup())
+	if (CurrentDrivingVehicle == nullptr || !CurrentDrivingVehicle->IsVehicleStartup())
 	{
 		return false;
 	}
 
-	if (CurrentOverlappingVehicle)
+	if (CurrentDrivingVehicle)
 	{
-		CurrentOverlappingVehicle->AircraftPitch(Value);
+		CurrentDrivingVehicle->AircraftPitch(Value);
 		return true;
 	}
 
@@ -317,14 +325,14 @@ bool UDrivingComponent::AircraftPitch(float Value)
 
 bool UDrivingComponent::ToggleOpenFire()
 {
-	if (CurrentOverlappingVehicle == nullptr || !CurrentOverlappingVehicle->IsVehicleStartup())
+	if (CurrentDrivingVehicle == nullptr || !CurrentDrivingVehicle->IsVehicleStartup())
 	{
 		return false;
 	}
 
-	if (CurrentOverlappingVehicle)
+	if (CurrentDrivingVehicle)
 	{
-		CurrentOverlappingVehicle->ToggleOpenFire();
+		CurrentDrivingVehicle->ToggleOpenFire();
 		return true;
 	}
 
@@ -333,14 +341,14 @@ bool UDrivingComponent::ToggleOpenFire()
 
 bool UDrivingComponent::LaunchProjectile()
 {
-	if (CurrentOverlappingVehicle == nullptr || !CurrentOverlappingVehicle->IsVehicleStartup())
+	if (CurrentDrivingVehicle == nullptr || !CurrentDrivingVehicle->IsVehicleStartup())
 	{
 		return false;
 	}
 
-	if (CurrentOverlappingVehicle)
+	if (CurrentDrivingVehicle)
 	{
-		CurrentOverlappingVehicle->LaunchProjectile();
+		CurrentDrivingVehicle->LaunchProjectile();
 		return true;
 	}
 
@@ -349,14 +357,14 @@ bool UDrivingComponent::LaunchProjectile()
 
 bool UDrivingComponent::VerticalRotateTurret(float Value)
 {
-	if (CurrentOverlappingVehicle == nullptr || !CurrentOverlappingVehicle->IsVehicleStartup())
+	if (CurrentDrivingVehicle == nullptr || !CurrentDrivingVehicle->IsVehicleStartup())
 	{
 		return false;
 	}
 
-	if (CurrentOverlappingVehicle)
+	if (CurrentDrivingVehicle)
 	{
-		CurrentOverlappingVehicle->VerticalRotateTurret(Value);
+		CurrentDrivingVehicle->VerticalRotateTurret(Value);
 		return true;
 	}
 
@@ -365,14 +373,14 @@ bool UDrivingComponent::VerticalRotateTurret(float Value)
 
 bool UDrivingComponent::HorizontalRotateTurret(float Value)
 {
-	if (CurrentOverlappingVehicle == nullptr || !CurrentOverlappingVehicle->IsVehicleStartup())
+	if (CurrentDrivingVehicle == nullptr || !CurrentDrivingVehicle->IsVehicleStartup())
 	{
 		return false;
 	}
 
-	if (CurrentOverlappingVehicle)
+	if (CurrentDrivingVehicle)
 	{
-		CurrentOverlappingVehicle->HorizontalRotateTurret(Value);
+		CurrentDrivingVehicle->HorizontalRotateTurret(Value);
 		return true;
 	}
 

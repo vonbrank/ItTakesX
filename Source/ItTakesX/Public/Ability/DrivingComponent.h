@@ -29,6 +29,9 @@ private:
 	class AVehicleControllerActor* CurrentOverlappingVehicle;
 
 	UPROPERTY()
+	class AVehicleControllerActor* CurrentDrivingVehicle;
+
+	UPROPERTY()
 	class AItTakesXCharacter* Character;
 
 protected:
@@ -53,4 +56,9 @@ public:
 	bool LaunchProjectile();
 	bool VerticalRotateTurret(float Value);
 	bool HorizontalRotateTurret(float Value);
+
+	FORCEINLINE class AVehicleControllerActor* GetCurrentDrivingVehicle()
+	{
+		return CurrentDrivingVehicle;
+	}
 };

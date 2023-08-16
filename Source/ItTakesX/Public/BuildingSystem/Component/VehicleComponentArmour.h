@@ -44,10 +44,6 @@ private:
 
 	float Health;
 
-	UFUNCTION()
-	void DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
-	                 AController* DamageInstigator, AActor* DamageCauser);
-
 	UPROPERTY()
 	class AArmourGeometryCollection* CurrentArmourGeometryCollection;
 

@@ -65,4 +65,10 @@ public:
 
 	virtual void TurnOnVehicleComponentCollisionChannel() = 0;
 	virtual bool TryTurnOffVehicleComponentCollisionChannel() = 0;
+
+	virtual void SetCurrentRunningRoot(TScriptInterface<IVehicleNode> VehicleRootNode) = 0;
+	virtual TScriptInterface<IVehicleNode> GetCurrentRunningRoot() = 0;
+	virtual void SetCurrentRunningVehicleController(TScriptInterface<IVehicleNode> CurrentRunningVehicleControllerNode)
+	= 0;
+	virtual TScriptInterface<IVehicleNode> GetCurrentRunningVehicleController() = 0;
 };

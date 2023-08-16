@@ -3,6 +3,8 @@
 
 #include "Ability/HealthComponent.h"
 
+#include "Ability/DrivingComponent.h"
+#include "BuildingSystem/VehicleControllerActor.h"
 #include "Enemy/EnemyBasePawn.h"
 
 // Sets default values for this component's properties
@@ -23,11 +25,21 @@ void UHealthComponent::BeginPlay()
 
 	Health = MaxHealth;
 	GetOwner()->OnTakeAnyDamage.AddDynamic(this, &ThisClass::DamageTaken);
+	DrivingComponent = GetOwner()->FindComponentByClass<UDrivingComponent>();
 }
 
 void UHealthComponent::DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
                                    AController* Instigator, AActor* DamageCauser)
 {
+	auto CurrentVehicleController =
+		DrivingComponent != nullptr ? DrivingComponent->GetCurrentDrivingVehicle() : nullptr;
+
+	if (CurrentVehicleController)
+	{
+		CurrentVehicleController->DamageTaken(DamagedActor, Damage, DamageType, Instigator, DamageCauser);
+		return;
+	}
+
 	if (Health <= 0)
 	{
 		return;

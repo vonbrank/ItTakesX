@@ -51,10 +51,8 @@ void AVehicleComponentActor::BeginPlay()
 			VehicleConnectionComponentList.Add(VehicleConnectionComponent);
 		}
 	}
-	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-	//                                  FString::Printf(
-	// 	                                 TEXT("name: %s, connection num: %d"), *GetName(),
-	// 	                                 VehicleConnectionComponentList.Num()));
+
+	OnTakeAnyDamage.AddDynamic(this, &ThisClass::DamageTaken);
 }
 
 void AVehicleComponentActor::SetIsRunning(bool bNewIsRunning)
@@ -536,6 +534,21 @@ bool AVehicleComponentActor::RemoveChildNode(TScriptInterface<IVehicleNode> Vehi
 	return false;
 }
 
+void AVehicleComponentActor::DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
+                                         AController* DamageInstigator, AActor* DamageCauser)
+{
+	if (Cast<IVehicleNode>(DamageCauser) || DamageInstigator == GetWorld()->GetFirstPlayerController())
+	{
+		return;
+	}
+
+	auto VehicleComponentController = Cast<AVehicleComponentActor>(CurrentRunningVehicleController.GetInterface());
+	if (VehicleComponentController)
+	{
+		VehicleComponentController->DamageTaken(DamagedActor, Damage, DamageType, DamageInstigator, DamageCauser);
+	}
+}
+
 void AVehicleComponentActor::OnBeginHoisting_Implementation(AActor* OtherActor)
 {
 	Super::OnBeginHoisting_Implementation(OtherActor);
@@ -546,4 +559,25 @@ void AVehicleComponentActor::OnEndHoisting_Implementation(AActor* OtherActor)
 {
 	Super::OnEndHoisting_Implementation(OtherActor);
 	Mesh->SetSimulatePhysics(true);
+}
+
+void AVehicleComponentActor::SetCurrentRunningRoot(TScriptInterface<IVehicleNode> NewVehicleRootNode)
+{
+	CurrentRunningRoot = NewVehicleRootNode;
+}
+
+TScriptInterface<IVehicleNode> AVehicleComponentActor::GetCurrentRunningRoot()
+{
+	return CurrentRunningRoot;
+}
+
+void AVehicleComponentActor::SetCurrentRunningVehicleController(
+	TScriptInterface<IVehicleNode> NewVehicleControllerNode)
+{
+	CurrentRunningVehicleController = NewVehicleControllerNode;
+}
+
+TScriptInterface<IVehicleNode> AVehicleComponentActor::GetCurrentRunningVehicleController()
+{
+	return CurrentRunningVehicleController;
 }
