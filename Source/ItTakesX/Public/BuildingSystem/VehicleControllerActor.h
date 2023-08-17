@@ -19,6 +19,8 @@ public:
 protected:
 	virtual void BeginPlay() override;
 private:
+	UPROPERTY()
+	class AItTakesXGameMode* ItTakesXGameMode;
 protected:
 	UPROPERTY()
 	class AItTakesXCharacter* CurrentOverlappingCharacter;
@@ -94,7 +96,7 @@ protected:
 
 public:
 	bool IsVehicleStartup() const;
-	virtual bool StartupVehicle();
+	virtual bool StartupVehicle(bool bNeedUpdateUsedComponents = false);
 	virtual bool ShutdownVehicle();
 
 	void AttachCharacter(ACharacter* Character);

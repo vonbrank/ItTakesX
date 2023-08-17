@@ -43,6 +43,9 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = true))
 	FColor CrossColor;
 
+	UPROPERTY()
+	class AItTakesXGameMode* ItTakesXGameMode;
+
 	UFUNCTION()
 	virtual void OnBoxStartOverlap(
 		UPrimitiveComponent* OverlappedComponent,

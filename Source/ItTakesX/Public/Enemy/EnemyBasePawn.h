@@ -18,9 +18,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-
-protected:
+	
 	UPROPERTY(VisibleAnywhere)
 	class UStaticMeshComponent* BodyMesh;
 
@@ -72,6 +70,9 @@ protected:
 	bool bHasDestruct = false;
 
 	virtual void Destruct(AActor* DestructCauser, AController* DestructInstigator);
+
+	UPROPERTY()
+	class AItTakesXGameMode* ItTakesXGameMode;
 
 public:
 	// Called every frame

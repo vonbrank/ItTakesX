@@ -105,6 +105,8 @@ void ALightningPawn::Shoot()
 
 void ALightningPawn::Destruct(AActor* DestructCauser, AController* DestructInstigator)
 {
+	Super::Destruct(DestructCauser, DestructInstigator);
+
 	BodyMesh->SetSimulatePhysics(false);
 	BodyMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	BodyMesh->SetHiddenInGame(true);

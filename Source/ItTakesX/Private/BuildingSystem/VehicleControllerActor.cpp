@@ -11,6 +11,8 @@
 #include "Character/ItTakesXCharacter.h"
 #include "Components/ArrowComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
+#include "GameModes/ItTakesXGameMode.h"
+#include "Kismet/GameplayStatics.h"
 #include "PhysicsEngine/PhysicsConstraintComponent.h"
 
 AVehicleControllerActor::AVehicleControllerActor()
@@ -43,6 +45,8 @@ void AVehicleControllerActor::BeginPlay()
 	{
 		DamageRatioTransferToArmour = 1;
 	}
+
+	ItTakesXGameMode = Cast<AItTakesXGameMode>(UGameplayStatics::GetGameMode(this));
 }
 
 void AVehicleControllerActor::OnSphereStartOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -129,7 +133,7 @@ bool AVehicleControllerActor::IsVehicleStartup() const
 	return bIsRunning;
 }
 
-bool AVehicleControllerActor::StartupVehicle()
+bool AVehicleControllerActor::StartupVehicle(bool bNeedUpdateUsedComponents)
 {
 	auto RootNode = GetVehicleRoot();
 	auto RootActor = Cast<AActor>(RootNode.GetInterface());
@@ -205,6 +209,11 @@ bool AVehicleControllerActor::StartupVehicle()
 		//                                  FString::Printf(
 		// 	                                 TEXT("root name %s, tree nodes num %d"), *RootActor->GetName(),
 		// 	                                 Cast<IVehicleNode>(RootActor)->GetAllChildNodes().Num()));
+	}
+
+	if (bNeedUpdateUsedComponents && ItTakesXGameMode)
+	{
+		ItTakesXGameMode->NewUseVehicleComponents(CurrentVehicleNodes);
 	}
 
 	return true;

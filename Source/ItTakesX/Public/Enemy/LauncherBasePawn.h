@@ -43,6 +43,9 @@ protected:
 
 	float TimeToNextShoot;
 
+	UPROPERTY(EditAnywhere)
+	float ProjectileSpeed = 1500;
+
 	virtual void Shoot();
 	virtual void LookAtTarget(FVector TargetPosition) override;
 

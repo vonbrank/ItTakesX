@@ -7,6 +7,8 @@
 #include "BuildingSystem/Component/VehicleComponentFlameThrower.h"
 #include "Character/ItTakesXCharacter.h"
 #include "Components/SphereComponent.h"
+#include "GameModes/ItTakesXGameMode.h"
+#include "Kismet/GameplayStatics.h"
 #include "Projectile/BaseProjectile.h"
 
 // Sets default values
@@ -34,10 +36,16 @@ void AEnemyBasePawn::BeginPlay()
 	OnTakeRadialDamage.AddDynamic(this, &ThisClass::RadialDamageTaken);
 
 	Health = MaxHealth;
+
+	ItTakesXGameMode = Cast<AItTakesXGameMode>(UGameplayStatics::GetGameMode(this));
 }
 
 void AEnemyBasePawn::Destruct(AActor* DestructCauser, AController* DestructInstigator)
 {
+	if (ItTakesXGameMode)
+	{
+		ItTakesXGameMode->EnemyDied(this);
+	}
 }
 
 // Called every frame
@@ -104,9 +112,10 @@ void AEnemyBasePawn::DamageTaken(AActor* DamagedActor, float Damage, const UDama
 
 	if (VehicleComponentFlameThrower)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue,
-		                                 FString::Printf(
-			                                 TEXT("%s is damaging by VehicleComponentFlameThrower, Health = %f"), *GetName(), Health));
+		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue,
+		//                                  FString::Printf(
+		// 	                                 TEXT("%s is damaging by VehicleComponentFlameThrower, Health = %f"),
+		// 	                                 *GetName(), Health));
 
 		if (CurrentBurningEmitter == nullptr)
 		{

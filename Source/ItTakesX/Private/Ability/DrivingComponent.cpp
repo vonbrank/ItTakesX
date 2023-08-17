@@ -40,7 +40,7 @@ void UDrivingComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (CurrentDrivingVehicle && CurrentDrivingVehicle->IsVehicleStartup())
+	if (CurrentDrivingVehicle && CurrentDrivingVehicle->IsVehicleStartup() && Character)
 	{
 		FRotator NewRotation = Character->Controller->GetControlRotation();
 		NewRotation.Yaw = CurrentDrivingVehicle->GetActorRotation().Yaw;
@@ -108,20 +108,20 @@ bool UDrivingComponent::ToggleVehicle(bool& bOutShouldActiveMovement)
 {
 	bOutShouldActiveMovement = false;
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-	                                 FString::Printf(
-		                                 TEXT("start ToggleVehicle")
-	                                 ));
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	//                                  FString::Printf(
+	// 	                                 TEXT("start ToggleVehicle")
+	//                                  ));
 
 	if (CurrentDrivingVehicle)
 	{
 		bool bShutdownResult = CurrentDrivingVehicle->ShutdownVehicle();
 		if (Character)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-			                                 FString::Printf(
-				                                 TEXT("location of character %s"),
-				                                 *Character->GetActorLocation().ToString()));
+			// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+			//                                  FString::Printf(
+			// 	                                 TEXT("location of character %s"),
+			// 	                                 *Character->GetActorLocation().ToString()));
 
 			CurrentDrivingVehicle->DetachCurrentCharacter();
 			bOutShouldActiveMovement = true;
@@ -130,10 +130,10 @@ bool UDrivingComponent::ToggleVehicle(bool& bOutShouldActiveMovement)
 			// Character->SetActorLocation(CurrentOverlappingVehicle->GetActorLocation() + FVector::UpVector * 100);
 			// Character->GetMovementComponent()->Velocity = FVector::Zero();
 			CurrentDrivingVehicle = nullptr;
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-			                                 FString::Printf(
-				                                 TEXT("location of character %s"),
-				                                 *Character->GetActorLocation().ToString()));
+			// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+			//                                  FString::Printf(
+			// 	                                 TEXT("location of character %s"),
+			// 	                                 *Character->GetActorLocation().ToString()));
 			// Character->();
 		}
 		return bShutdownResult;
@@ -143,14 +143,14 @@ bool UDrivingComponent::ToggleVehicle(bool& bOutShouldActiveMovement)
 		return false;
 	}
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-	                                 FString::Printf(
-		                                 TEXT("start ToggleVehicle 2")
-	                                 ));
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	//                                  FString::Printf(
+	// 	                                 TEXT("start ToggleVehicle 2")
+	//                                  ));
 	CurrentDrivingVehicle = CurrentOverlappingVehicle;
 	CurrentDrivingVehicle->AttachCharacter(Character);
 
-	return CurrentDrivingVehicle->StartupVehicle();
+	return CurrentDrivingVehicle->StartupVehicle(true);
 }
 
 bool UDrivingComponent::Throttle(float Value)

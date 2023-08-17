@@ -5,6 +5,8 @@
 
 #include "Character/ItTakesXCharacter.h"
 #include "Components/BoxComponent.h"
+#include "GameModes/ItTakesXGameMode.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AFlyingCircle::AFlyingCircle()
@@ -42,6 +44,8 @@ void AFlyingCircle::BeginPlay()
 		// SecondPlaneMaterial->SetScalarParameterValue(TEXT("ColorBright"), 10);
 		SecondPlaneMaterial->SetVectorParameterValue(FName("BaseColor"), OriginColor);
 	}
+
+	ItTakesXGameMode = Cast<AItTakesXGameMode>(UGameplayStatics::GetGameMode(this));
 }
 
 // Called every frame
@@ -58,7 +62,7 @@ void AFlyingCircle::OnBoxStartOverlap(UPrimitiveComponent* OverlappedComponent, 
 	if (Character && bCharacterHasCrossed == false)
 	{
 		bCharacterHasCrossed = true;
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("Character first Overlap")));
+		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("Character first Overlap")));
 
 		if (FirstPlaneMaterial)
 		{
@@ -69,6 +73,11 @@ void AFlyingCircle::OnBoxStartOverlap(UPrimitiveComponent* OverlappedComponent, 
 		{
 			// SecondPlaneMaterial->SetScalarParameterValue(TEXT("ColorBright"), 10);
 			SecondPlaneMaterial->SetVectorParameterValue(FName("BaseColor"), CrossColor);
+		}
+
+		if (ItTakesXGameMode)
+		{
+			ItTakesXGameMode->CircleCrossed(this);
 		}
 	}
 }

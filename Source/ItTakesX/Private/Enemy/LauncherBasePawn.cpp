@@ -64,6 +64,8 @@ void ALauncherBasePawn::Shoot()
 		{
 			Projectile->GetProjectileMovement()->HomingTargetComponent = TWeakObjectPtr<USceneComponent>(
 				CurrentTargetCharacter->GetRootComponent());
+			Projectile->GetProjectileMovement()->InitialSpeed = ProjectileSpeed;
+			Projectile->GetProjectileMovement()->MaxSpeed = ProjectileSpeed;
 			Projectile->GetProjectileMovement()->bIsHomingProjectile = true;
 			Projectile->GetProjectileMovement()->HomingAccelerationMagnitude = 3000;
 		}
