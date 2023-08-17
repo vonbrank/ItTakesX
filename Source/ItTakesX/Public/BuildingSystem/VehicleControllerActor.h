@@ -6,6 +6,10 @@
 #include "BuildingSystem/VehicleComponentActor.h"
 #include "VehicleControllerActor.generated.h"
 
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(
+	FVehicleDestroyDelegate);
+
 /**
  * 
  */
@@ -21,6 +25,12 @@ protected:
 private:
 	UPROPERTY()
 	class AItTakesXGameMode* ItTakesXGameMode;
+
+	FTransform InitialTransform;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AActor> GeometryCollectionActorClass;
+
 protected:
 	UPROPERTY()
 	class AItTakesXCharacter* CurrentOverlappingCharacter;
@@ -94,6 +104,8 @@ protected:
 	UPROPERTY(EditAnywhere)
 	float DamageRatioTransferToArmour = 0.8;
 
+	void DestroyVehicle();
+
 public:
 	bool IsVehicleStartup() const;
 	virtual bool StartupVehicle(bool bNeedUpdateUsedComponents = false);
@@ -124,4 +136,6 @@ public:
 	FORCEINLINE float GetArmourMaxHealth() { return CurrentMaxArmourHealth; }
 	void UpdateArmourHealth();
 	void RebootVehicle();
+
+	FVehicleDestroyDelegate VehicleDestroyDelegate;
 };

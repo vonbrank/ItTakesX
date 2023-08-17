@@ -149,6 +149,8 @@ bool UDrivingComponent::ToggleVehicle(bool& bOutShouldActiveMovement)
 	//                                  ));
 	CurrentDrivingVehicle = CurrentOverlappingVehicle;
 	CurrentDrivingVehicle->AttachCharacter(Character);
+	CurrentDrivingVehicle->VehicleDestroyDelegate.AddDynamic(
+		Character, &AItTakesXCharacter::BeforeDrivingVehicleDestroy);
 
 	return CurrentDrivingVehicle->StartupVehicle(true);
 }

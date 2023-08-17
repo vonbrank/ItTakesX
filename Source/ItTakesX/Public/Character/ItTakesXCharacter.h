@@ -101,6 +101,8 @@ private:
 	UPROPERTY()
 	class AItTakesXGameMode* ItTakesXGameMode;
 
+	bool ToggleDriving();
+
 public:
 	FORCEINLINE class UCameraComponent* GetFollowCamera() { return FollowCamera; }
 	FVector GetFollowCameraLocation() const;
@@ -123,4 +125,7 @@ public:
 	void RespawnAtTransform(FTransform RespawnTransform);
 
 	bool IsDead() const;
+	
+	UFUNCTION()
+	void BeforeDrivingVehicleDestroy();
 };

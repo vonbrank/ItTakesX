@@ -47,6 +47,8 @@ void AVehicleControllerActor::BeginPlay()
 	}
 
 	ItTakesXGameMode = Cast<AItTakesXGameMode>(UGameplayStatics::GetGameMode(this));
+
+	InitialTransform = GetTransform();
 }
 
 void AVehicleControllerActor::OnSphereStartOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -82,6 +84,11 @@ void AVehicleControllerActor::DamageTaken(AActor* DamagedActor, float Damage, co
 	// 调用父类同名函数将导致递归调用
 	// Super::DamageTaken(DamagedActor, Damage, DamageType, DamageInstigator, DamageCauser);
 
+	if (Health <= 0)
+	{
+		return;
+	}
+
 
 	if (CurrentVehicleComponentArmours.Num() > 0)
 	{
@@ -98,6 +105,11 @@ void AVehicleControllerActor::DamageTaken(AActor* DamagedActor, float Damage, co
 	else
 	{
 		Health -= Damage;
+	}
+
+	if (Health <= 0)
+	{
+		DestroyVehicle();
 	}
 }
 
@@ -126,6 +138,26 @@ void AVehicleControllerActor::RebootVehicle()
 	ShutdownVehicle();
 	StartupVehicle();
 	CurrentAirplaneThrottle = PreviousAirplaneThrottle;
+}
+
+void AVehicleControllerActor::DestroyVehicle()
+{
+	auto PreviousVehicleNodes = CurrentVehicleNodes;
+
+	VehicleDestroyDelegate.Broadcast();
+	VehicleDestroyDelegate.Clear();
+
+	for (auto VehicleNode : PreviousVehicleNodes)
+	{
+		if (VehicleNode.GetInterface())
+		{
+			VehicleNode->DetachFromParentVehicleNode();
+		}
+	}
+
+	GetWorld()->SpawnActor<AActor>(GeometryCollectionActorClass, GetActorLocation(), GetActorRotation());
+
+	SetActorTransform(InitialTransform);
 }
 
 bool AVehicleControllerActor::IsVehicleStartup() const

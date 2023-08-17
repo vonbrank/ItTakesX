@@ -229,6 +229,24 @@ void AItTakesXCharacter::HandleRepeatingX()
 	}
 }
 
+void AItTakesXCharacter::BeforeDrivingVehicleDestroy()
+{
+	ToggleDriving();
+}
+
+bool AItTakesXCharacter::ToggleDriving()
+{
+	bool bOutShouldActiveMovement = false;
+	bool bResult = Driving->ToggleVehicle(bOutShouldActiveMovement);
+
+	if (bOutShouldActiveMovement)
+	{
+		AfterDetachFromVehicle();
+	}
+
+	return bResult;
+}
+
 FVector AItTakesXCharacter::GetFollowCameraLocation() const
 {
 	if (FollowCamera == nullptr)
@@ -245,15 +263,8 @@ void AItTakesXCharacter::HandlePressingF()
 		SwitchToView(EItTakesXViewType_NiceToAiming);
 		return;
 	}
-
-	bool bOutShouldActiveMovement = false;
-	if (Driving->ToggleVehicle(bOutShouldActiveMovement))
+	if (ToggleDriving())
 	{
-		if (bOutShouldActiveMovement)
-		{
-			AfterDetachFromVehicle();
-		}
-
 		return;
 	}
 }
