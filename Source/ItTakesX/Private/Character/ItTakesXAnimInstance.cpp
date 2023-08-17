@@ -43,5 +43,7 @@ void UItTakesXAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	FRotator MovementRotation = UKismetMathLibrary::MakeRotFromX(ItTakesXCharacter->GetVelocity());
 	YawOffset = UKismetMathLibrary::NormalizedDeltaRotator(MovementRotation, AimRotation).Yaw;
 
+	bIsDead = ItTakesXCharacter->IsDead();
+
 	// YawOffset = UKismetMathLibrary::MakeRotFromX(UKismetMathLibrary::InverseTransformDirection(ItTakesXCharacter->GetActorTransform(), Velocity)).Yaw;
 }

@@ -40,4 +40,7 @@ private:
 
 	UPROPERTY(BlueprintReadOnly, Category = INVALID_NAME_CHARACTERS, meta = (AllowPrivateAccess = "true"))
 	float YawOffset;
+
+	UPROPERTY(BlueprintReadOnly, Category = INVALID_NAME_CHARACTERS, meta = (AllowPrivateAccess = "true"))
+	bool bIsDead;
 };
