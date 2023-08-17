@@ -49,6 +49,9 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	class UStaticMeshComponent* FlagBody;
 
+	UPROPERTY(VisibleAnywhere)
+	class UArrowComponent* CharacterRespawnPoint;
+
 	UPROPERTY(EditAnywhere)
 	float ActiveThreshold;
 
@@ -81,9 +84,13 @@ private:
 	void LightUpButton();
 	void LightDownButton();
 
+	UPROPERTY()
+	class AItTakesXGameMode* ItTakesXGameMode;
+
 protected:
 	virtual bool CanSpawnTokenCube();
 	virtual void RiseFlag();
 
 public:
+	FTransform GetCharacterRespawnPointTransform();
 };

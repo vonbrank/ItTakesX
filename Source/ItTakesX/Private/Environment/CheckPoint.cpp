@@ -4,6 +4,8 @@
 #include "Environment/CheckPoint.h"
 
 #include "Components/ArrowComponent.h"
+#include "GameModes/ItTakesXGameMode.h"
+#include "Kismet/GameplayStatics.h"
 #include "PhysicsEngine/PhysicsConstraintComponent.h"
 
 // Sets default values
@@ -38,6 +40,9 @@ ACheckPoint::ACheckPoint()
 	FlagConstraint = CreateDefaultSubobject<UPhysicsConstraintComponent>(TEXT("FlagConstraint"));
 	FlagConstraint->SetupAttachment(FlagBase);
 
+	CharacterRespawnPoint = CreateDefaultSubobject<UArrowComponent>(TEXT("CharacterRespawnPoint"));
+	CharacterRespawnPoint->SetupAttachment(RootComponent);
+
 	FlagConstraint->SetConstrainedComponents(FlagBase, NAME_None, FlagBody, NAME_None);
 }
 
@@ -47,6 +52,7 @@ void ACheckPoint::BeginPlay()
 	Super::BeginPlay();
 
 	ButtonBodyDynamicMaterial = ButtonBody->CreateDynamicMaterialInstance(0);
+	ItTakesXGameMode = Cast<AItTakesXGameMode>(UGameplayStatics::GetGameMode(this));
 }
 
 // Called every frame
@@ -87,19 +93,25 @@ void ACheckPoint::Tick(float DeltaTime)
 
 void ACheckPoint::SpawnTokenCube()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("spawn token cube")));
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("spawn token cube")));
 	CurrentSpawnActor = GetWorld()->SpawnActor<AActor>(TokenCubeClass, TokenCubeSpawnPoint->GetComponentLocation(),
 	                                                   TokenCubeSpawnPoint->GetComponentRotation());
 	if (CurrentSpawnActor)
 	{
 		CurrentSpawnActor->Tags.Add(SpawnCubeTag);
 	}
+	ItTakesXGameMode->ArriveCheckPoint(this);
 }
 
 void ACheckPoint::RiseFlag()
 {
 	FlagConstraint->SetLinearDriveParams(1000, 200, 0);
 	FlagBody->AddForce(FlagBody->GetUpVector());
+}
+
+FTransform ACheckPoint::GetCharacterRespawnPointTransform()
+{
+	return CharacterRespawnPoint->GetComponentTransform();
 }
 
 bool ACheckPoint::CanSpawnTokenCube()

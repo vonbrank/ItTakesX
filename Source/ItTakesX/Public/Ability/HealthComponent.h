@@ -35,10 +35,14 @@ private:
 	UPROPERTY()
 	class UDrivingComponent* DrivingComponent;
 
+	UPROPERTY()
+	class AItTakesXGameMode* ItTakesXGameMode;
+
 public:
 	float GetHealthPercentage();
 
 	FORCEINLINE float GetMaxHealth() { return MaxHealth; }
 
 	FORCEINLINE float GetHealth() { return Health; }
+	FORCEINLINE void ResetHealth() { Health = MaxHealth; }
 };

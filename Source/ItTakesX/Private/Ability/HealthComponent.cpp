@@ -5,7 +5,10 @@
 
 #include "Ability/DrivingComponent.h"
 #include "BuildingSystem/VehicleControllerActor.h"
+#include "Character/ItTakesXCharacter.h"
 #include "Enemy/EnemyBasePawn.h"
+#include "GameModes/ItTakesXGameMode.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values for this component's properties
 UHealthComponent::UHealthComponent()
@@ -26,6 +29,8 @@ void UHealthComponent::BeginPlay()
 	Health = MaxHealth;
 	GetOwner()->OnTakeAnyDamage.AddDynamic(this, &ThisClass::DamageTaken);
 	DrivingComponent = GetOwner()->FindComponentByClass<UDrivingComponent>();
+
+	ItTakesXGameMode = Cast<AItTakesXGameMode>(UGameplayStatics::GetGameMode(this));
 }
 
 void UHealthComponent::DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
@@ -48,6 +53,11 @@ void UHealthComponent::DamageTaken(AActor* DamagedActor, float Damage, const UDa
 	Health -= Damage;
 
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("Character Health = %f"), Health));
+
+	if (Health <= 0 && ItTakesXGameMode)
+	{
+		ItTakesXGameMode->CharacterDied(Cast<AItTakesXCharacter>(GetOwner()));
+	}
 	// if (DamageCauser)
 	// {
 	// 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,

@@ -26,6 +26,14 @@ private:
 	UPROPERTY()
 	TArray<TScriptInterface<IVehicleNode>> CurrentUsedVehicleComponents;
 
+	UPROPERTY()
+	class ACheckPoint* LastCheckPoint;
+
+	UPROPERTY()
+	class AItTakesXCharacter* Character;
+
+	FTransform CharacterBeginTransform;
+
 public:
 	FORCEINLINE float GetGameTimeInSeconds() { return GameTimeInSeconds; }
 	FORCEINLINE int GetCurrentCrossedCircleNumber() { return CurrentCrossedCircleNumber; }
@@ -35,4 +43,7 @@ public:
 	void EnemyDied(class AEnemyBasePawn* EnemyBasePawn);
 	void CircleCrossed(class AFlyingCircle* FlyingCircle);
 	void NewUseVehicleComponents(TArray<TScriptInterface<IVehicleNode>> NewVehicleNodes);
+	void SetCharacterBeginTransform(class AItTakesXCharacter* BeginCharacter, FTransform Transform);
+	void ArriveCheckPoint(class ACheckPoint* NewCheckPoint);
+	void CharacterDied(class AItTakesXCharacter* DeadCharacter);
 };

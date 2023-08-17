@@ -98,6 +98,9 @@ private:
 
 	friend class UInGameWidget;
 
+	UPROPERTY()
+	class AItTakesXGameMode* ItTakesXGameMode;
+
 public:
 	FORCEINLINE class UCameraComponent* GetFollowCamera() { return FollowCamera; }
 	FVector GetFollowCameraLocation() const;
@@ -116,4 +119,6 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void AfterDetachFromVehicle();
+
+	void RespawnAtTransform(FTransform RespawnTransform);
 };

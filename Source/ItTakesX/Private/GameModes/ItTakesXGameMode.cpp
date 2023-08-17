@@ -3,8 +3,10 @@
 
 #include "GameModes/ItTakesXGameMode.h"
 
+#include "Character/ItTakesXCharacter.h"
 #include "Engine/Engine.h"
 #include "Engine/World.h"
+#include "Environment/CheckPoint.h"
 
 void AItTakesXGameMode::Tick(float DeltaSeconds)
 {
@@ -62,4 +64,36 @@ void AItTakesXGameMode::NewUseVehicleComponents(TArray<TScriptInterface<IVehicle
 	                                 FString::Printf(
 		                                 TEXT("CurrentUsedVehicleComponentNumber = %d"),
 		                                 CurrentUsedVehicleComponents.Num()));
+}
+
+void AItTakesXGameMode::SetCharacterBeginTransform(AItTakesXCharacter* BeginCharacter, FTransform Transform)
+{
+	if (BeginCharacter)
+	{
+		Character = BeginCharacter;
+		CharacterBeginTransform = Transform;
+	}
+}
+
+void AItTakesXGameMode::ArriveCheckPoint(ACheckPoint* NewCheckPoint)
+{
+	if (NewCheckPoint)
+	{
+		LastCheckPoint = NewCheckPoint;
+	}
+}
+
+void AItTakesXGameMode::CharacterDied(AItTakesXCharacter* DeadCharacter)
+{
+	if (DeadCharacter)
+	{
+		if (LastCheckPoint)
+		{
+			DeadCharacter->RespawnAtTransform(LastCheckPoint->GetCharacterRespawnPointTransform());
+		}
+		else if (Character)
+		{
+			DeadCharacter->RespawnAtTransform(CharacterBeginTransform);
+		}
+	}
 }

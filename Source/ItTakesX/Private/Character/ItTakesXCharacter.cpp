@@ -16,6 +16,8 @@
 #include "Engine/SkeletalMeshSocket.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "GameModes/ItTakesXGameMode.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AItTakesXCharacter::AItTakesXCharacter()
@@ -55,6 +57,11 @@ void AItTakesXCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	InventoryComponent->OnCurrentEquippableUpdate.AddDynamic(this, &ThisClass::OnCurrentEquippableUpdate);
+	ItTakesXGameMode = Cast<AItTakesXGameMode>(UGameplayStatics::GetGameMode(this));
+	if (ItTakesXGameMode)
+	{
+		ItTakesXGameMode->SetCharacterBeginTransform(this, GetTransform());
+	}
 }
 
 // Called every frame
@@ -364,6 +371,12 @@ void AItTakesXCharacter::SetCurrentOverlappingVehicleCore(AVehicleControllerActo
 	{
 		Driving->SetCurrenOverlappingVehicle(VehicleController);
 	}
+}
+
+void AItTakesXCharacter::RespawnAtTransform(FTransform RespawnTransform)
+{
+	SetActorTransform(RespawnTransform);
+	Health->ResetHealth();
 }
 
 void AItTakesXCharacter::SwitchGliding()
