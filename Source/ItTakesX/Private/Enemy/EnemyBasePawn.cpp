@@ -102,7 +102,7 @@ void AEnemyBasePawn::LookAtTarget(FVector TargetPosition)
 
 bool AEnemyBasePawn::IsTargetInRange() const
 {
-	return CurrentTargetCharacter != nullptr;
+	return CurrentTargetCharacter != nullptr && !CurrentTargetCharacter->IsDead();
 }
 
 void AEnemyBasePawn::DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType,

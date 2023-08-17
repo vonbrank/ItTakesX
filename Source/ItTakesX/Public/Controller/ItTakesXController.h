@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "HUD/CharacterRespawnWidget.h"
 #include "HUD/InGameWidget.h"
 #include "ItTakesXController.generated.h"
 
@@ -17,8 +18,25 @@ class ITTAKESX_API AItTakesXController : public APlayerController
 
 protected:
 	virtual void BeginPlay() override;
-	
+
 private:
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	TSubclassOf<UInGameWidget> InGameWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	TSubclassOf<UCharacterRespawnWidget> CharacterRespawnWidgetClass;
+
+	UPROPERTY()
+	class UCharacterRespawnWidget* CharacterRespawnWidget;
+
+	FTransform CurrentRespawnTransform;
+
+	UPROPERTY()
+	float RespawnDelay = 3;
+
+protected:
+	void RespawnCharacterAtTransform();
+
+public:
+	void CharacterDied(FTransform RespawnTransform);
 };

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "HUD/CharacterRespawnWidget.h"
 #include "Interface/VehicleNode.h"
 #include "ItTakesXGameMode.generated.h"
 
@@ -16,6 +17,8 @@ class ITTAKESX_API AItTakesXGameMode : public AGameModeBase
 	GENERATED_BODY()
 public:
 	virtual void Tick(float DeltaSeconds) override;
+protected:
+	virtual void BeginPlay() override;
 private:
 	float GameTimeInSeconds = 0;
 
@@ -33,6 +36,14 @@ private:
 	class AItTakesXCharacter* Character;
 
 	FTransform CharacterBeginTransform;
+
+	// UPROPERTY()
+	// class AItTakesXCharacter* CurrentDeadCharacter;
+
+	// void RespawnDeadCharacter();
+
+	UPROPERTY()
+	class AItTakesXController* ItTakesXController;
 
 public:
 	FORCEINLINE float GetGameTimeInSeconds() { return GameTimeInSeconds; }

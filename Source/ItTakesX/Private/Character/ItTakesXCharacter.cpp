@@ -379,6 +379,11 @@ void AItTakesXCharacter::RespawnAtTransform(FTransform RespawnTransform)
 	Health->ResetHealth();
 }
 
+bool AItTakesXCharacter::IsDead() const
+{
+	return Health->GetHealth() <= 0;
+}
+
 void AItTakesXCharacter::SwitchGliding()
 {
 	Gliding->ToggleGliding();

@@ -121,4 +121,6 @@ public:
 	void AfterDetachFromVehicle();
 
 	void RespawnAtTransform(FTransform RespawnTransform);
+
+	bool IsDead() const;
 };

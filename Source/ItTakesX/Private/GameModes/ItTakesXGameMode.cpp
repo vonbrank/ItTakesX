@@ -4,15 +4,23 @@
 #include "GameModes/ItTakesXGameMode.h"
 
 #include "Character/ItTakesXCharacter.h"
+#include "Controller/ItTakesXController.h"
 #include "Engine/Engine.h"
 #include "Engine/World.h"
 #include "Environment/CheckPoint.h"
+#include "Kismet/GameplayStatics.h"
 
 void AItTakesXGameMode::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
 	GameTimeInSeconds = GetWorld()->GetTimeSeconds();
+}
+
+void AItTakesXGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+	ItTakesXController = Cast<AItTakesXController>(GetWorld()->GetFirstPlayerController());
 }
 
 void AItTakesXGameMode::EnemyDied(AEnemyBasePawn* EnemyBasePawn)
@@ -85,15 +93,18 @@ void AItTakesXGameMode::ArriveCheckPoint(ACheckPoint* NewCheckPoint)
 
 void AItTakesXGameMode::CharacterDied(AItTakesXCharacter* DeadCharacter)
 {
-	if (DeadCharacter)
+	if (ItTakesXController && DeadCharacter)
 	{
+		FTransform RespawnTransform = DeadCharacter->GetTransform();
 		if (LastCheckPoint)
 		{
-			DeadCharacter->RespawnAtTransform(LastCheckPoint->GetCharacterRespawnPointTransform());
+			RespawnTransform = LastCheckPoint->GetCharacterRespawnPointTransform();
 		}
 		else if (Character)
 		{
-			DeadCharacter->RespawnAtTransform(CharacterBeginTransform);
+			RespawnTransform = CharacterBeginTransform;
 		}
+
+		ItTakesXController->CharacterDied(RespawnTransform);
 	}
 }
