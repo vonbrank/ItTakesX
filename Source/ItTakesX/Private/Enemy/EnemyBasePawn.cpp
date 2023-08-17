@@ -108,25 +108,31 @@ bool AEnemyBasePawn::IsTargetInRange() const
 void AEnemyBasePawn::DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
                                  AController* DamageInstigator, AActor* DamageCauser)
 {
+	auto Projectile = Cast<ABaseProjectile>(DamageCauser);
+	if (Projectile && Cast<AEnemyBasePawn>(Projectile->GetOwner()))
+	{
+		return;
+	}
 	auto VehicleComponentFlameThrower = Cast<AVehicleComponentFlameThrower>(DamageCauser);
 
-	if (VehicleComponentFlameThrower)
+	if (CurrentBurningEmitter == nullptr)
 	{
-		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue,
-		//                                  FString::Printf(
-		// 	                                 TEXT("%s is damaging by VehicleComponentFlameThrower, Health = %f"),
-		// 	                                 *GetName(), Health));
-
-		if (CurrentBurningEmitter == nullptr)
+		if (VehicleComponentFlameThrower)
 		{
 			CurrentBurningEmitter = GetWorld()->SpawnActor<AEmitter>(VehicleComponentFlameThrower->GetFireClass(),
 			                                                         GetActorLocation(), GetActorRotation());
-			if (CurrentBurningEmitter)
-			{
-				CurrentBurningEmitter->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
-			}
+		}
+		else if (Projectile)
+		{
+			CurrentBurningEmitter = GetWorld()->SpawnActor<AEmitter>(Projectile->GetFireClass(),
+			                                                         GetActorLocation(), GetActorRotation());
+		}
+		if (CurrentBurningEmitter)
+		{
+			CurrentBurningEmitter->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
 		}
 	}
+
 	if (Health <= 0)
 	{
 		if (!bHasDestruct)
@@ -151,10 +157,13 @@ void AEnemyBasePawn::RadialDamageTaken(AActor* DamagedActor, float Damage, const
                                        AActor* DamageCauser)
 {
 	auto Projectile = Cast<ABaseProjectile>(DamageCauser);
+	if (Projectile && Cast<AEnemyBasePawn>(Projectile->GetOwner()))
+	{
+		return;
+	}
 	if (Projectile)
 	{
-		auto EnemyBasePawn = Cast<AEnemyBasePawn>(Projectile->GetOwner());
-		if (CurrentBurningEmitter == nullptr && EnemyBasePawn != nullptr)
+		if (CurrentBurningEmitter == nullptr)
 		{
 			CurrentBurningEmitter = GetWorld()->SpawnActor<AEmitter>(Projectile->GetFireClass(),
 			                                                         GetActorLocation(), GetActorRotation());
