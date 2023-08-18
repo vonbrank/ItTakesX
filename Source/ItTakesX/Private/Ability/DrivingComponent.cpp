@@ -31,6 +31,10 @@ void UDrivingComponent::BeginPlay()
 	Super::BeginPlay();
 
 	Character = Cast<AItTakesXCharacter>(GetOwner());
+	if (Character)
+	{
+		PlayerControllerRef = Cast<APlayerController>(Character->GetController());
+	}
 }
 
 
@@ -43,8 +47,41 @@ void UDrivingComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	if (CurrentDrivingVehicle && CurrentDrivingVehicle->IsVehicleStartup() && Character)
 	{
 		FRotator NewRotation = Character->Controller->GetControlRotation();
+		if (CurrentDrivingVehicle->IsAimingOpenFireMode())
+		{
+			NewRotation.Pitch = CurrentControllerPitch;
+
+			if (PlayerControllerRef)
+			{
+				PlayerControllerRef->bShowMouseCursor = true;
+				FHitResult HitResult;
+				if (PlayerControllerRef->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult))
+				{
+					// DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 25.f, 12, FColor::Red, false, -1.f);
+					if (CurrentDrivingVehicle && !(Cast<IVehicleNode>(HitResult.GetActor()) || Cast<AItTakesXCharacter>(
+						HitResult.GetActor())))
+					{
+						CurrentDrivingVehicle->TurretLookAtTarget(HitResult.Location);
+					}
+				}
+			}
+		}
+		else
+		{
+			if (PlayerControllerRef)
+			{
+				PlayerControllerRef->bShowMouseCursor = false;
+			}
+		}
 		NewRotation.Yaw = CurrentDrivingVehicle->GetActorRotation().Yaw;
 		Character->Controller->SetControlRotation(NewRotation);
+	}
+	else
+	{
+		if (PlayerControllerRef)
+		{
+			PlayerControllerRef->bShowMouseCursor = false;
+		}
 	}
 }
 
@@ -151,6 +188,8 @@ bool UDrivingComponent::ToggleVehicle(bool& bOutShouldActiveMovement)
 	CurrentDrivingVehicle->AttachCharacter(Character);
 	CurrentDrivingVehicle->VehicleDestroyDelegate.AddDynamic(
 		Character, &AItTakesXCharacter::BeforeDrivingVehicleDestroy);
+
+	CurrentControllerPitch = Character->Controller->GetControlRotation().Pitch;
 
 	return CurrentDrivingVehicle->StartupVehicle(true);
 }
@@ -441,4 +480,27 @@ float UDrivingComponent::GetDrivingVehicleArmourHealthPercentage()
 		return FMath::Max(0, CurrentDrivingVehicle->GetArmourHealth()) / CurrentDrivingVehicle->GetArmourMaxHealth();
 	}
 	return 0.5;
+}
+
+bool UDrivingComponent::ToggleVehicleAimingMode()
+{
+	if (CurrentDrivingVehicle)
+	{
+		if (CurrentDrivingVehicle->IsAimingOpenFireMode())
+		{
+			CurrentDrivingVehicle->SetAimingOpenFireMode(false);
+		}
+		else
+		{
+			if (Character)
+			{
+				CurrentControllerPitch = Character->Controller->GetControlRotation().Pitch;
+			}
+			CurrentDrivingVehicle->SetAimingOpenFireMode(true);
+		}
+
+
+		return true;
+	}
+	return false;
 }

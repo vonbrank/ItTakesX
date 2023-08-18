@@ -431,6 +431,10 @@ void AItTakesXCharacter::HandlePressingLMB()
 	{
 		return;
 	}
+	if (Driving->LaunchProjectile())
+	{
+		return;
+	}
 }
 
 void AItTakesXCharacter::HandlePressingK()
@@ -443,7 +447,7 @@ void AItTakesXCharacter::HandlePressingK()
 
 void AItTakesXCharacter::HandlePressingL()
 {
-	if (Driving->LaunchProjectile())
+	if (Driving->ToggleVehicleAimingMode())
 	{
 		return;
 	}

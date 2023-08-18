@@ -31,6 +31,8 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AActor> GeometryCollectionActorClass;
 
+	bool bAimingOpenFireMode = false;
+
 protected:
 	UPROPERTY()
 	class AItTakesXCharacter* CurrentOverlappingCharacter;
@@ -126,6 +128,8 @@ public:
 	void VerticalRotateTurret(float Value);
 	void HorizontalRotateTurret(float Value);
 
+	void TurretLookAtTarget(FVector TargetLocation);
+
 	virtual void SetIsRunning(bool bNewIsRunning) override;
 	virtual void DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
 	                         AController* DamageInstigator, AActor* DamageCauser) override;
@@ -136,6 +140,9 @@ public:
 	FORCEINLINE float GetArmourMaxHealth() { return CurrentMaxArmourHealth; }
 	void UpdateArmourHealth();
 	void RebootVehicle();
+
+	FORCEINLINE void SetAimingOpenFireMode(bool NewValue) { bAimingOpenFireMode = NewValue; }
+	FORCEINLINE bool IsAimingOpenFireMode() { return bAimingOpenFireMode; }
 
 	FVehicleDestroyDelegate VehicleDestroyDelegate;
 

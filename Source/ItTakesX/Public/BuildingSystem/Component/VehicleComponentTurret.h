@@ -40,8 +40,12 @@ private:
 	UPROPERTY(EditAnywhere)
 	float MaxVerticalRotatingDegree = 45;
 
+	UPROPERTY(EditAnywhere)
+	float ProjectileScale = 2;
+
 public:
 	void LaunchProjectile();
 	void VerticalRotateTurret(float Value);
 	void HorizontalRotateTurret(float Value);
+	void LookAtTarget(FVector TargetLocation);
 };

@@ -33,7 +33,7 @@ void AVehicleComponentTurret::LaunchProjectile()
 	{
 		FVector CurrentSpeed = Mesh->GetPhysicsLinearVelocity();
 
-		ProjectileActor->SetActorScale3D(FVector(1, 1, 1));
+		ProjectileActor->SetActorScale3D(FVector(ProjectileScale, ProjectileScale, ProjectileScale));
 		ProjectileActor->GetProjectileMovement()->InitialSpeed = ProjectileSpeed + FVector::DotProduct(
 			CurrentSpeed, ProjectileSpawnPoint->GetForwardVector());
 		ProjectileActor->GetProjectileMovement()->MaxSpeed = ProjectileSpeed + FVector::DotProduct(
@@ -67,4 +67,21 @@ void AVehicleComponentTurret::HorizontalRotateTurret(float Value)
 	auto NewRotation = TurretMesh->GetRelativeRotation();
 	NewRotation.Add(0, GetWorld()->DeltaTimeSeconds * TurretRotatingSpeedDegree * -Value, 0);
 	TurretMesh->SetRelativeRotation(NewRotation);
+}
+
+void AVehicleComponentTurret::LookAtTarget(FVector TargetLocation)
+{
+	auto NewRotation = GetTransform().InverseTransformPosition(TargetLocation).
+	                                  ToOrientationRotator();
+
+	if (NewRotation.Pitch < -MaxVerticalRotatingDegree)
+	{
+		NewRotation.Pitch = -MaxVerticalRotatingDegree;
+	}
+	else if (NewRotation.Pitch > MaxVerticalRotatingDegree)
+	{
+		NewRotation.Pitch = MaxVerticalRotatingDegree;
+	}
+	TurretMesh->SetRelativeRotation(FMath::RInterpTo(TurretMesh->GetRelativeRotation(), NewRotation,
+	                                                 GetWorld()->DeltaTimeSeconds, 5.f));
 }

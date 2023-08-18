@@ -34,6 +34,11 @@ private:
 	UPROPERTY()
 	class AItTakesXCharacter* Character;
 
+	UPROPERTY()
+	class APlayerController* PlayerControllerRef;
+
+	float CurrentControllerPitch = 0;
+
 protected:
 public:
 	void SetCurrenOverlappingVehicle(class AVehicleControllerActor* NewOverlappingVehicle);
@@ -68,4 +73,5 @@ public:
 	float GetDrivingVehicleArmourHealth();
 	float GetDrivingVehicleArmourMaxHealth();
 	float GetDrivingVehicleArmourHealthPercentage();
+	bool ToggleVehicleAimingMode();
 };

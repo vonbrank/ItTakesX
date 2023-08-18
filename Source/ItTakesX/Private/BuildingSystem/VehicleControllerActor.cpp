@@ -420,6 +420,10 @@ void AVehicleControllerActor::LaunchProjectile()
 
 void AVehicleControllerActor::VerticalRotateTurret(float Value)
 {
+	if (bAimingOpenFireMode)
+	{
+		return;
+	}
 	for (auto VehicleComponentTurret : CurrentVehicleComponentTurrets)
 	{
 		if (VehicleComponentTurret)
@@ -431,11 +435,30 @@ void AVehicleControllerActor::VerticalRotateTurret(float Value)
 
 void AVehicleControllerActor::HorizontalRotateTurret(float Value)
 {
+	if (bAimingOpenFireMode)
+	{
+		return;
+	}
 	for (auto VehicleComponentTurret : CurrentVehicleComponentTurrets)
 	{
 		if (VehicleComponentTurret)
 		{
 			VehicleComponentTurret->HorizontalRotateTurret(Value);
+		}
+	}
+}
+
+void AVehicleControllerActor::TurretLookAtTarget(FVector TargetLocation)
+{
+	if (!bAimingOpenFireMode)
+	{
+		return;
+	}
+	for (auto VehicleComponentTurret : CurrentVehicleComponentTurrets)
+	{
+		if (VehicleComponentTurret)
+		{
+			VehicleComponentTurret->LookAtTarget(TargetLocation);
 		}
 	}
 }
