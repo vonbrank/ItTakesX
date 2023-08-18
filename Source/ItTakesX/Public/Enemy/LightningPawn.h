@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "EnemyBasePawn.h"
 #include "Effect/DottedLazer.h"
+#include "Environment/BaseExplosion.h"
 #include "Field/FieldSystemActor.h"
 #include "GameFramework/Pawn.h"
 #include "LightningPawn.generated.h"
@@ -63,6 +64,12 @@ private:
 
 	UPROPERTY()
 	AActor* CurrentTargetActor;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<ABaseExplosion> ExplosionClass;
+
+	UPROPERTY(EditAnywhere)
+	float LaserDamage = 30;
 
 protected:
 	virtual void OnSphereStartOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,

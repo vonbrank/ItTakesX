@@ -6,6 +6,7 @@
 #include "BuildingSystem/VehicleControllerActor.h"
 #include "Character/ItTakesXCharacter.h"
 #include "GeometryCollection/GeometryCollectionComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ALightningPawn::ALightningPawn()
@@ -95,15 +96,19 @@ void ALightningPawn::Shoot()
 
 	CurrentLaser = GetWorld()->SpawnActor<ADottedLazer>(LaserClass, LightningSpawnLocation->GetComponentLocation(),
 	                                                    FRotator::ZeroRotator);
+	auto DamageType = UDamageType::StaticClass();
+	UGameplayStatics::ApplyDamage(CurrentTargetCharacter, LaserDamage, GetController(), this, DamageType);
 
 	if (CurrentLaser)
 	{
 		TimeToDestroyLaser = ShootTime;
 		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("shoot laser")));
 
+		FVector TargetLocation = CurrentLaser->GetActorLocation() + FVector::UpVector;
+
 		if (CurrentTargetActor)
 		{
-			CurrentLaser->SetEndLocation(CurrentTargetActor->GetActorLocation());
+			TargetLocation = CurrentTargetActor->GetActorLocation();
 		}
 		else
 		{
@@ -114,7 +119,8 @@ void ALightningPawn::Shoot()
 					CurrentVehicleController->GetRandomComponentFromVehicle().GetInterface());
 				if (CurrentTargetActor)
 				{
-					CurrentLaser->SetEndLocation(CurrentTargetActor->GetActorLocation());
+					TargetLocation = CurrentTargetActor->GetActorLocation();
+					// CurrentLaser->SetEndLocation();
 					GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
 					                                 FString::Printf(
 						                                 TEXT("New CurrentTargetActor: %s"),
@@ -128,7 +134,8 @@ void ALightningPawn::Shoot()
 				}
 				else
 				{
-					CurrentLaser->SetEndLocation(CurrentTargetCharacter->GetActorLocation());
+					TargetLocation = CurrentTargetCharacter->GetActorLocation();
+					// CurrentLaser->SetEndLocation(CurrentTargetCharacter->GetActorLocation());
 					GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
 					                                 FString::Printf(
 						                                 TEXT("CurrentTargetActor is null")));
@@ -140,8 +147,21 @@ void ALightningPawn::Shoot()
 				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
 				                                 FString::Printf(
 					                                 TEXT("CurrentVehicleController is null")));
-				CurrentLaser->SetEndLocation(CurrentTargetCharacter->GetActorLocation());
+				TargetLocation = CurrentTargetCharacter->GetActorLocation();
+				// CurrentLaser->SetEndLocation(CurrentTargetCharacter->GetActorLocation());
 			}
+		}
+		CurrentLaser->SetEndLocation(TargetLocation);
+
+		auto Direction = TargetLocation - CurrentLaser->GetActorLocation();
+		Direction.Normalize();
+
+		auto Explosion = GetWorld()->SpawnActor<
+			ABaseExplosion>(ExplosionClass, TargetLocation, (-Direction).Rotation());
+		if (Explosion)
+		{
+			Explosion->SetActorScale3D(FVector(2, 2, 2));
+			Explosion->SetLifeSpan(1);
 		}
 	}
 }
