@@ -43,6 +43,9 @@ private:
 	UPROPERTY(EditAnywhere)
 	float ProjectileScale = 2;
 
+	UPROPERTY(EditAnywhere)
+	float ProjectileGravity = 0.5;
+
 public:
 	void LaunchProjectile();
 	void VerticalRotateTurret(float Value);

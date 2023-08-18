@@ -39,6 +39,7 @@ void AVehicleComponentTurret::LaunchProjectile()
 		ProjectileActor->GetProjectileMovement()->MaxSpeed = ProjectileSpeed + FVector::DotProduct(
 			CurrentSpeed, ProjectileSpawnPoint->GetForwardVector());
 		ProjectileActor->SetOwner(UGameplayStatics::GetPlayerCharacter(this, 0));
+		ProjectileActor->GetProjectileMovement()->ProjectileGravityScale = ProjectileGravity;
 	}
 	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("Ref = %s"), *Ref->GetName()));
 }
