@@ -252,10 +252,7 @@ bool AVehicleComponentActor::AttachToCurrentOverlappingVehicleNode()
 	// 	GetComponentLocation() - CurrentNearestConnectionComponent->GetComponentLocation()) / 2;
 
 	// 生成物理约束
-	if (CurrentConnectionConstraintActor)
-	{
-		CurrentConnectionConstraintActor->Destroy();
-	}
+	auto PreviousConnectionConstraintActor = CurrentConnectionConstraintActor;
 	APhysicsConstraintActor* PhysicsConstraintActor = GetWorld()->SpawnActor<APhysicsConstraintActor>();
 	PhysicsConstraintActor->SetActorLocation(GetActorLocation());
 	UPhysicsConstraintComponent* PhysicsConstraintComponent = PhysicsConstraintActor->GetConstraintComp();
@@ -275,6 +272,15 @@ bool AVehicleComponentActor::AttachToCurrentOverlappingVehicleNode()
 	ParentRootComponent->SetSimulatePhysics(true);
 	Mesh->SetSimulatePhysics(true);
 
+	if (ParentNode.GetInterface())
+	{
+		TScriptInterface<IVehicleNode> ThisNode;
+		ThisNode.SetInterface(this);
+		ThisNode.SetObject(this);
+		ParentNode.GetInterface()->ReverseAsRootNode(ThisNode, CurrentSelfConnection, CurrentOtherConnection,
+		                                             PreviousConnectionConstraintActor);
+	}
+
 	ParentNode = CurrenNearestVehicleNode;
 	if (ParentNode.GetInterface())
 	{
@@ -288,6 +294,23 @@ bool AVehicleComponentActor::AttachToCurrentOverlappingVehicleNode()
 		CurrentOtherConnection = CurrentNearestOtherConnectionComponent;
 		CurrentSelfConnection->SetConnectingState(true);
 		CurrentOtherConnection->SetConnectingState(true);
+
+		auto CurrentRoot = ParentNode->GetVehicleRoot();
+		if (CurrentRoot)
+		{
+			auto TreeNodes = CurrentRoot->GetAllChildNodes();
+
+			for (int i = 0; i < TreeNodes.Num(); i++)
+			{
+				auto NodeActor = Cast<AActor>(TreeNodes[i].GetInterface());
+				if (NodeActor)
+				{
+					GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+					                                 FString::Printf(
+						                                 TEXT("NodeActor %d: %s"), i, *NodeActor->GetName()));
+				}
+			}
+		}
 	}
 
 
@@ -371,6 +394,12 @@ bool AVehicleComponentActor::GetNearestConnectionInfo(UVehicleConnectionComponen
 
 	for (auto VehicleNode : CurrentOverlappingVehicleNodes)
 	{
+		// 并查集
+		if (GetVehicleRoot() == VehicleNode->GetVehicleRoot())
+		{
+			continue;
+		}
+
 		for (auto OtherVehicleConnectionComponent : VehicleNode->GetConnectionInfoList())
 		{
 			if (OtherVehicleConnectionComponent->IsConnecting())
@@ -614,4 +643,45 @@ void AVehicleComponentActor::SetCurrentRunningVehicleController(
 TScriptInterface<IVehicleNode> AVehicleComponentActor::GetCurrentRunningVehicleController()
 {
 	return CurrentRunningVehicleController;
+}
+
+void AVehicleComponentActor::ReverseAsRootNode(TScriptInterface<IVehicleNode> NewParentNode,
+                                               UVehicleConnectionComponent* NewCurrentSelfConnection,
+                                               UVehicleConnectionComponent* NewCurrentOtherConnection,
+                                               APhysicsConstraintActor* NewPhysicsConstraintActor)
+{
+	TScriptInterface<IVehicleNode> ThisNode;
+	ThisNode.SetInterface(this);
+	ThisNode.SetObject(this);
+
+	if (ParentNode.GetInterface())
+	{
+		ParentNode.GetInterface()->ReverseAsRootNode(ThisNode, CurrentSelfConnection, CurrentOtherConnection,
+		                                             CurrentConnectionConstraintActor);
+	}
+
+	int ChildIndex = -1;
+
+	for (int i = 0; i < ChildNodes.Num(); i++)
+	{
+		auto ChildNodeInterface = ChildNodes[i];
+		if (ChildNodeInterface.GetInterface() == NewParentNode.GetInterface())
+		{
+			ChildIndex = i;
+			break;
+		}
+	}
+
+	if (ChildIndex != -1)
+	{
+		ChildNodes.RemoveAt(ChildIndex);
+	}
+
+	CurrentSelfConnection = NewCurrentSelfConnection;
+	CurrentOtherConnection = NewCurrentOtherConnection;
+	CurrentConnectionConstraintActor = NewPhysicsConstraintActor;
+
+
+	NewParentNode->AddChildNode(ThisNode);
+	ParentNode = NewParentNode;
 }

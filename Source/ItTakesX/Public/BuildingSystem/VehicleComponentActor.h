@@ -148,4 +148,8 @@ public:
 	virtual void
 	SetCurrentRunningVehicleController(TScriptInterface<IVehicleNode> CurrentRunningVehicleControllerNode) override;
 	virtual TScriptInterface<IVehicleNode> GetCurrentRunningVehicleController() override;
+	virtual void ReverseAsRootNode(TScriptInterface<IVehicleNode> NewParentNode,
+	                               UVehicleConnectionComponent* NewCurrentSelfConnection,
+	                               UVehicleConnectionComponent* NewCurrentOtherConnection,
+	                               APhysicsConstraintActor* NewPhysicsConstraintActor) override;
 };

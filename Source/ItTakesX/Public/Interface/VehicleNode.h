@@ -73,4 +73,9 @@ public:
 	virtual void SetCurrentRunningVehicleController(TScriptInterface<IVehicleNode> CurrentRunningVehicleControllerNode)
 	= 0;
 	virtual TScriptInterface<IVehicleNode> GetCurrentRunningVehicleController() = 0;
+	// NewParentNode 表示当前节点的某一个子节点，不能是 nullptr
+	virtual void ReverseAsRootNode(TScriptInterface<IVehicleNode> NewParentNode,
+	                               class UVehicleConnectionComponent* NewCurrentSelfConnection,
+	                               class UVehicleConnectionComponent* NewCurrentOtherConnection,
+	                               class APhysicsConstraintActor* NewPhysicsConstraintActor) = 0;
 };
