@@ -89,6 +89,11 @@ void ALightningPawn::Shoot()
 		CurrentLaser->Destroy();
 	}
 
+	if (bHasDestruct)
+	{
+		return;
+	}
+
 	if (CurrentTargetCharacter == nullptr)
 	{
 		return;

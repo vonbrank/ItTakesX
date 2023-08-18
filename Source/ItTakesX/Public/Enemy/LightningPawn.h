@@ -56,8 +56,6 @@ private:
 	UPROPERTY()
 	ADottedLazer* CurrentLaser;
 
-	bool bHasDestruct = false;
-
 	void Shoot();
 
 	virtual void Destruct(AActor* DestructCauser, AController* DestructInstigator) override;
