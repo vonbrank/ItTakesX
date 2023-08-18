@@ -18,7 +18,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	
+
 	UPROPERTY(VisibleAnywhere)
 	class UStaticMeshComponent* BodyMesh;
 
@@ -73,6 +73,8 @@ protected:
 
 	UPROPERTY()
 	class AItTakesXGameMode* ItTakesXGameMode;
+
+	virtual FVector GetTargetPosition();
 
 public:
 	// Called every frame

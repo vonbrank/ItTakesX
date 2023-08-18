@@ -3,6 +3,8 @@
 
 #include "Enemy/TankPawn.h"
 
+#include "BuildingSystem/VehicleControllerActor.h"
+#include "Character/ItTakesXCharacter.h"
 #include "Components/ArrowComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -37,6 +39,22 @@ void ATankPawn::LookAtTarget(FVector TargetPosition)
 	{
 		TurretMesh->SetWorldRotation(PreviewRotation);
 	}
+}
+
+FVector ATankPawn::GetTargetPosition()
+{
+	if (CurrentTargetCharacter)
+	{
+		auto VehicleController = CurrentTargetCharacter->GetVehicleControllerFromCharacter();
+		if (VehicleController)
+		{
+			return VehicleController->GetActorLocation();
+		}
+
+		return Super::GetTargetPosition();
+	}
+
+	return Super::GetTargetPosition();
 }
 
 void ATankPawn::Destruct(AActor* DestructCauser, AController* DestructInstigator)

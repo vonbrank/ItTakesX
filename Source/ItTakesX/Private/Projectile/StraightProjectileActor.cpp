@@ -3,6 +3,8 @@
 
 #include "Projectile/StraightProjectileActor.h"
 
+#include "BuildingSystem/VehicleControllerActor.h"
+#include "Character/ItTakesXCharacter.h"
 #include "Enemy/EnemyBasePawn.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -42,12 +44,24 @@ void AStraightProjectileActor::DamageTarget(UPrimitiveComponent* HitComp, AActor
 	auto DamageType = UDamageType::StaticClass();
 	UGameplayStatics::ApplyDamage(OtherActor, 20, ThisInstigator, this, DamageType);
 
-	auto Character = Cast<ACharacter>(OtherActor);
+	auto Character = Cast<AItTakesXCharacter>(OtherActor);
+	UPrimitiveComponent* PrimitiveComponent = Cast<UPrimitiveComponent>(OtherComp);
+
 	if (Character)
 	{
-		// auto UnitNormal = NormalImpulse;
-		// UnitNormal.Normalize();
-		Character->GetCharacterMovement()->AddImpulse(-HitResult.Normal * 3000, true);
+		auto VehicleController = Character->GetVehicleControllerFromCharacter();
+		if (VehicleController)
+		{
+			VehicleController->GetRootMesh()->AddImpulse(-HitResult.Normal * HitImpulse, NAME_None, true);
+		}
+		else
+		{
+			Character->GetCharacterMovement()->AddImpulse(-HitResult.Normal * HitImpulse, true);
+		}
+	}
+	else if (PrimitiveComponent && OtherActor->IsRootComponentMovable())
+	{
+		PrimitiveComponent->AddImpulse(-HitResult.Normal * HitImpulse, NAME_None, true);
 	}
 }
 

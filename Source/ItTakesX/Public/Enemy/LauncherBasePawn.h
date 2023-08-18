@@ -19,6 +19,12 @@ class ITTAKESX_API ALauncherBasePawn : public AEnemyBasePawn
 public:
 	ALauncherBasePawn();
 	virtual void Tick(float DeltaSeconds) override;
+private:
+	UPROPERTY(EditAnywhere)
+	float ProjectileLifeSpan = 8.f;
+
+	UPROPERTY(EditAnywhere)
+	float HomingAccelerationMagnitude = 0;
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class UStaticMeshComponent* TurretMesh;

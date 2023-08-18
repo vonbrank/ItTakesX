@@ -48,6 +48,15 @@ void AEnemyBasePawn::Destruct(AActor* DestructCauser, AController* DestructInsti
 	}
 }
 
+FVector AEnemyBasePawn::GetTargetPosition()
+{
+	if (CurrentTargetCharacter)
+	{
+		return CurrentTargetCharacter->GetActorLocation();
+	}
+	return FVector::Zero();
+}
+
 // Called every frame
 void AEnemyBasePawn::Tick(float DeltaTime)
 {
@@ -55,7 +64,7 @@ void AEnemyBasePawn::Tick(float DeltaTime)
 
 	if (IsTargetInRange())
 	{
-		LookAtTarget(CurrentTargetCharacter->GetActorLocation());
+		LookAtTarget(GetTargetPosition());
 	}
 }
 

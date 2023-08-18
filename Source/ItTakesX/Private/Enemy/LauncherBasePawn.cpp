@@ -67,7 +67,8 @@ void ALauncherBasePawn::Shoot()
 			Projectile->GetProjectileMovement()->InitialSpeed = ProjectileSpeed;
 			Projectile->GetProjectileMovement()->MaxSpeed = ProjectileSpeed;
 			Projectile->GetProjectileMovement()->bIsHomingProjectile = true;
-			Projectile->GetProjectileMovement()->HomingAccelerationMagnitude = 3000;
+			Projectile->GetProjectileMovement()->HomingAccelerationMagnitude = HomingAccelerationMagnitude;
+			Projectile->SetLifeSpan(ProjectileLifeSpan);
 		}
 	}
 }

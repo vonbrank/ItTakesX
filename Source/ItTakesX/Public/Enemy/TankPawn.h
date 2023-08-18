@@ -23,5 +23,7 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	class UStaticMeshComponent* FakeBodyMesh;
 
+	virtual FVector GetTargetPosition() override;
+
 	virtual void Destruct(AActor* DestructCauser, AController* DestructInstigator) override;
 };
