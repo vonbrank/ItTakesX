@@ -51,6 +51,9 @@ private:
 	void AddNewNodeToVehicleNodeList(IVehicleNode* VehicleNode, AActor* Actor);
 	void RemoveNodeFromVehicleNodeList(IVehicleNode* VehicleNode);
 
+	UPROPERTY(EditDefaultsOnly)
+	bool bNeedBuoyancy = false;
+
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Vehicle Properties")
 	class UStaticMeshComponent* Mesh;

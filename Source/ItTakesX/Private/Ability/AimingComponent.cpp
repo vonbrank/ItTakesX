@@ -72,10 +72,21 @@ void UAimingComponent::AimScene()
 
 	UWorld* World = GetWorld();
 	TArray<FHitResult> HitResults;
-	if (World->LineTraceMultiByChannel(HitResults, Start, End, ECollisionChannel::ECC_Visibility))
+
+	
+	
+	if (World->LineTraceMultiByChannel(HitResults, Start, End, ECollisionChannel::ECC_WorldDynamic))
 	{
 	}
 	CurrentHitResults = HitResults;
+
+	// for (auto Result : CurrentHitResults)
+	// {
+	// 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	// 	                                 FString::Printf(
+	// 		                                 TEXT("Result actor name %s, component name %s"),
+	// 		                                 *Result.GetActor()->GetName(), *Result.Component->GetName()));
+	// }
 
 	auto CurrentNearestHitAimable = GetNearestAimingAimable();
 

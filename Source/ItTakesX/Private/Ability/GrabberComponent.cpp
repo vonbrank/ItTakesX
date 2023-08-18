@@ -72,6 +72,9 @@ bool UGrabberComponent::ToggleHoistingActor()
 	AActor* AimableActor = Cast<AActor>(Aimable);
 	if (AimableActor == nullptr) return false;
 
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	//                                  FString::Printf(TEXT("AimableActor name = %s"), *AimableActor->GetName()));
+
 	IHoistable* Hoistable = Cast<IHoistable>(Aimable);
 	if (Hoistable == nullptr) return false;
 

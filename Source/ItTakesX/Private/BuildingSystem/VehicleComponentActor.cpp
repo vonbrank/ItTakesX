@@ -507,12 +507,21 @@ bool AVehicleComponentActor::DetachFromAllAdjacentVehicleNode()
 
 void AVehicleComponentActor::TurnOnVehicleComponentCollisionChannel()
 {
+	if (bNeedBuoyancy)
+	{
+		return;
+	}
 	Mesh->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel1);
 	Mesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel1, ECollisionResponse::ECR_Ignore);
+	Mesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 }
 
 bool AVehicleComponentActor::TryTurnOffVehicleComponentCollisionChannel()
 {
+	if (bNeedBuoyancy)
+	{
+		return true;
+	}
 	if (ParentNode.GetInterface() || ChildNodes.Num() > 0)
 	{
 		return false;
@@ -520,6 +529,7 @@ bool AVehicleComponentActor::TryTurnOffVehicleComponentCollisionChannel()
 
 	Mesh->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
 	Mesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_GameTraceChannel1, ECollisionResponse::ECR_Block);
+	Mesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Block);
 	return true;
 }
 
