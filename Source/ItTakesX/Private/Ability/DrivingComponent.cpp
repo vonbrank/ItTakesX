@@ -504,3 +504,8 @@ bool UDrivingComponent::ToggleVehicleAimingMode()
 	}
 	return false;
 }
+
+bool UDrivingComponent::IsOverlappingVehicle()
+{
+	return CurrentOverlappingVehicle != nullptr;
+}

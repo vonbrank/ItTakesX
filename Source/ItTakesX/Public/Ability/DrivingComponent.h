@@ -74,4 +74,5 @@ public:
 	float GetDrivingVehicleArmourMaxHealth();
 	float GetDrivingVehicleArmourHealthPercentage();
 	bool ToggleVehicleAimingMode();
+	bool IsOverlappingVehicle();
 };

@@ -5,6 +5,9 @@
 
 #include "Ability/DrivingComponent.h"
 #include "Ability/HealthComponent.h"
+#include "Ability/InventoryComponent.h"
+#include "Ability/GrabberComponent.h"
+#include "BuildingSystem/VehicleControllerActor.h"
 #include "Character/ItTakesXCharacter.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
@@ -42,6 +45,56 @@ bool UInGameWidget::Initialize()
 	if (CarArmourContainText)
 	{
 		CarArmourContainText->TextDelegate.BindDynamic(this, &ThisClass::GetCarArmourContainText);
+	}
+
+	if (KeyOneTextBlock)
+	{
+		KeyOneTextBlock->TextDelegate.BindDynamic(this, &ThisClass::GetKeyOneText);
+	}
+	if (KeyTwoTextBlock)
+	{
+		KeyTwoTextBlock->TextDelegate.BindDynamic(this, &ThisClass::GetKeyTwoText);
+	}
+	if (KeyThreeTextBlock)
+	{
+		KeyThreeTextBlock->TextDelegate.BindDynamic(this, &ThisClass::GetKeyThreeText);
+	}
+	if (KeyVTextBlock)
+	{
+		KeyVTextBlock->TextDelegate.BindDynamic(this, &ThisClass::GetKeyVText);
+	}
+
+	if (KeyETextBlock)
+	{
+		KeyETextBlock->TextDelegate.BindDynamic(this, &ThisClass::GetKeyEText);
+	}
+	if (KeyFTextBlock)
+	{
+		KeyFTextBlock->TextDelegate.BindDynamic(this, &ThisClass::GetKeyFText);
+	}
+	if (KeyXTextBlock)
+	{
+		KeyXTextBlock->TextDelegate.BindDynamic(this, &ThisClass::GetKeyXText);
+	}
+	if (KeyLShiftTextBlock)
+	{
+		KeyLShiftTextBlock->TextDelegate.BindDynamic(this, &ThisClass::GetKeyLShiftText);
+	}
+	if (KeyPageUpTextBlock)
+	{
+		KeyPageUpTextBlock->TextDelegate.BindDynamic(this, &ThisClass::GetKeyPageUpText);
+	}
+	if (KeyPageDownTextBlock)
+	{
+		KeyPageDownTextBlock->TextDelegate.BindDynamic(this, &ThisClass::GetKeyPageDownText);
+	}
+	if (KeyLTextBlock)
+	{
+		KeyLTextBlock->TextDelegate.BindDynamic(this, &ThisClass::GetKeyLText);
+	}
+	if (KeyKTextBlock)
+	{
+		KeyKTextBlock->TextDelegate.BindDynamic(this, &ThisClass::GetKeyKText);
 	}
 
 	return true;
@@ -105,4 +158,128 @@ FText UInGameWidget::GetCarArmourContainText()
 			                Character->Driving->GetDrivingVehicleArmourMaxHealth()));
 	}
 	return FText::FromString(FString::Printf(TEXT("N/A")));
+}
+
+FText UInGameWidget::GetKeyOneText()
+{
+	return FText::FromString(FString::Printf(TEXT("取消装备 - 1")));
+}
+
+FText UInGameWidget::GetKeyTwoText()
+{
+	return FText::FromString(FString::Printf(TEXT("装备磁铁 - 2")));
+}
+
+FText UInGameWidget::GetKeyThreeText()
+{
+	return FText::FromString(FString::Printf(TEXT("装备枪 - 3")));
+}
+
+FText UInGameWidget::GetKeyVText()
+{
+	return FText::FromString(FString::Printf(TEXT("启用/停止滑翔 - V")));
+}
+
+FText UInGameWidget::GetKeyEText()
+{
+	if (Character->InventoryComponent->HasMagnetEquipped())
+	{
+		return FText::FromString(FString::Printf(TEXT("吸起/放下零件 - E")));
+	}
+	if (Character->InventoryComponent->HasWeaponEquipped())
+	{
+		return FText::FromString(FString::Printf(TEXT("断开零件的连接 - E")));
+	}
+	return FText::FromString(FString::Printf(TEXT("")));
+}
+
+FText UInGameWidget::GetKeyFText()
+{
+	if (Character->InventoryComponent->HasMagnetEquipped())
+	{
+		return FText::FromString(FString::Printf(TEXT("连接零件 - E")));
+	}
+	if (Character->Driving->IsOverlappingVehicle() || Character->GetVehicleControllerFromCharacter() != nullptr)
+	{
+		return FText::FromString(FString::Printf(TEXT("登上/离开载具 - F")));
+	}
+	return FText::FromString(FString::Printf(TEXT("")));
+}
+
+FText UInGameWidget::GetKeyXText()
+{
+	if (Character->Grabber->IsHoisting())
+	{
+		return FText::FromString(FString::Printf(TEXT("水平旋转零件 - Z/X")));
+	}
+	if (Character->GetVehicleControllerFromCharacter() != nullptr && !Character->GetVehicleControllerFromCharacter()->
+		IsAimingOpenFireMode())
+	{
+		return FText::FromString(FString::Printf(TEXT("水平旋转炮塔 - Z/X")));
+	}
+	return FText::FromString(FString::Printf(TEXT("")));
+}
+
+// FText UInGameWidget::GetKeyZText()
+// {
+// }
+
+FText UInGameWidget::GetKeyLShiftText()
+{
+	if (Character->Grabber->IsHoisting())
+	{
+		return FText::FromString(FString::Printf(TEXT("竖直旋转零件 - LCtrl/LShift")));
+	}
+	if (Character->GetVehicleControllerFromCharacter() != nullptr && !Character->GetVehicleControllerFromCharacter()->
+		IsAimingOpenFireMode())
+	{
+		return FText::FromString(FString::Printf(TEXT("竖直旋转炮塔 - Z/X")));
+	}
+	return FText::FromString(FString::Printf(TEXT("")));
+}
+
+// FText UInGameWidget::GetKeyLCtrlText()
+// {
+// }
+
+FText UInGameWidget::GetKeyPageUpText()
+{
+	if (Character->GetVehicleControllerFromCharacter() != nullptr)
+	{
+		return FText::FromString(FString::Printf(TEXT("提高引擎输出 - Page Up")));
+	}
+	return FText::FromString(FString::Printf(TEXT("")));
+}
+
+FText UInGameWidget::GetKeyPageDownText()
+{
+	if (Character->GetVehicleControllerFromCharacter() != nullptr)
+	{
+		return FText::FromString(FString::Printf(TEXT("降低引擎输出 - Page Down")));
+	}
+	return FText::FromString(FString::Printf(TEXT("")));
+}
+
+FText UInGameWidget::GetKeyLText()
+{
+	if (Character->GetVehicleControllerFromCharacter() != nullptr)
+	{
+		if (Character->GetVehicleControllerFromCharacter()->
+		               IsAimingOpenFireMode())
+		{
+			return FText::FromString(FString::Printf(TEXT("炮塔切换至按键瞄准模式 - L")));
+		}
+
+		return FText::FromString(FString::Printf(TEXT("炮塔切换至准星瞄准模式 - L")));
+	}
+	return FText::FromString(FString::Printf(TEXT("")));
+}
+
+FText UInGameWidget::GetKeyKText()
+{
+	if (Character->GetVehicleControllerFromCharacter() != nullptr)
+	{
+		return FText::FromString(FString::Printf(TEXT("开启/关闭火焰喷射器 - K")));
+	}
+	return FText::FromString(FString::Printf(TEXT("")));
 }
