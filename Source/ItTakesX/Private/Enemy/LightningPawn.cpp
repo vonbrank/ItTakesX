@@ -160,7 +160,7 @@ void ALightningPawn::Shoot()
 			ABaseExplosion>(ExplosionClass, TargetLocation, (-Direction).Rotation());
 		if (Explosion)
 		{
-			Explosion->SetActorScale3D(FVector(2, 2, 2));
+			// Explosion->SetActorScale3D(FVector(2, 2, 2));
 			Explosion->SetLifeSpan(1);
 		}
 	}
