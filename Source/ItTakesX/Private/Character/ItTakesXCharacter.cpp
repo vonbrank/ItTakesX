@@ -234,6 +234,11 @@ void AItTakesXCharacter::BeforeDrivingVehicleDestroy()
 	ToggleDriving();
 }
 
+AVehicleControllerActor* AItTakesXCharacter::GetVehicleControllerFromCharacter()
+{
+	return Driving->GetCurrentDrivingVehicle();
+}
+
 bool AItTakesXCharacter::ToggleDriving()
 {
 	bool bOutShouldActiveMovement = false;

@@ -82,7 +82,7 @@ void AEnemyBasePawn::OnSphereStartOverlap(UPrimitiveComponent* OverlappedCompone
 	if (NewCharacter)
 	{
 		CurrentTargetCharacter = NewCharacter;
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("New target character entered.")));
+		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("New target character entered.")));
 	}
 }
 
@@ -91,7 +91,7 @@ void AEnemyBasePawn::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent
 {
 	if (OtherActor == CurrentTargetCharacter)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("target character left.")));
+		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, FString::Printf(TEXT("target character left.")));
 		CurrentTargetCharacter = nullptr;
 	}
 }

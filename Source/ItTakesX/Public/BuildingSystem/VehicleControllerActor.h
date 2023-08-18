@@ -138,4 +138,6 @@ public:
 	void RebootVehicle();
 
 	FVehicleDestroyDelegate VehicleDestroyDelegate;
+
+	TScriptInterface<IVehicleNode> GetRandomComponentFromVehicle();
 };

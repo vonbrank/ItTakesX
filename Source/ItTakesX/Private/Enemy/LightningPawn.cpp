@@ -3,6 +3,7 @@
 
 #include "Enemy/LightningPawn.h"
 
+#include "BuildingSystem/VehicleControllerActor.h"
 #include "Character/ItTakesXCharacter.h"
 #include "GeometryCollection/GeometryCollectionComponent.h"
 
@@ -99,7 +100,49 @@ void ALightningPawn::Shoot()
 	{
 		TimeToDestroyLaser = ShootTime;
 		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("shoot laser")));
-		CurrentLaser->SetEndLocation(CurrentTargetCharacter->GetActorLocation());
+
+		if (CurrentTargetActor)
+		{
+			CurrentLaser->SetEndLocation(CurrentTargetActor->GetActorLocation());
+		}
+		else
+		{
+			auto CurrentVehicleController = CurrentTargetCharacter->GetVehicleControllerFromCharacter();
+			if (CurrentVehicleController)
+			{
+				CurrentTargetActor = Cast<AActor>(
+					CurrentVehicleController->GetRandomComponentFromVehicle().GetInterface());
+				if (CurrentTargetActor)
+				{
+					CurrentLaser->SetEndLocation(CurrentTargetActor->GetActorLocation());
+					GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+					                                 FString::Printf(
+						                                 TEXT("New CurrentTargetActor: %s"),
+						                                 *CurrentTargetActor->GetName()));
+					auto VehicleNode = Cast<IVehicleNode>(CurrentTargetActor);
+					if (VehicleNode)
+					{
+						VehicleNode->DetachFromAllAdjacentVehicleNode();
+						CurrentVehicleController->RebootVehicle();
+					}
+				}
+				else
+				{
+					CurrentLaser->SetEndLocation(CurrentTargetCharacter->GetActorLocation());
+					GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+					                                 FString::Printf(
+						                                 TEXT("CurrentTargetActor is null")));
+				}
+				CurrentTargetActor = nullptr;
+			}
+			else
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+				                                 FString::Printf(
+					                                 TEXT("CurrentVehicleController is null")));
+				CurrentLaser->SetEndLocation(CurrentTargetCharacter->GetActorLocation());
+			}
+		}
 	}
 }
 
@@ -117,4 +160,29 @@ void ALightningPawn::Destruct(AActor* DestructCauser, AController* DestructInsti
 
 	GetWorld()->SpawnActor<AFieldSystemActor>(FieldSystemClass, FieldSystemSpawnPoint->GetComponentLocation(),
 	                                          FieldSystemSpawnPoint->GetComponentRotation());
+}
+
+void ALightningPawn::OnSphereStartOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+                                          UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+                                          const FHitResult& SweepResult)
+{
+	Super::OnSphereStartOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
+	//
+	// AItTakesXCharacter* NewCharacter = Cast<AItTakesXCharacter>(OtherActor);
+	//
+	// if (NewCharacter)
+	// {
+	// }
+}
+
+void ALightningPawn::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+                                        UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	Super::OnSphereEndOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex);
+
+	if (OtherActor == CurrentTargetCharacter)
+	{
+		CurrentTargetCharacter = nullptr;
+		CurrentTargetActor = nullptr;
+	}
 }

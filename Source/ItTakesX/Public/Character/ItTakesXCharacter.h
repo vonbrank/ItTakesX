@@ -125,7 +125,9 @@ public:
 	void RespawnAtTransform(FTransform RespawnTransform);
 
 	bool IsDead() const;
-	
+
 	UFUNCTION()
 	void BeforeDrivingVehicleDestroy();
+
+	class AVehicleControllerActor* GetVehicleControllerFromCharacter();
 };

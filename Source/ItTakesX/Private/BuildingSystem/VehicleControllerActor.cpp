@@ -140,6 +140,20 @@ void AVehicleControllerActor::RebootVehicle()
 	CurrentAirplaneThrottle = PreviousAirplaneThrottle;
 }
 
+TScriptInterface<IVehicleNode> AVehicleControllerActor::GetRandomComponentFromVehicle()
+{
+	if (CurrentVehicleNodes.Num() == 0)
+	{
+		TScriptInterface<IVehicleNode> Res;
+		Res.SetInterface(nullptr);
+		Res.SetObject(nullptr);
+		return Res;
+	}
+
+	auto Index = FMath::RandRange(0, CurrentVehicleNodes.Num() - 1);
+	return CurrentVehicleNodes[Index];
+}
+
 void AVehicleControllerActor::DestroyVehicle()
 {
 	auto PreviousVehicleNodes = CurrentVehicleNodes;
