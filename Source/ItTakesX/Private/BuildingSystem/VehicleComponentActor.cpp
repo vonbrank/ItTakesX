@@ -116,18 +116,18 @@ void AVehicleComponentActor::OnSphereStartOverlap(UPrimitiveComponent* Overlappe
 {
 	auto VehicleNode = Cast<IVehicleNode>(OtherActor);
 
-	if (CurrentHoistingActor != nullptr && // 必须被举着
+	if (
 		VehicleNode != nullptr && // 另一个 Actor 必须是一个 IVehicleNode
 		OtherComp // 另一个 Component 需要是连接点的 Comp
 		->ComponentTags.Contains(TEXT("VehicleArea")))
 	{
 		AddNewNodeToVehicleNodeList(VehicleNode, OtherActor);
 
-		GEngine->AddOnScreenDebugMessage(
-			-1, 15.f, FColor::Yellow,
-			FString::Printf(
-				TEXT("Start overlap: %s, owner: %s, list length: %d"), *OtherComp->GetName(), *OtherActor->GetName(),
-				CurrentOverlappingVehicleNodes.Num()));
+		// GEngine->AddOnScreenDebugMessage(
+		// 	-1, 15.f, FColor::Yellow,
+		// 	FString::Printf(
+		// 		TEXT("Start overlap: %s, owner: %s, list length: %d"), *OtherComp->GetName(), *OtherActor->GetName(),
+		// 		CurrentOverlappingVehicleNodes.Num()));
 	}
 }
 
@@ -135,17 +135,17 @@ void AVehicleComponentActor::OnSphereEndOverlap(UPrimitiveComponent* OverlappedC
                                                 UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	auto VehicleNode = Cast<IVehicleNode>(OtherActor);
-	if (CurrentHoistingActor != nullptr && VehicleNode != nullptr && OtherComp
-	                                                                 ->ComponentTags.Contains(TEXT("VehicleArea")))
+	if (VehicleNode != nullptr && OtherComp
+	                              ->ComponentTags.Contains(TEXT("VehicleArea")))
 	// 另一个 Component 需要是连接点的 Comp
 	{
 		RemoveNodeFromVehicleNodeList(VehicleNode);
 
-		GEngine->AddOnScreenDebugMessage(
-			-1, 15.f, FColor::Yellow,
-			FString::Printf(
-				TEXT("End overlap: %s, owner: %s, list length: %d"), *OtherComp->GetName(), *OtherActor->GetName(),
-				CurrentOverlappingVehicleNodes.Num()));
+		// GEngine->AddOnScreenDebugMessage(
+		// 	-1, 15.f, FColor::Yellow,
+		// 	FString::Printf(
+		// 		TEXT("End overlap: %s, owner: %s, list length: %d"), *OtherComp->GetName(), *OtherActor->GetName(),
+		// 		CurrentOverlappingVehicleNodes.Num()));
 	}
 }
 
