@@ -62,7 +62,7 @@ void AEnemyBasePawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (IsTargetInRange())
+	if (!bHasDestruct && IsTargetInRange())
 	{
 		LookAtTarget(GetTargetPosition());
 	}

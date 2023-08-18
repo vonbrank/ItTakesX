@@ -53,6 +53,11 @@ void ALauncherBasePawn::Tick(float DeltaSeconds)
 
 void ALauncherBasePawn::Shoot()
 {
+	if (bHasDestruct)
+	{
+		return;
+	}
+
 	auto Projectile = GetWorld()->SpawnActor<ABaseProjectile>(ProjectileClass,
 	                                                          ProjectileSpawnPoint->GetComponentLocation(),
 	                                                          ProjectileSpawnPoint->GetComponentRotation());

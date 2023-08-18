@@ -92,7 +92,7 @@ void AVehicleControllerActor::DamageTaken(AActor* DamagedActor, float Damage, co
 
 	if (CurrentVehicleComponentArmours.Num() > 0)
 	{
-		float DamageToArmours = Damage * DamageRatioTransferToArmour;
+		float DamageToArmours = Damage * DamageRatioTransferToArmour / CurrentVehicleComponentArmours.Num();
 		float DamageToSelf = Damage * (1 - DamageRatioTransferToArmour);
 
 		for (auto VehicleComponentArmour : CurrentVehicleComponentArmours)
