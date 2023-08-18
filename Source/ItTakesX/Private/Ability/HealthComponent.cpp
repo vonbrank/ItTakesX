@@ -7,6 +7,7 @@
 #include "BuildingSystem/VehicleControllerActor.h"
 #include "Character/ItTakesXCharacter.h"
 #include "Enemy/EnemyBasePawn.h"
+#include "Environment/DeadZone.h"
 #include "GameModes/ItTakesXGameMode.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -41,6 +42,11 @@ void UHealthComponent::DamageTaken(AActor* DamagedActor, float Damage, const UDa
 
 	if (CurrentVehicleController)
 	{
+		if (Cast<ADeadZone>(DamageCauser))
+		{
+			Damage *= 10;
+		}
+
 		CurrentVehicleController->DamageTaken(DamagedActor, Damage, DamageType, Instigator, DamageCauser);
 		return;
 	}
