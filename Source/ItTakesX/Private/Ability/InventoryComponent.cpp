@@ -57,6 +57,8 @@ void UInventoryComponent::AddAndEquip(TScriptInterface<IEquippable> NewEquippabl
 		bHaveWeapon = true;
 	}
 
+	BeforeCurrentEquippableUpdate.Broadcast(CurrentEquippableInterface);
+
 	UnEquipCurrenEquippable();
 	CurrentEquippableInterface = NewEquippableInterface;
 	OnCurrentEquippableUpdate.Broadcast(NewEquippableInterface);

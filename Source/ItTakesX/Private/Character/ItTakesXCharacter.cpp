@@ -270,6 +270,10 @@ void AItTakesXCharacter::HandlePressingF()
 	}
 	if (ToggleDriving())
 	{
+		if (Driving->GetCurrentDrivingVehicle())
+		{
+			InventoryComponent->SwitchToEquippableByIndex(1);
+		}
 		return;
 	}
 }
@@ -287,7 +291,10 @@ bool AItTakesXCharacter::HasWeaponEquipped() const
 
 void AItTakesXCharacter::PickUpAndEquip(TScriptInterface<IEquippable> Equippable)
 {
-	InventoryComponent->AddAndEquip(Equippable);
+	if (Driving->GetCurrentDrivingVehicle() == nullptr)
+	{
+		InventoryComponent->AddAndEquip(Equippable);
+	}
 }
 
 void AItTakesXCharacter::OnCurrentEquippableUpdate(TScriptInterface<IEquippable> NewEquippableInterface)
@@ -412,17 +419,26 @@ bool AItTakesXCharacter::IsGliding() const
 
 void AItTakesXCharacter::HandlePressingOne()
 {
-	InventoryComponent->SwitchToEquippableByIndex(1);
+	if (Driving->GetCurrentDrivingVehicle() == nullptr)
+	{
+		InventoryComponent->SwitchToEquippableByIndex(1);
+	}
 }
 
 void AItTakesXCharacter::HandlePressingTwo()
 {
-	InventoryComponent->SwitchToEquippableByIndex(2);
+	if (Driving->GetCurrentDrivingVehicle() == nullptr)
+	{
+		InventoryComponent->SwitchToEquippableByIndex(2);
+	}
 }
 
 void AItTakesXCharacter::HandlePressingThree()
 {
-	InventoryComponent->SwitchToEquippableByIndex(3);
+	if (Driving->GetCurrentDrivingVehicle() == nullptr)
+	{
+		InventoryComponent->SwitchToEquippableByIndex(3);
+	}
 }
 
 void AItTakesXCharacter::HandlePressingLMB()
