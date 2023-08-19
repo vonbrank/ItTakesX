@@ -233,7 +233,7 @@ bool UGrabberComponent::InteractWithZoomingHoistable(float Value)
 	}
 
 	CurrentSelectDistance += Value;
-	CurrentSelectDistance = FMath::Clamp(CurrentSelectDistance, 1000.f, 10000.f);
+	CurrentSelectDistance = FMath::Clamp(CurrentSelectDistance, MinGrabbingDistance, MaxGrabbingDistance);
 
 	return true;
 }

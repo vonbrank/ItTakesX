@@ -60,6 +60,11 @@ private:
 
 	void DropDownCurrentHoistable();
 
+	UPROPERTY(EditAnywhere)
+	float MinGrabbingDistance = 500.f;
+	UPROPERTY(EditAnywhere)
+	float MaxGrabbingDistance = 5000.f;
+
 
 public:
 	bool ToggleHoistingActor();
