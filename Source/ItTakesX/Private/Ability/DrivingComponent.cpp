@@ -142,6 +142,12 @@ bool UDrivingComponent::ToggleVehicle(bool& bOutShouldActiveMovement)
 	if (CurrentDrivingVehicle)
 	{
 		bool bShutdownResult = CurrentDrivingVehicle->ShutdownVehicle();
+
+		if (CurrentDrivingVehicle->IsAimingOpenFireMode())
+		{
+			ToggleVehicleAimingMode();
+		}
+
 		if (Character)
 		{
 			// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
