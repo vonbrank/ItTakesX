@@ -211,6 +211,10 @@ FText UInGameWidget::GetKeyEText()
 	{
 		return FText::FromString(FString::Printf(TEXT("断开零件的连接 - E")));
 	}
+	if (Character->GetVehicleControllerFromCharacter())
+	{
+		return FText::FromString(FString::Printf(TEXT("开火 - E/LMB")));
+	}
 	return FText::FromString(FString::Printf(TEXT("")));
 }
 

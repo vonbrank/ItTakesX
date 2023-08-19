@@ -178,6 +178,10 @@ void AItTakesXCharacter::HandlePressingE()
 	{
 		return;
 	}
+	if (Driving->LaunchProjectile())
+	{
+		return;
+	}
 }
 
 void AItTakesXCharacter::HandleRepeatingLShift()
