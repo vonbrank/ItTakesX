@@ -14,6 +14,9 @@ class ITTAKESX_API AVehicleComponentBlade : public AVehicleComponentActor
 {
 	GENERATED_BODY()
 
+public:
+	AVehicleComponentBlade();
+	virtual void Tick(float DeltaSeconds) override;
 protected:
 	virtual void BeginPlay() override;
 
@@ -27,4 +30,10 @@ private:
 
 	UPROPERTY()
 	TSubclassOf<AActor> ExplosionClass;
+
+	UPROPERTY(VisibleAnywhere)
+	class UStaticMeshComponent* RotatingMesh;
+
+	UPROPERTY(EditAnywhere)
+	float RotatingSpeed = 10;
 };

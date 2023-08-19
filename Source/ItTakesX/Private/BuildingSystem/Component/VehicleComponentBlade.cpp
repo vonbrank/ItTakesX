@@ -8,6 +8,24 @@
 #include "PhysicsEngine/RadialForceActor.h"
 #include "PhysicsEngine/RadialForceComponent.h"
 
+AVehicleComponentBlade::AVehicleComponentBlade()
+{
+	RotatingMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RotatingMesh"));
+	RotatingMesh->SetupAttachment(RootComponent);
+}
+
+void AVehicleComponentBlade::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	if (bIsRunning)
+	{
+		auto NewRotation = RotatingMesh->GetRelativeRotation();
+		NewRotation.Yaw += RotatingSpeed * DeltaSeconds;
+		RotatingMesh->SetRelativeRotation(NewRotation);
+	}
+}
+
 void AVehicleComponentBlade::BeginPlay()
 {
 	Super::BeginPlay();
@@ -24,13 +42,18 @@ void AVehicleComponentBlade::OnWeaponHit(UPrimitiveComponent* HitComp, AActor* O
 		auto DamageType = UDamageType::StaticClass();
 		UGameplayStatics::ApplyDamage(OtherActor, Damage, GetWorld()->GetFirstPlayerController(), this, DamageType);
 
-		auto Explosion = GetWorld()->SpawnActor<ARadialForceActor>();
-		if (Explosion)
+		if (OtherActor->IsRootComponentMovable())
 		{
-			Explosion->SetActorLocation(Hit.Location);
-			auto ForceComponent = Explosion->GetForceComponent();
-			ForceComponent->ImpulseStrength = 10000;
-			ForceComponent->ForceStrength = 10000;
+			OtherComp->AddImpulse(GetActorForwardVector() * 500, NAME_None, true);
 		}
+
+		// auto Explosion = GetWorld()->SpawnActor<ARadialForceActor>();
+		// if (Explosion)
+		// {
+		// 	Explosion->SetActorLocation(Hit.Location);
+		// 	auto ForceComponent = Explosion->GetForceComponent();
+		// 	ForceComponent->ImpulseStrength = 10000;
+		// 	ForceComponent->ForceStrength = 10000;
+		// }
 	}
 }
