@@ -95,6 +95,8 @@ void AItTakesXGameMode::CharacterDied(AItTakesXCharacter* DeadCharacter)
 {
 	if (ItTakesXController && DeadCharacter)
 	{
+		CurrentDiedTimes += 1;
+
 		FTransform RespawnTransform = DeadCharacter->GetTransform();
 		if (LastCheckPoint)
 		{

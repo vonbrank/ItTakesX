@@ -41,6 +41,10 @@ private:
 	UPROPERTY()
 	float RespawnDelay = 3;
 
+
+	UPROPERTY(EditDefaultsOnly)
+	bool bShowInGameUI = true;
+
 protected:
 	void RespawnCharacterAtTransform();
 

@@ -14,7 +14,10 @@ void AItTakesXController::BeginPlay()
 	if (InGameWidget)
 	{
 		InGameWidget->SetOwningPlayer(this);
-		InGameWidget->AddToViewport();
+		if (bShowInGameUI)
+		{
+			InGameWidget->AddToViewport();
+		}
 	}
 
 	CharacterRespawnWidget = CreateWidget<UCharacterRespawnWidget>(this, CharacterRespawnWidgetClass);
@@ -64,6 +67,7 @@ void AItTakesXController::WinGame(AItTakesXGameMode* GameMode)
 		WinGameWidget->SetGameTimeInSeconds(GameMode->GetGameTimeInSeconds());
 		WinGameWidget->SetCurrentCrossedCircleNumber(GameMode->GetCurrentCrossedCircleNumber());
 		WinGameWidget->SetCurrentKilledEnemyNumber(GameMode->GetCurrentKilledEnemyNumber());
+		WinGameWidget->SetDiedTimes(GameMode->GetCurrentDiedTimes());
 		WinGameWidget->AddToViewport();
 		SetPause(true);
 	}

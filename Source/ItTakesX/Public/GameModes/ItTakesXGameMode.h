@@ -26,6 +26,8 @@ private:
 
 	int CurrentKilledEnemyNumber = 0;
 
+	int CurrentDiedTimes = 0;
+
 	UPROPERTY()
 	TArray<TScriptInterface<IVehicleNode>> CurrentUsedVehicleComponents;
 
@@ -46,10 +48,11 @@ private:
 	class AItTakesXController* ItTakesXController;
 
 public:
-	FORCEINLINE float GetGameTimeInSeconds() { return GameTimeInSeconds; }
+	FORCEINLINE float GetGameTimeInSeconds() { return GetWorld()->TimeSeconds; }
 	FORCEINLINE int GetCurrentCrossedCircleNumber() { return CurrentCrossedCircleNumber; }
 	FORCEINLINE int GetCurrentKilledEnemyNumber() { return CurrentKilledEnemyNumber; }
 	FORCEINLINE int GetCurrentUsedVehicleComponentNumber() { return CurrentUsedVehicleComponents.Num(); }
+	FORCEINLINE int GetCurrentDiedTimes() { return CurrentDiedTimes; }
 
 	void EnemyDied(class AEnemyBasePawn* EnemyBasePawn);
 	void CircleCrossed(class AFlyingCircle* FlyingCircle);
