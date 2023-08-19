@@ -45,35 +45,24 @@ void UItTakesXAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	YawOffset = UKismetMathLibrary::NormalizedDeltaRotator(MovementRotation, AimRotation).Yaw;
 
 	bIsDead = ItTakesXCharacter->IsDead();
-	//
-	// auto VehicleController = ItTakesXCharacter->GetVehicleControllerFromCharacter();
-	// bIsDriving = VehicleController != nullptr;
-	// if (bIsDriving)
-	// {
-	// 	auto LeftHandLocation = GetOwningComponent()->GetSocketLocation(FName(TEXT("hand_l")));
-	// 	auto RightHandLocation = GetOwningComponent()->GetSocketLocation(FName(TEXT("hand_r")));
-	// 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-	// 	                                 FString::Printf(
-	// 		                                 TEXT("LeftHandLocation = %s, RightHandLocation = %s"),
-	// 		                                 *LeftHandLocation.ToString(), *RightHandLocation.ToString()));
-	//
-	// 	auto TempTransform = ItTakesXCharacter->GetTransform();
-	// 	TempTransform.SetLocation(FVector::Zero());
-	//
-	// 	LeftHandOffset = TempTransform.
-	// 		InverseTransformPosition(VehicleController->GetLeftHandleLocation()) -
-	// 		ItTakesXCharacter->GetTransform().
-	// 		                   InverseTransformPosition(LeftHandLocation);
-	// 	RightHandOffset = TempTransform.
-	// 		InverseTransformPosition(VehicleController->GetLeftHandleLocation()) +
-	// 		ItTakesXCharacter->GetTransform().
-	// 		                   InverseTransformPosition(RightHandLocation);
-	//
-	// 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-	// 	                                 FString::Printf(
-	// 		                                 TEXT("LeftHandOffset = %s, RightHandOffset = %s"),
-	// 		                                 *LeftHandOffset.ToString(), *RightHandOffset.ToString()));
-	// }
+
+	auto VehicleController = ItTakesXCharacter->GetVehicleControllerFromCharacter();
+	bIsDriving = VehicleController != nullptr;
+	if (bIsDriving)
+	{
+		// auto LeftHandLocation = GetOwningComponent()->GetSocketLocation(FName(TEXT("hand_l")));
+		// auto RightHandLocation = GetOwningComponent()->GetSocketLocation(FName(TEXT("hand_r")));
+		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+		//                                  FString::Printf(
+		// 	                                 TEXT("LeftHandLocation = %s, RightHandLocation = %s"),
+		// 	                                 *LeftHandLocation.ToString(), *RightHandLocation.ToString()));
+		//
+		// auto TempTransform = ItTakesXCharacter->GetTransform();
+		// TempTransform.SetLocation(FVector::Zero());
+
+		LeftHandOffset = VehicleController->GetLeftHandleLocation();
+		RightHandOffset = VehicleController->GetRightHandleLocation();
+	}
 
 	// YawOffset = UKismetMathLibrary::MakeRotFromX(UKismetMathLibrary::InverseTransformDirection(ItTakesXCharacter->GetActorTransform(), Velocity)).Yaw;
 }

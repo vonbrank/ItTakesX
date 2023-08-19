@@ -10,6 +10,7 @@
 #include "BuildingSystem/Core/VehicleCoreQuadcopter.h"
 #include "BuildingSystem/Core/VehicleCoreSimpleAirplane.h"
 #include "Character/ItTakesXCharacter.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
 #include "PhysicsEngine/PhysicsConstraintActor.h"
 #include "PhysicsEngine/PhysicsConstraintComponent.h"
@@ -172,6 +173,7 @@ bool UDrivingComponent::ToggleVehicle(bool& bOutShouldActiveMovement)
 			// 	                                 TEXT("location of character %s"),
 			// 	                                 *Character->GetActorLocation().ToString()));
 			// Character->();
+			Character->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		}
 		return bShutdownResult;
 	}
@@ -190,6 +192,7 @@ bool UDrivingComponent::ToggleVehicle(bool& bOutShouldActiveMovement)
 		Character, &AItTakesXCharacter::BeforeDrivingVehicleDestroy);
 
 	CurrentControllerPitch = Character->Controller->GetControlRotation().Pitch;
+	Character->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	return CurrentDrivingVehicle->StartupVehicle(true);
 }
