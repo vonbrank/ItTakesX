@@ -17,6 +17,8 @@ ADottedLazer::ADottedLazer()
 void ADottedLazer::BeginPlay()
 {
 	Super::BeginPlay();
+
+	SetEndLocation(GetActorLocation());
 }
 
 // Called every frame
