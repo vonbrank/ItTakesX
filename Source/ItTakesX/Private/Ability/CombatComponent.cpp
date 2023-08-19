@@ -75,8 +75,8 @@ bool UCombatComponent::InteractWithDisconnectVehicleComponent()
 
 	if (InventoryComponent == nullptr || !InventoryComponent->HasWeaponEquipped())
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-		                                 FString::Printf(TEXT("InventoryComponent is null or not equip weapon")));
+		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+		//                                  FString::Printf(TEXT("InventoryComponent is null or not equip weapon")));
 		return false;
 	}
 

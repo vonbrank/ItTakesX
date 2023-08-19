@@ -14,7 +14,7 @@ void UMainMenuWidget::StartButtonClicked()
 
 void UMainMenuWidget::QuitButtonClicked()
 {
-	// UKismetSystemLibrary::QuitGame(this, GetWorld()->GetFirstPlayerController(), EQuitPreference::Quit, false);
+	UKismetSystemLibrary::QuitGame(this, GetWorld()->GetFirstPlayerController(), EQuitPreference::Quit, false);
 }
 
 bool UMainMenuWidget::Initialize()
