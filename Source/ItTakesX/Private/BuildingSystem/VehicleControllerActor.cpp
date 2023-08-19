@@ -67,7 +67,7 @@ void AVehicleControllerActor::OnSphereStartOverlap(UPrimitiveComponent* Overlapp
 	{
 		Character->SetCurrentOverlappingVehicleCore(this);
 		CurrentOverlappingCharacter = Character;
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("Start overlapping character")));
+		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("Start overlapping character")));
 	}
 }
 
@@ -80,7 +80,7 @@ void AVehicleControllerActor::OnSphereEndOverlap(UPrimitiveComponent* Overlapped
 	{
 		CurrentOverlappingCharacter->SetCurrentOverlappingVehicleCore(nullptr);
 		CurrentOverlappingCharacter = nullptr;
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("End overlapping character")));
+		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("End overlapping character")));
 	}
 }
 
@@ -316,9 +316,9 @@ void AVehicleControllerActor::AttachCharacter(ACharacter* Character)
 {
 	if (Character == nullptr)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-		                                 FString::Printf(
-			                                 TEXT("Character is null")));
+		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+		//                                  FString::Printf(
+		// 	                                 TEXT("Character is null")));
 		return;
 	}
 

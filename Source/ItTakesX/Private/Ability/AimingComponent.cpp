@@ -102,17 +102,17 @@ void UAimingComponent::AimScene()
 	if (CurrentAimingAimable != CurrentNearestHitAimable)
 	{
 		CurrentAimingAimable = CurrentNearestHitAimable;
-		if (CurrentAimingAimable)
-		{
-			AActor* AimingActor = Cast<AActor>(CurrentAimingAimable);
-			if (AimingActor)
-			{
-				GEngine->AddOnScreenDebugMessage(
-					-1, 15.f, FColor::Yellow,
-					FString::Printf(
-						TEXT("Current aiming actor: %s"), *AimingActor->GetName()));
-			}
-		}
+		// if (CurrentAimingAimable)
+		// {
+		// 	AActor* AimingActor = Cast<AActor>(CurrentAimingAimable);
+		// 	if (AimingActor)
+		// 	{
+		// 		GEngine->AddOnScreenDebugMessage(
+		// 			-1, 15.f, FColor::Yellow,
+		// 			FString::Printf(
+		// 				TEXT("Current aiming actor: %s"), *AimingActor->GetName()));
+		// 	}
+		// }
 	}
 }
 

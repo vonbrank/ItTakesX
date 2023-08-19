@@ -249,7 +249,7 @@ FVector UGrabberComponent::GetHoistingActorHorizontalRotatingAxisRight()
 	FVector Res = FVector::CrossProduct(FollowCamera->GetForwardVector(), FVector::UpVector);
 	Res.Normalize();
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("Res = %s"), *Res.ToString()));
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("Res = %s"), *Res.ToString()));
 
 	return Res;
 }
