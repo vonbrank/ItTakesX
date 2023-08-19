@@ -62,16 +62,17 @@ void AVehicleComponentSuspensionWheel::SetIsRunning(bool bNewIsRunning)
 
 	if (bNewIsRunning)
 	{
-		AxisConstraint->SetAngularVelocityDriveTwistAndSwing(true, true);
-		AxisConstraint->SetAngularDriveParams(50, 1000000, 0);
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-		                                 FString::Printf(TEXT("startup vehicle")));
+		// AxisConstraint->SetAngularVelocityDriveTwistAndSwing(true, true);
+		// AxisConstraint->SetAngularDriveParams(50, 1000000, 0);
+		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+		//                                  FString::Printf(TEXT("startup vehicle")));
 	}
 	else
 	{
-		AxisConstraint->SetAngularDriveParams(50, 0, 0);
-		AxisConstraint->SetAngularVelocityDriveTwistAndSwing(false, false);
+		// AxisConstraint->SetAngularDriveParams(50, 0, 0);
+		// AxisConstraint->SetAngularVelocityDriveTwistAndSwing(false, false);
 		AxisConstraint->SetAngularVelocityTarget(FVector(0, 0, 0));
+		TurnConstraint->SetAngularOrientationTarget(FRotator(0, 0, 0));
 	}
 }
 
