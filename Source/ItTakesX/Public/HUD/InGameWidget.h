@@ -113,6 +113,33 @@ private:
 	UFUNCTION()
 	FText GetKeyKText();
 
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* KeyWASDTextBlock;
+	UFUNCTION()
+	FText GetKeyWASDText();
+
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* KeyLRTextBlock;
+	UFUNCTION()
+	FText GetKeyLRText();
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* KeyUDTextBlock;
+	UFUNCTION()
+	FText GetKeyUDText();
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* ThrusterPercentageTextBlock;
+	UFUNCTION()
+	FText GetThrusterPercentageText();
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* VehicleSpeedTextBlock;
+	UFUNCTION()
+	FText GetVehicleSpeedText();
+
 	UPROPERTY()
 	class AItTakesXCharacter* Character;
 

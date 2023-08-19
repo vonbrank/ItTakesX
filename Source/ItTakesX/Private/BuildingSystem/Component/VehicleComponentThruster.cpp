@@ -51,10 +51,10 @@ void AVehicleComponentThruster::Throttle(float Value)
 	// 	CurrentThrottle = MaxThrottle;
 	// }
 	// CurrentThrottle = FMath::Clamp(0, MaxThrottle, CurrentThrottle);
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-	                                 FString::Printf(
-		                                 TEXT("throttling percentage: %.f%%"),
-		                                 CurrentThrottle / MaxThrottle * 100));
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	//                                  FString::Printf(
+	// 	                                 TEXT("throttling percentage: %.f%%"),
+	// 	                                 CurrentThrottle / MaxThrottle * 100));
 }
 
 void AVehicleComponentThruster::SetIsRunning(bool bNewIsRunning)

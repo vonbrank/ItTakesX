@@ -165,6 +165,13 @@ TScriptInterface<IVehicleNode> AVehicleControllerActor::GetRandomComponentFromVe
 	return CurrentVehicleNodes[Index];
 }
 
+float AVehicleControllerActor::GetCurrentForwardSpeedLength()
+{
+	float CurrentForwardSpeedLength = FVector::DotProduct(Mesh->GetForwardVector(),
+	                                                      Mesh->GetPhysicsLinearVelocity());
+	return CurrentForwardSpeedLength;
+}
+
 void AVehicleControllerActor::DestroyVehicle()
 {
 	auto PreviousVehicleNodes = CurrentVehicleNodes;

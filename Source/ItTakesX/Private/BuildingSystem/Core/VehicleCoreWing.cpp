@@ -34,8 +34,6 @@ void AVehicleCoreWing::Tick(float DeltaSeconds)
 			               NAME_None, true);
 		}
 
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-		                                 FString::Printf(
-			                                 TEXT("CurrentForwardSpeedLength = %.f"), CurrentForwardSpeedLength));
+
 	}
 }

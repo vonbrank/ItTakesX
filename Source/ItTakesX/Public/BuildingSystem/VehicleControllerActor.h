@@ -157,4 +157,6 @@ public:
 
 	FORCEINLINE FVector GetLeftHandleLocation() { return LeftHandleMark->GetComponentLocation(); }
 	FORCEINLINE FVector GetRightHandleLocation() { return RightHandleMark->GetComponentLocation(); }
+	FORCEINLINE float GetAircraftThrottlePercentage() { return CurrentAirplaneThrottle / MaxAirplaneThrottle; }
+	float GetCurrentForwardSpeedLength();
 };

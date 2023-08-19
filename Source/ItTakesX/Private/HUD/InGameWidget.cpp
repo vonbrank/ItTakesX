@@ -97,6 +97,27 @@ bool UInGameWidget::Initialize()
 		KeyKTextBlock->TextDelegate.BindDynamic(this, &ThisClass::GetKeyKText);
 	}
 
+	if (KeyWASDTextBlock)
+	{
+		KeyWASDTextBlock->TextDelegate.BindDynamic(this, &ThisClass::GetKeyWASDText);
+	}
+	if (KeyLRTextBlock)
+	{
+		KeyLRTextBlock->TextDelegate.BindDynamic(this, &ThisClass::GetKeyLRText);
+	}
+	if (KeyUDTextBlock)
+	{
+		KeyUDTextBlock->TextDelegate.BindDynamic(this, &ThisClass::GetKeyUDText);
+	}
+	if (ThrusterPercentageTextBlock)
+	{
+		ThrusterPercentageTextBlock->TextDelegate.BindDynamic(this, &ThisClass::GetThrusterPercentageText);
+	}
+	if (VehicleSpeedTextBlock)
+	{
+		VehicleSpeedTextBlock->TextDelegate.BindDynamic(this, &ThisClass::GetVehicleSpeedText);
+	}
+
 	return true;
 }
 
@@ -282,4 +303,58 @@ FText UInGameWidget::GetKeyKText()
 		return FText::FromString(FString::Printf(TEXT("开启/关闭火焰喷射器 - K")));
 	}
 	return FText::FromString(FString::Printf(TEXT("")));
+}
+
+FText UInGameWidget::GetKeyWASDText()
+{
+	if (Character->GetVehicleControllerFromCharacter())
+	{
+		return FText::FromString(FString::Printf(TEXT("车轮驱动/转向 - WASD")));
+	}
+	return FText::FromString(FString::Printf(TEXT("角色 Locomotion - WASD")));
+}
+
+FText UInGameWidget::GetKeyLRText()
+{
+	if (Character->GetVehicleControllerFromCharacter())
+	{
+		return FText::FromString(FString::Printf(TEXT("偏航x滚转 - ← →")));
+	}
+	return FText::FromString(FString::Printf(TEXT("")));
+}
+
+FText UInGameWidget::GetKeyUDText()
+{
+	if (Character->GetVehicleControllerFromCharacter())
+	{
+		return FText::FromString(FString::Printf(TEXT("俯仰- ↑ ↓")));
+	}
+	return FText::FromString(FString::Printf(TEXT("")));
+}
+
+FText UInGameWidget::GetThrusterPercentageText()
+{
+	if (Character->GetVehicleControllerFromCharacter())
+	{
+		return FText::FromString(FString::Printf(
+			TEXT("引擎输出百分比: %.f%%"),
+			Character->GetVehicleControllerFromCharacter()->GetAircraftThrottlePercentage() * 100));
+	}
+	return FText::FromString(FString::Printf(TEXT("引擎输出百分比: 0%%")));
+}
+
+FText UInGameWidget::GetVehicleSpeedText()
+{
+	if (Character->GetVehicleControllerFromCharacter())
+	{
+		if (Character->GetVehicleControllerFromCharacter()->GetCurrentForwardSpeedLength() == -0)
+		{
+			return FText::FromString(FString::Printf(TEXT("载具前向速度: 0 m/s")));
+		}
+
+		return FText::FromString(FString::Printf(
+			TEXT("载具前向速度: %.f m/s"),
+			Character->GetVehicleControllerFromCharacter()->GetCurrentForwardSpeedLength() / 100));
+	}
+	return FText::FromString(FString::Printf(TEXT("载具前向速度: 0 m/s")));
 }
