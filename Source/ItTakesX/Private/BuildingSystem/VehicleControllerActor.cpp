@@ -84,6 +84,11 @@ void AVehicleControllerActor::DamageTaken(AActor* DamagedActor, float Damage, co
 	// 调用父类同名函数将导致递归调用
 	// Super::DamageTaken(DamagedActor, Damage, DamageType, DamageInstigator, DamageCauser);
 
+	if (Cast<IVehicleNode>(DamageCauser) || DamageInstigator == GetWorld()->GetFirstPlayerController())
+	{
+		return;
+	}
+
 	if (Health <= 0)
 	{
 		return;

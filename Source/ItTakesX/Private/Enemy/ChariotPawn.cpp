@@ -46,10 +46,14 @@ void AChariotPawn::OnWeaponHit(UPrimitiveComponent* HitComp, AActor* OtherActor,
 	auto OwnerInstigator = CurrentOwner->GetInstigatorController();
 	auto DamageTypeClass = UDamageType::StaticClass();
 
-	if (Cast<AItTakesXCharacter>(OtherActor))
-	{
-		UGameplayStatics::ApplyDamage(OtherActor, WeaponDamage, OwnerInstigator, this, DamageTypeClass);
-	}
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("AChariotPawn OnWeaponHit")));
+
+	UGameplayStatics::ApplyDamage(OtherActor, WeaponDamage, OwnerInstigator, this, DamageTypeClass);
+
+	// if (Cast<AItTakesXCharacter>(OtherActor))
+	// {
+	//
+	// }
 }
 
 void AChariotPawn::LookAtTarget(FVector TargetPosition)

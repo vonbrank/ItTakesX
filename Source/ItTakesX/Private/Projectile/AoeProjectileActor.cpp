@@ -25,6 +25,12 @@ void AAoeProjectileActor::DamageTarget(UPrimitiveComponent* HitComp, AActor* Oth
 		ThisInstigator = GetWorld()->GetFirstPlayerController();
 	}
 
+	// if (ThisInstigator)
+	// {
+	// 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	// 	                                 FString::Printf(TEXT("ThisInstigator = %s"), *ThisInstigator->GetName()));
+	// }
+
 	auto DamageType = UDamageType::StaticClass();
 	TArray<AActor*> IgnoreActors;
 	UGameplayStatics::ApplyDamage(OtherActor, HitDamage, ThisInstigator, this, DamageType);

@@ -73,6 +73,11 @@ void AVehicleComponentArmour::DamageTaken(AActor* DamagedActor, float Damage, co
 	// 装甲不需要将伤害转发到整个载具
 	// Super::DamageTaken(DamagedActor, Damage, DamageType, DamageInstigator, DamageCauser);
 
+	if (Cast<IVehicleNode>(DamageCauser) || DamageInstigator == GetWorld()->GetFirstPlayerController())
+	{
+		return;
+	}
+
 	float PreviousHealth = Health;
 	Health -= Damage;
 

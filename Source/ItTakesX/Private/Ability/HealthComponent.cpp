@@ -35,8 +35,13 @@ void UHealthComponent::BeginPlay()
 }
 
 void UHealthComponent::DamageTaken(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
-                                   AController* Instigator, AActor* DamageCauser)
+                                   AController* DamageInstigator, AActor* DamageCauser)
 {
+	if (Cast<IVehicleNode>(DamageCauser) || DamageInstigator == GetWorld()->GetFirstPlayerController())
+	{
+		return;
+	}
+
 	auto CurrentVehicleController =
 		DrivingComponent != nullptr ? DrivingComponent->GetCurrentDrivingVehicle() : nullptr;
 
@@ -47,7 +52,7 @@ void UHealthComponent::DamageTaken(AActor* DamagedActor, float Damage, const UDa
 			Damage *= 10;
 		}
 
-		CurrentVehicleController->DamageTaken(DamagedActor, Damage, DamageType, Instigator, DamageCauser);
+		CurrentVehicleController->DamageTaken(DamagedActor, Damage, DamageType, DamageInstigator, DamageCauser);
 		return;
 	}
 
