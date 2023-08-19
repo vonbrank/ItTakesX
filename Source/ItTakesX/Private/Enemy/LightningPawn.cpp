@@ -126,10 +126,10 @@ void ALightningPawn::Shoot()
 				{
 					TargetLocation = CurrentTargetActor->GetActorLocation();
 					// CurrentLaser->SetEndLocation();
-					GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-					                                 FString::Printf(
-						                                 TEXT("New CurrentTargetActor: %s"),
-						                                 *CurrentTargetActor->GetName()));
+					// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+					//                                  FString::Printf(
+					// 	                                 TEXT("New CurrentTargetActor: %s"),
+					// 	                                 *CurrentTargetActor->GetName()));
 					auto VehicleNode = Cast<IVehicleNode>(CurrentTargetActor);
 					if (VehicleNode)
 					{
@@ -141,17 +141,17 @@ void ALightningPawn::Shoot()
 				{
 					TargetLocation = CurrentTargetCharacter->GetActorLocation();
 					// CurrentLaser->SetEndLocation(CurrentTargetCharacter->GetActorLocation());
-					GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-					                                 FString::Printf(
-						                                 TEXT("CurrentTargetActor is null")));
+					// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+					//                                  FString::Printf(
+					// 	                                 TEXT("CurrentTargetActor is null")));
 				}
 				CurrentTargetActor = nullptr;
 			}
 			else
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-				                                 FString::Printf(
-					                                 TEXT("CurrentVehicleController is null")));
+				// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+				//                                  FString::Printf(
+				// 	                                 TEXT("CurrentVehicleController is null")));
 				TargetLocation = CurrentTargetCharacter->GetActorLocation();
 				// CurrentLaser->SetEndLocation(CurrentTargetCharacter->GetActorLocation());
 			}

@@ -83,9 +83,9 @@ void AVehicleCoreActor::AttachCharacter(ACharacter* Character)
 {
 	if (Character == nullptr)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-		                                 FString::Printf(
-			                                 TEXT("Character is null")));
+		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+		//                                  FString::Printf(
+		// 	                                 TEXT("Character is null")));
 		return;
 	}
 

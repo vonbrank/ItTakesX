@@ -299,7 +299,7 @@ void AItTakesXCharacter::PickUpAndEquip(TScriptInterface<IEquippable> Equippable
 
 void AItTakesXCharacter::OnCurrentEquippableUpdate(TScriptInterface<IEquippable> NewEquippableInterface)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("start on Equip Update")));
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, FString::Printf(TEXT("start on Equip Update")));
 
 	auto NewEquippable = NewEquippableInterface.GetInterface();
 

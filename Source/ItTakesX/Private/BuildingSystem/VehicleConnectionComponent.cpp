@@ -81,9 +81,9 @@ FQuat UVehicleConnectionComponent::GetDirectionRotation(UVehicleConnectionCompon
 	auto OutAngle = 180 - FMath::RadiansToDegrees(
 		FMath::Acos(FVector::DotProduct(ConnectionDirection->GetForwardVector(),
 		                                OtherConnectionComponent->ConnectionDirection->GetForwardVector())));
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-	                                 FString::Printf(
-		                                 TEXT("OutAxis = %s, OutDegree = %f"), *OutAxis.ToString(), OutAngle));
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	//                                  FString::Printf(
+	// 	                                 TEXT("OutAxis = %s, OutDegree = %f"), *OutAxis.ToString(), OutAngle));
 	OutAxis.Normalize();
 	return FQuat(OutAxis, FMath::DegreesToRadians(OutAngle));
 }
@@ -114,11 +114,11 @@ FQuat UVehicleConnectionComponent::GetAlignmentRotation(UVehicleConnectionCompon
 		}
 	}
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-	                                 FString::Printf(
-		                                 TEXT("OutAxis = %s, OutDegree = %f, ConnectionAlignments num: %d "),
-		                                 *ConnectionDirection->GetForwardVector().ToString(), MinAngle,
-		                                 ConnectionAlignments.Num()));
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	//                                  FString::Printf(
+	// 	                                 TEXT("OutAxis = %s, OutDegree = %f, ConnectionAlignments num: %d "),
+	// 	                                 *ConnectionDirection->GetForwardVector().ToString(), MinAngle,
+	// 	                                 ConnectionAlignments.Num()));
 
 	if (MinAngle >= 180)
 	{

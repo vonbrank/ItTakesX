@@ -63,13 +63,13 @@ bool UCombatComponent::InteractWithShoot()
 
 bool UCombatComponent::InteractWithDisconnectVehicleComponent()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-	                                 FString::Printf(TEXT("InteractWithDisconnectVehicleComponent")));
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	//                                  FString::Printf(TEXT("InteractWithDisconnectVehicleComponent")));
 
 	if (AimingComponent == nullptr)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-		                                 FString::Printf(TEXT("AimingComponent is null")));
+		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+		//                                  FString::Printf(TEXT("AimingComponent is null")));
 		return false;
 	}
 

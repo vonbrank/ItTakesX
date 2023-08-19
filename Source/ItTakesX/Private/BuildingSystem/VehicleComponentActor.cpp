@@ -300,16 +300,16 @@ bool AVehicleComponentActor::AttachToCurrentOverlappingVehicleNode()
 		{
 			auto TreeNodes = CurrentRoot->GetAllChildNodes();
 
-			for (int i = 0; i < TreeNodes.Num(); i++)
-			{
-				auto NodeActor = Cast<AActor>(TreeNodes[i].GetInterface());
-				if (NodeActor)
-				{
-					GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-					                                 FString::Printf(
-						                                 TEXT("NodeActor %d: %s"), i, *NodeActor->GetName()));
-				}
-			}
+			// for (int i = 0; i < TreeNodes.Num(); i++)
+			// {
+			// 	auto NodeActor = Cast<AActor>(TreeNodes[i].GetInterface());
+			// 	if (NodeActor)
+			// 	{
+			// 		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+			// 		//                                  FString::Printf(
+			// 		// 	                                 TEXT("NodeActor %d: %s"), i, *NodeActor->GetName()));
+			// 	}
+			// }
 		}
 	}
 
@@ -446,8 +446,8 @@ ADottedLazer* AVehicleComponentActor::SpawnNewAdsorbEffect()
 	CurrentAdsorbEffect = GetWorld()->SpawnActor<ADottedLazer>(
 		AdsorbEffectClass, CurrentNearestConnectionComponent->GetComponentLocation(), FRotator::ZeroRotator);
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-	                                 FString::Printf(TEXT("Spawn result: %p"), CurrentAdsorbEffect));
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	//                                  FString::Printf(TEXT("Spawn result: %p"), CurrentAdsorbEffect));
 
 	if (CurrentAdsorbEffect)
 	{
@@ -513,8 +513,8 @@ bool AVehicleComponentActor::DetachFromParentVehicleNode()
 bool AVehicleComponentActor::DetachFromAdjacentChildVehicleNode()
 {
 	auto CurrenChildNodes = ChildNodes;
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-	                                 FString::Printf(TEXT("CurrenChildNodes num = %d"), CurrenChildNodes.Num()));
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	//                                  FString::Printf(TEXT("CurrenChildNodes num = %d"), CurrenChildNodes.Num()));
 	for (auto ChildNodeInterface : CurrenChildNodes)
 	{
 		auto ChildNode = ChildNodeInterface.GetInterface();

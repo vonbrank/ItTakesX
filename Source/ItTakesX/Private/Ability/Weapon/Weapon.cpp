@@ -40,8 +40,8 @@ void AWeapon::OnSphereStartOverlap(UPrimitiveComponent* OverlappedComponent, AAc
 {
 	Super::OnSphereStartOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-	                                 FString::Printf(TEXT("On overlapping Weapon: %s"), *OtherActor->GetName()));
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	//                                  FString::Printf(TEXT("On overlapping Weapon: %s"), *OtherActor->GetName()));
 	auto Character = Cast<AItTakesXCharacter>(OtherActor);
 	auto OwnerCharacter = Cast<AItTakesXCharacter>(GetOwner());
 	if (Character && OwnerCharacter == nullptr)

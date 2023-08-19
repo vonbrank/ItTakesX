@@ -98,10 +98,10 @@ void AVehicleComponentArmour::DamageTaken(AActor* DamagedActor, float Damage, co
 		Destruct00();
 	}
 
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-	                                 FString::Printf(
-		                                 TEXT("AVehicleComponentArmour before = %f, after = %f, current Health = %f"),
-		                                 PreviousHealth / MaxHealth, Health / MaxHealth, Health));
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	//                                  FString::Printf(
+	// 	                                 TEXT("AVehicleComponentArmour before = %f, after = %f, current Health = %f"),
+	// 	                                 PreviousHealth / MaxHealth, Health / MaxHealth, Health));
 
 	auto VehicleController = Cast<AVehicleControllerActor>(CurrentRunningVehicleController.GetInterface());
 	if (VehicleController)

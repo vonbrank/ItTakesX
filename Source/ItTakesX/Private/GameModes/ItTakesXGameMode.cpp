@@ -28,9 +28,9 @@ void AItTakesXGameMode::EnemyDied(AEnemyBasePawn* EnemyBasePawn)
 	if (EnemyBasePawn)
 	{
 		CurrentKilledEnemyNumber += 1;
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-		                                 FString::Printf(
-			                                 TEXT("CurrentKilledEnemyNumber = %d"), CurrentKilledEnemyNumber));
+		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+		//                                  FString::Printf(
+		// 	                                 TEXT("CurrentKilledEnemyNumber = %d"), CurrentKilledEnemyNumber));
 	}
 }
 
@@ -39,9 +39,9 @@ void AItTakesXGameMode::CircleCrossed(AFlyingCircle* FlyingCircle)
 	if (FlyingCircle)
 	{
 		CurrentCrossedCircleNumber += 1;
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-		                                 FString::Printf(
-			                                 TEXT("CurrentCrossedCircleNumber = %d"), CurrentCrossedCircleNumber));
+		// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+		//                                  FString::Printf(
+		// 	                                 TEXT("CurrentCrossedCircleNumber = %d"), CurrentCrossedCircleNumber));
 	}
 }
 
@@ -68,10 +68,10 @@ void AItTakesXGameMode::NewUseVehicleComponents(TArray<TScriptInterface<IVehicle
 		}
 	}
 	CurrentUsedVehicleComponents = NewUsedVehicleComponents;
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
-	                                 FString::Printf(
-		                                 TEXT("CurrentUsedVehicleComponentNumber = %d"),
-		                                 CurrentUsedVehicleComponents.Num()));
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	//                                  FString::Printf(
+	// 	                                 TEXT("CurrentUsedVehicleComponentNumber = %d"),
+	// 	                                 CurrentUsedVehicleComponents.Num()));
 }
 
 void AItTakesXGameMode::SetCharacterBeginTransform(AItTakesXCharacter* BeginCharacter, FTransform Transform)
