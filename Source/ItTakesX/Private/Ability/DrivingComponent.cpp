@@ -509,3 +509,21 @@ bool UDrivingComponent::IsOverlappingVehicle()
 {
 	return CurrentOverlappingVehicle != nullptr;
 }
+
+FVector UDrivingComponent::GetLeftHandleLocation()
+{
+	if (CurrentDrivingVehicle)
+	{
+		return CurrentDrivingVehicle->GetLeftHandleLocation();
+	}
+	return FVector::Zero();
+}
+
+FVector UDrivingComponent::GetRightHandleLocation()
+{
+	if (CurrentDrivingVehicle)
+	{
+		return CurrentDrivingVehicle->GetRightHandleLocation();
+	}
+	return FVector::Zero();
+}

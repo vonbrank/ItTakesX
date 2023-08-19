@@ -3,6 +3,7 @@
 
 #include "Character/ItTakesXAnimInstance.h"
 
+#include "BuildingSystem/VehicleControllerActor.h"
 #include "Character/ItTakesXCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -44,6 +45,35 @@ void UItTakesXAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	YawOffset = UKismetMathLibrary::NormalizedDeltaRotator(MovementRotation, AimRotation).Yaw;
 
 	bIsDead = ItTakesXCharacter->IsDead();
+	//
+	// auto VehicleController = ItTakesXCharacter->GetVehicleControllerFromCharacter();
+	// bIsDriving = VehicleController != nullptr;
+	// if (bIsDriving)
+	// {
+	// 	auto LeftHandLocation = GetOwningComponent()->GetSocketLocation(FName(TEXT("hand_l")));
+	// 	auto RightHandLocation = GetOwningComponent()->GetSocketLocation(FName(TEXT("hand_r")));
+	// 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	// 	                                 FString::Printf(
+	// 		                                 TEXT("LeftHandLocation = %s, RightHandLocation = %s"),
+	// 		                                 *LeftHandLocation.ToString(), *RightHandLocation.ToString()));
+	//
+	// 	auto TempTransform = ItTakesXCharacter->GetTransform();
+	// 	TempTransform.SetLocation(FVector::Zero());
+	//
+	// 	LeftHandOffset = TempTransform.
+	// 		InverseTransformPosition(VehicleController->GetLeftHandleLocation()) -
+	// 		ItTakesXCharacter->GetTransform().
+	// 		                   InverseTransformPosition(LeftHandLocation);
+	// 	RightHandOffset = TempTransform.
+	// 		InverseTransformPosition(VehicleController->GetLeftHandleLocation()) +
+	// 		ItTakesXCharacter->GetTransform().
+	// 		                   InverseTransformPosition(RightHandLocation);
+	//
+	// 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan,
+	// 	                                 FString::Printf(
+	// 		                                 TEXT("LeftHandOffset = %s, RightHandOffset = %s"),
+	// 		                                 *LeftHandOffset.ToString(), *RightHandOffset.ToString()));
+	// }
 
 	// YawOffset = UKismetMathLibrary::MakeRotFromX(UKismetMathLibrary::InverseTransformDirection(ItTakesXCharacter->GetActorTransform(), Velocity)).Yaw;
 }

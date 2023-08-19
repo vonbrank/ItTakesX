@@ -10,6 +10,7 @@
 #include "BuildingSystem/Component/VehicleComponentTurret.h"
 #include "Character/ItTakesXCharacter.h"
 #include "Components/ArrowComponent.h"
+#include "Components/SphereComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
 #include "GameModes/ItTakesXGameMode.h"
 #include "Kismet/GameplayStatics.h"
@@ -29,6 +30,11 @@ AVehicleControllerActor::AVehicleControllerActor()
 	AnchorConstraint->SetupAttachment(RootComponent);
 
 	AnchorConstraint->SetConstrainedComponents(Mesh, NAME_None, AnchorMesh, NAME_None);
+
+	LeftHandleMark = CreateDefaultSubobject<USphereComponent>(TEXT("LeftHandleMark"));
+	LeftHandleMark->SetupAttachment(RootComponent);
+	RightHandleMark = CreateDefaultSubobject<USphereComponent>(TEXT("RightHandleMark"));
+	RightHandleMark->SetupAttachment(RootComponent);
 }
 
 void AVehicleControllerActor::BeginPlay()

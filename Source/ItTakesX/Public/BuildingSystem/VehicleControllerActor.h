@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BuildingSystem/VehicleComponentActor.h"
+#include "Components/SphereComponent.h"
 #include "VehicleControllerActor.generated.h"
 
 
@@ -30,6 +31,12 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AActor> GeometryCollectionActorClass;
+
+	UPROPERTY(VisibleAnywhere)
+	class USphereComponent* LeftHandleMark;
+
+	UPROPERTY(VisibleAnywhere)
+	class USphereComponent* RightHandleMark;
 
 	bool bAimingOpenFireMode = false;
 
@@ -147,4 +154,7 @@ public:
 	FVehicleDestroyDelegate VehicleDestroyDelegate;
 
 	TScriptInterface<IVehicleNode> GetRandomComponentFromVehicle();
+
+	FORCEINLINE FVector GetLeftHandleLocation() { return LeftHandleMark->GetComponentLocation(); }
+	FORCEINLINE FVector GetRightHandleLocation() { return RightHandleMark->GetComponentLocation(); }
 };

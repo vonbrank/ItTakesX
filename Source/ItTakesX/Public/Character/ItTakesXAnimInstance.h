@@ -43,4 +43,13 @@ private:
 
 	UPROPERTY(BlueprintReadOnly, Category = INVALID_NAME_CHARACTERS, meta = (AllowPrivateAccess = "true"))
 	bool bIsDead;
+
+	UPROPERTY(BlueprintReadOnly, Category = INVALID_NAME_CHARACTERS, meta = (AllowPrivateAccess = "true"))
+	bool bIsDriving;
+
+	UPROPERTY(BlueprintReadOnly, Category = INVALID_NAME_CHARACTERS, meta = (AllowPrivateAccess = "true"))
+	FVector LeftHandOffset;
+
+	UPROPERTY(BlueprintReadOnly, Category = INVALID_NAME_CHARACTERS, meta = (AllowPrivateAccess = "true"))
+	FVector RightHandOffset;
 };

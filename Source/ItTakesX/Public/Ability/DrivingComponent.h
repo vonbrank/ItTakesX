@@ -75,4 +75,6 @@ public:
 	float GetDrivingVehicleArmourHealthPercentage();
 	bool ToggleVehicleAimingMode();
 	bool IsOverlappingVehicle();
+	FVector GetLeftHandleLocation();
+	FVector GetRightHandleLocation();
 };
