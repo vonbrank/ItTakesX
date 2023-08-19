@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "HUD/CharacterRespawnWidget.h"
 #include "HUD/InGameWidget.h"
+#include "HUD/WinGameWidget.h"
 #include "ItTakesXController.generated.h"
 
 /**
@@ -26,8 +27,14 @@ private:
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
 	TSubclassOf<UCharacterRespawnWidget> CharacterRespawnWidgetClass;
 
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = true))
+	TSubclassOf<UWinGameWidget> WinGameWidgetClass;
+
 	UPROPERTY()
 	class UCharacterRespawnWidget* CharacterRespawnWidget;
+
+	UPROPERTY()
+	class UWinGameWidget* WinGameWidget;
 
 	FTransform CurrentRespawnTransform;
 
@@ -39,4 +46,6 @@ protected:
 
 public:
 	void CharacterDied(FTransform RespawnTransform);
+	UFUNCTION(BlueprintCallable)
+	void WinGame(class AItTakesXGameMode* GameMode);
 };

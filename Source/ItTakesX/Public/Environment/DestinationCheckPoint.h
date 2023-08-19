@@ -13,7 +13,10 @@ UCLASS()
 class ITTAKESX_API ADestinationCheckPoint : public ALockerCheckPoint
 {
 	GENERATED_BODY()
-
+private:
+	UPROPERTY()
+	class AItTakesXGameMode* GameMode;
+	virtual void BeginPlay() override;
 protected:
 	virtual void RiseFlag() override;
 };

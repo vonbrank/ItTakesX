@@ -54,7 +54,6 @@ void UDrivingComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 
 			if (PlayerControllerRef)
 			{
-				PlayerControllerRef->bShowMouseCursor = true;
 				FHitResult HitResult;
 				if (PlayerControllerRef->GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, HitResult))
 				{
@@ -67,22 +66,11 @@ void UDrivingComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 				}
 			}
 		}
-		else
-		{
-			if (PlayerControllerRef)
-			{
-				PlayerControllerRef->bShowMouseCursor = false;
-			}
-		}
 		NewRotation.Yaw = CurrentDrivingVehicle->GetActorRotation().Yaw;
 		Character->Controller->SetControlRotation(NewRotation);
 	}
 	else
 	{
-		if (PlayerControllerRef)
-		{
-			PlayerControllerRef->bShowMouseCursor = false;
-		}
 	}
 }
 
@@ -491,6 +479,10 @@ bool UDrivingComponent::ToggleVehicleAimingMode()
 	{
 		if (CurrentDrivingVehicle->IsAimingOpenFireMode())
 		{
+			if (PlayerControllerRef)
+			{
+				PlayerControllerRef->bShowMouseCursor = false;
+			}
 			CurrentDrivingVehicle->SetAimingOpenFireMode(false);
 		}
 		else
@@ -498,6 +490,10 @@ bool UDrivingComponent::ToggleVehicleAimingMode()
 			if (Character)
 			{
 				CurrentControllerPitch = Character->Controller->GetControlRotation().Pitch;
+			}
+			if (PlayerControllerRef)
+			{
+				PlayerControllerRef->bShowMouseCursor = true;
 			}
 			CurrentDrivingVehicle->SetAimingOpenFireMode(true);
 		}

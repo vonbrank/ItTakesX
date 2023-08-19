@@ -337,10 +337,10 @@ FText UInGameWidget::GetThrusterPercentageText()
 	if (Character->GetVehicleControllerFromCharacter())
 	{
 		return FText::FromString(FString::Printf(
-			TEXT("引擎输出百分比: %.f%%"),
+			TEXT("推进器输出百分比: %.f%%"),
 			Character->GetVehicleControllerFromCharacter()->GetAircraftThrottlePercentage() * 100));
 	}
-	return FText::FromString(FString::Printf(TEXT("引擎输出百分比: 0%%")));
+	return FText::FromString(FString::Printf(TEXT("推进器输出百分比: 0%%")));
 }
 
 FText UInGameWidget::GetVehicleSpeedText()

@@ -4,6 +4,7 @@
 #include "Controller/ItTakesXController.h"
 
 #include "Character/ItTakesXCharacter.h"
+#include "GameModes/ItTakesXGameMode.h"
 
 void AItTakesXController::BeginPlay()
 {
@@ -17,6 +18,7 @@ void AItTakesXController::BeginPlay()
 	}
 
 	CharacterRespawnWidget = CreateWidget<UCharacterRespawnWidget>(this, CharacterRespawnWidgetClass);
+	WinGameWidget = CreateWidget<UWinGameWidget>(this, WinGameWidgetClass);
 }
 
 void AItTakesXController::RespawnCharacterAtTransform()
@@ -46,5 +48,23 @@ void AItTakesXController::CharacterDied(FTransform RespawnTransform)
 	{
 		CharacterRespawnWidget->StartCountDown(RespawnDelay);
 		CharacterRespawnWidget->AddToViewport();
+	}
+}
+
+void AItTakesXController::WinGame(AItTakesXGameMode* GameMode)
+{
+	if (WinGameWidget)
+	{
+		FInputModeUIOnly InputModeData;
+		InputModeData.SetWidgetToFocus(WinGameWidget->TakeWidget());
+		InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+		SetInputMode(InputModeData);
+		SetShowMouseCursor(true);
+		bShowMouseCursor = true;
+		WinGameWidget->SetGameTimeInSeconds(GameMode->GetGameTimeInSeconds());
+		WinGameWidget->SetCurrentCrossedCircleNumber(GameMode->GetCurrentCrossedCircleNumber());
+		WinGameWidget->SetCurrentKilledEnemyNumber(GameMode->GetCurrentKilledEnemyNumber());
+		WinGameWidget->AddToViewport();
+		SetPause(true);
 	}
 }

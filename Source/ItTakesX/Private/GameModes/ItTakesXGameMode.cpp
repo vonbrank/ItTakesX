@@ -108,3 +108,11 @@ void AItTakesXGameMode::CharacterDied(AItTakesXCharacter* DeadCharacter)
 		ItTakesXController->CharacterDied(RespawnTransform);
 	}
 }
+
+void AItTakesXGameMode::OnWinGameCheckPointRise(ADestinationCheckPoint* DestinationCheckPoint)
+{
+	if (ItTakesXController)
+	{
+		ItTakesXController->WinGame(this);
+	}
+}

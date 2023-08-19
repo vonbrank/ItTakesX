@@ -57,4 +57,5 @@ public:
 	void SetCharacterBeginTransform(class AItTakesXCharacter* BeginCharacter, FTransform Transform);
 	void ArriveCheckPoint(class ACheckPoint* NewCheckPoint);
 	void CharacterDied(class AItTakesXCharacter* DeadCharacter);
+	void OnWinGameCheckPointRise(class ADestinationCheckPoint* DestinationCheckPoint);
 };
