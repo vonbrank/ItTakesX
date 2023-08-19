@@ -197,7 +197,7 @@ FText UInGameWidget::GetKeyFText()
 {
 	if (Character->InventoryComponent->HasMagnetEquipped())
 	{
-		return FText::FromString(FString::Printf(TEXT("连接零件 - E")));
+		return FText::FromString(FString::Printf(TEXT("连接零件 - F")));
 	}
 	if (Character->Driving->IsOverlappingVehicle() || Character->GetVehicleControllerFromCharacter() != nullptr)
 	{
