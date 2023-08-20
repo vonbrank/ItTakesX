@@ -31,6 +31,7 @@ private:
 	int CurrentCrossedCircleNumber = 0;
 	int CurrentKilledEnemyNumber = 0;
 	int DiedTimes = 0;
+	int UsedComponentNumber = 0;
 
 
 	UPROPERTY(meta = (BindWidget))
@@ -49,10 +50,15 @@ private:
 	class UTextBlock* DiedTimesTextBlock;
 	UFUNCTION()
 	FText GetDiedTimesText();
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* UsedComponentNumberTextBlock;
+	UFUNCTION()
+	FText GetUsedComponentNumberText();
 
 public:
 	FORCEINLINE void SetGameTimeInSeconds(float Value) { GameTimeInSeconds = Value; }
 	FORCEINLINE void SetCurrentCrossedCircleNumber(float Value) { CurrentCrossedCircleNumber = Value; }
 	FORCEINLINE void SetCurrentKilledEnemyNumber(float Value) { CurrentKilledEnemyNumber = Value; }
 	FORCEINLINE void SetDiedTimes(float Value) { DiedTimes = Value; }
+	FORCEINLINE void SetUsedComponentNumber(float Value) { UsedComponentNumber = Value; }
 };

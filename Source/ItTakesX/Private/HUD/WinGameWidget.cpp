@@ -37,6 +37,10 @@ bool UWinGameWidget::Initialize()
 	{
 		DiedTimesTextBlock->TextDelegate.BindDynamic(this, &ThisClass::GetDiedTimesText);
 	}
+	if (UsedComponentNumberTextBlock)
+	{
+		UsedComponentNumberTextBlock->TextDelegate.BindDynamic(this, &ThisClass::GetUsedComponentNumberText);
+	}
 
 	return true;
 }
@@ -69,4 +73,9 @@ FText UWinGameWidget::GetCurrentKilledEnemyNumberText()
 FText UWinGameWidget::GetDiedTimesText()
 {
 	return FText::FromString(FString::Printf(TEXT("死亡次数：%d"), DiedTimes));
+}
+
+FText UWinGameWidget::GetUsedComponentNumberText()
+{
+	return FText::FromString(FString::Printf(TEXT("已使用零件数：%d"), UsedComponentNumber));
 }

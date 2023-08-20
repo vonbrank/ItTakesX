@@ -68,6 +68,7 @@ void AItTakesXController::WinGame(AItTakesXGameMode* GameMode)
 		WinGameWidget->SetCurrentCrossedCircleNumber(GameMode->GetCurrentCrossedCircleNumber());
 		WinGameWidget->SetCurrentKilledEnemyNumber(GameMode->GetCurrentKilledEnemyNumber());
 		WinGameWidget->SetDiedTimes(GameMode->GetCurrentDiedTimes());
+		WinGameWidget->SetUsedComponentNumber(GameMode->GetCurrentUsedVehicleComponentNumber());
 		WinGameWidget->AddToViewport();
 		SetPause(true);
 	}
